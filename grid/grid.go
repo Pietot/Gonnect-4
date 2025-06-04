@@ -1,7 +1,8 @@
 package grid
 
 type Grid struct {
-	Grid [][]int
+	Grid    [][]int
+	nbMoves int
 }
 
 func InitGrid() *Grid {
@@ -11,6 +12,7 @@ func InitGrid() *Grid {
 	for i := range grid.Grid {
 		grid.Grid[i] = make([]int, 7)
 	}
+	grid.nbMoves = 0
 	return grid
 }
 
