@@ -9,7 +9,7 @@ import (
 func TestConnect4(t *testing.T) {
 	test_game := initGame()
 	for i, game := range test_game {
-		if !game.Grid.CheckWin(game.player, game.line, game.column) {
+		if !game.Grid.CheckWinFromIndex(game.player, game.line, game.column) {
 			t.Errorf("Expected player %d to win in game %d", game.player, i)
 		}
 	}

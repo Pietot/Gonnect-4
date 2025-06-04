@@ -47,7 +47,7 @@ func (grid *Grid) DropPiece(column int, player int) bool {
 	return false
 }
 
-func (grid *Grid) CheckWin(player int, line int, column int) bool {
+func (grid *Grid) CheckWinFromIndex(player int, line int, column int) bool {
 	// Horizontal check
 	count := 0
 	for index := range 7 {
