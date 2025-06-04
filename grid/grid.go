@@ -39,14 +39,14 @@ func (grid *Grid) String() string {
 	return output
 }
 
-func (grid *Grid) DropPiece(column int, player int) bool {
+func (grid *Grid) DropPiece(column int, player int) (bool, int) {
 	for i := len(grid.Grid) - 1; i >= 0; i-- {
 		if grid.Grid[i][column] == 0 {
 			grid.Grid[i][column] = player
-			return true
+			return true, i
 		}
 	}
-	return false
+	return false, -1
 }
 
 func (grid *Grid) CheckWinFromIndex(player int, line int, column int) bool {
