@@ -8,14 +8,11 @@ type Grid struct {
 	Grid [][]int
 }
 
-func InitGrid() *Grid {
-	grid := &Grid{
-		Grid: make([][]int, 6),
-	}
+func (grid *Grid) InitGrid() {
+	grid.Grid = make([][]int, 6)
 	for i := range grid.Grid {
 		grid.Grid[i] = make([]int, 7)
 	}
-	return grid
 }
 
 func PrintGrid(grid *Grid) {
@@ -27,7 +24,7 @@ func PrintGrid(grid *Grid) {
 	}
 }
 
-func DropPiece(grid *Grid, column int, player int) bool {
+func (grid *Grid) DropPiece(column int, player int) bool {
 	for i := len(grid.Grid) - 1; i >= 0; i-- {
 		if grid.Grid[i][column] == 0 {
 			grid.Grid[i][column] = player
@@ -37,7 +34,7 @@ func DropPiece(grid *Grid, column int, player int) bool {
 	return false
 }
 
-func CheckWin(grid *Grid, player int, line int, column int) bool {
+func (grid *Grid) CheckWin(player int, line int, column int) bool {
 	// Horizontal check
 	count := 0
 	for index := range 7 {

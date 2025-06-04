@@ -9,14 +9,15 @@ import (
 func TestConnect4(t *testing.T) {
 	test_game := initGame()
 	for i, game := range test_game {
-		if !grid.CheckWin(game.Grid, game.player, game.line, game.column) {
+		if !game.Grid.CheckWin(game.player, game.line, game.column) {
 			t.Errorf("Expected player %d to win in game %d", game.player, i)
 		}
 	}
 }
 
 func TestGridInitialization(t *testing.T) {
-	test_grid := grid.InitGrid()
+	test_grid := grid.Grid{}
+	test_grid.InitGrid()
 	if len(test_grid.Grid) != 6 || len(test_grid.Grid[0]) != 7 {
 		t.Errorf("Expected grid to be 6 rows and 7 columns, got %d rows and %d columns", len(test_grid.Grid), len(test_grid.Grid[0]))
 	}
