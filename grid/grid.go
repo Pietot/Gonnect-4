@@ -1,9 +1,5 @@
 package grid
 
-import (
-	"fmt"
-)
-
 type Grid struct {
 	Grid [][]int
 }
@@ -18,13 +14,27 @@ func InitGrid() *Grid {
 	return grid
 }
 
-func PrintGrid(grid *Grid) {
+func (grid *Grid) String() string {
+	var output string
 	for _, row := range grid.Grid {
 		for _, cell := range row {
-			fmt.Printf("%d ", cell)
+			switch cell {
+			case 1:
+				// Color red for player 1
+				output += "\033[31m@\033[0m "
+			case 2:
+				// Color blue for player 2
+				output += "\033[34m@\033[0m "
+			default:
+				// Empty cell
+				output += "  "
+			}
 		}
-		fmt.Println()
+		output += "\n"
 	}
+	output += "-------------\n"
+	output += "1 2 3 4 5 6 7\n"
+	return output
 }
 
 func (grid *Grid) DropPiece(column int, player int) bool {
