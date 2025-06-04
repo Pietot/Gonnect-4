@@ -8,11 +8,14 @@ type Grid struct {
 	Grid [][]int
 }
 
-func (grid *Grid) InitGrid() {
-	grid.Grid = make([][]int, 6)
+func InitGrid() *Grid {
+	grid := &Grid{
+		Grid: make([][]int, 6),
+	}
 	for i := range grid.Grid {
 		grid.Grid[i] = make([]int, 7)
 	}
+	return grid
 }
 
 func PrintGrid(grid *Grid) {

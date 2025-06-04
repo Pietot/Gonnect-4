@@ -16,8 +16,7 @@ func TestConnect4(t *testing.T) {
 }
 
 func TestGridInitialization(t *testing.T) {
-	test_grid := grid.Grid{}
-	test_grid.InitGrid()
+	test_grid := grid.InitGrid()
 	if len(test_grid.Grid) != 6 || len(test_grid.Grid[0]) != 7 {
 		t.Errorf("Expected grid to be 6 rows and 7 columns, got %d rows and %d columns", len(test_grid.Grid), len(test_grid.Grid[0]))
 	}
