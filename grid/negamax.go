@@ -5,13 +5,17 @@ import (
 	"math"
 )
 
-type score struct {
+type evaluation struct {
 	score         *float64
 	bestMove      *int
 	remainingMove *int
 }
 
-func (s *score) String() string {
+const COMPUTER = 1
+
+var stack = 0
+
+func (s *evaluation) String() string {
 	var scoreStr, bestMoveStr, remainingMoveStr string
 
 	if s.score != nil {
@@ -65,19 +69,49 @@ func (eval1 *evaluation) isBetterThan(eval2 *evaluation) bool {
 	return false
 }
 
-func (grid *Grid) Negamax(depth int, maximizingPlayer int) *score {
-	if grid.isDraw() {
-		val := 0.0
-		return &score{&val, nil, nil}
+func (grid *Grid) Negamax(player int) *evaluation {
+	if grid.IsDraw() {
+		score := 0.0
+		remainingMoves := stack
+		return &evaluation{&score, nil, &remainingMoves}
 	}
-	copyGrid := grid.deepCopy()
+
+	var bestEvaluation = &evaluation{nil, nil, nil}
+
 	for column := range 7 {
-		canPlay, line := copyGrid.DropPiece(column, maximizingPlayer)
-		if canPlay && copyGrid.CheckWinFromIndex(maximizingPlayer, line, column) {
-			val := math.Inf(1)
-			remainingMove := 1
-			return &score{&val, &column, &remainingMove}
+		copyGrid := grid.DeepCopy()
+		droppedPiece, line := copyGrid.DropPiece(column, player)
+		if droppedPiece && copyGrid.CheckWinFromIndex(player, line, column) {
+			remainingMoves := stack
+			score := math.Inf(1)
+			return &evaluation{&score, &column, &remainingMoves}
 		}
 	}
-	return &score{}
+
+	for column := range 7 {
+		copyGrid := grid.DeepCopy()
+		droppedPiece, _ := copyGrid.DropPiece(column, player)
+		if droppedPiece {
+			stack++
+			childEvaluation := copyGrid.Negamax(getOpponent(player)).Negate()
+			stack--
+			newEvaluation := &evaluation{
+				score:         childEvaluation.score,
+				bestMove:      &column,
+				remainingMove: childEvaluation.remainingMove,
+			}
+			if newEvaluation.isBetterThan(bestEvaluation) {
+				bestEvaluation = newEvaluation
+			}
+		}
+	}
+
+	return bestEvaluation
+}
+
+func getOpponent(player int) int {
+	if player == COMPUTER {
+		return 2
+	}
+	return 1
 }
