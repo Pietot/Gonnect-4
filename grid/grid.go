@@ -120,3 +120,31 @@ func (e *evaluation) Negate() *evaluation {
 		remainingMove: e.remainingMove,
 	}
 }
+
+func (grid *Grid) IsDraw() bool {
+	// For debugging purposes when I directly initialize the grid
+	if grid.nbMoves == 0 {
+		count := 0
+		for _, row := range grid.Grid {
+			for _, cell := range row {
+				if cell != 0 {
+					count++
+				}
+			}
+		}
+		return count == 6*7
+	}
+	return grid.nbMoves == 6*7
+}
+
+func (grid *Grid) DeepCopy() *Grid {
+	newGrid := make([][]int, len(grid.Grid))
+	for i := range grid.Grid {
+		newGrid[i] = make([]int, len(grid.Grid[i]))
+		copy(newGrid[i], grid.Grid[i])
+	}
+	return &Grid{
+		Grid:    newGrid,
+		nbMoves: grid.nbMoves,
+	}
+}
