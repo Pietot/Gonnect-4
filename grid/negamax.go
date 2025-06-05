@@ -37,20 +37,32 @@ func (s *score) String() string {
 		", \nRemaining Moves: " + remainingMoveStr
 }
 
-func (grid *Grid) isDraw() bool {
-	return grid.nbMoves == 6*7
-}
+func (eval1 *evaluation) isBetterThan(eval2 *evaluation) bool {
+	// A defined score is always better than a nil score
+	if eval2.score == nil {
+		return true
+	}
+	if eval1.score == nil {
+		return false
+	}
 
-func (grid *Grid) deepCopy() *Grid {
-	newGrid := make([][]int, len(grid.Grid))
-	for i := range grid.Grid {
-		newGrid[i] = make([]int, len(grid.Grid[i]))
-		copy(newGrid[i], grid.Grid[i])
+	// If both scores are defined and different, compare them
+	if *eval1.score != *eval2.score {
+		return *eval1.score > *eval2.score
 	}
-	return &Grid{
-		Grid:    newGrid,
-		nbMoves: grid.nbMoves,
+
+	// If scores are equal and victory is imminent, minimize the remaining moves
+	if *eval1.score == math.Inf(1) {
+		return *eval1.remainingMove < *eval2.remainingMove
 	}
+
+	// If scores are equal and defeat is imminent, maximize the remaining moves
+	if *eval1.score == math.Inf(-1) {
+		return *eval1.remainingMove > *eval2.remainingMove
+	}
+
+	// Useless case
+	return false
 }
 
 func (grid *Grid) Negamax(depth int, maximizingPlayer int) *score {
