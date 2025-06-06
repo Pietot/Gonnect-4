@@ -105,22 +105,6 @@ func (grid *Grid) CheckWinFromIndex(player int, line int, column int) bool {
 	return false
 }
 
-func (e *evaluation) Negate() *evaluation {
-	if e.score == nil || *e.score == 0.0 {
-		return &evaluation{
-			score:         e.score,
-			bestMove:      e.bestMove,
-			remainingMove: e.remainingMove,
-		}
-	}
-	neg := -(*e.score)
-	return &evaluation{
-		score:         &neg,
-		bestMove:      e.bestMove,
-		remainingMove: e.remainingMove,
-	}
-}
-
 func (grid *Grid) IsDraw() bool {
 	// For debugging purposes when I directly initialize the grid
 	if grid.nbMoves == 0 {
