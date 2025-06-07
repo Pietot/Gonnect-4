@@ -51,8 +51,8 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64) *evaluation.Evaluation 
 
 	var bestEvaluation = &evaluation.Evaluation{Score: nil, BestMove: nil, RemainingMove: nil}
 
+	copyGrid := grid.DeepCopy()
 	for column := range 7 {
-		copyGrid := grid.DeepCopy()
 		droppedPiece, line := copyGrid.DropPiece(column, player)
 		if !droppedPiece {
 			continue
@@ -67,11 +67,12 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64) *evaluation.Evaluation 
 			}
 		}
 		movedPlayed--
+		copyGrid.Grid[line][column] = 0
 	}
 
+	copyGrid = grid.DeepCopy()
 	for column := range 7 {
-		copyGrid := grid.DeepCopy()
-		droppedPiece, _ := copyGrid.DropPiece(column, player)
+		droppedPiece, line := copyGrid.DropPiece(column, player)
 		if droppedPiece {
 			movedPlayed++
 			childEvaluation := copyGrid.negamaxStats(utils.GetOpponent(player), nbPos).Negate()
@@ -85,6 +86,7 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64) *evaluation.Evaluation 
 			if newEvaluation.IsBetterThan(bestEvaluation) {
 				bestEvaluation = newEvaluation
 			}
+			copyGrid.Grid[line][column] = 0
 		}
 	}
 
