@@ -4,6 +4,7 @@ import (
 	"math"
 
 	"github.com/Pietot/Gonnect-4/evaluation"
+	"github.com/Pietot/Gonnect-4/utils"
 )
 
 const COMPUTER = 1
@@ -13,9 +14,9 @@ var stack = 0
 func (grid *Grid) Negamax(player int) *evaluation.Evaluation {
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(0.0),
+			Score:         utils.Float64Ptr(0.0),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(stack),
+			RemainingMove: utils.IntPtr(stack),
 		}
 	}
 
@@ -26,9 +27,9 @@ func (grid *Grid) Negamax(player int) *evaluation.Evaluation {
 		droppedPiece, line := copyGrid.DropPiece(column, player)
 		if droppedPiece && copyGrid.CheckWinFromIndex(player, line, column) {
 			return &evaluation.Evaluation{
-				Score:         evaluation.Float64Ptr(math.Inf(1)),
+				Score:         utils.Float64Ptr(math.Inf(1)),
 				BestMove:      &column,
-				RemainingMove: evaluation.IntPtr(stack),
+				RemainingMove: utils.IntPtr(stack),
 			}
 		}
 	}
@@ -38,7 +39,7 @@ func (grid *Grid) Negamax(player int) *evaluation.Evaluation {
 		droppedPiece, _ := copyGrid.DropPiece(column, player)
 		if droppedPiece {
 			stack++
-			childEvaluation := copyGrid.Negamax(getOpponent(player)).Negate()
+			childEvaluation := copyGrid.negamaxStats(utils.GetOpponent(player), nbPos).Negate()
 			stack--
 			newEvaluation := &evaluation.Evaluation{
 				Score:         childEvaluation.Score,

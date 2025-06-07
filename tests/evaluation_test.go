@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Pietot/Gonnect-4/evaluation"
+	"github.com/Pietot/Gonnect-4/utils"
 )
 
 type compareEvaluation struct {
@@ -29,7 +30,7 @@ var compareEvaluations = []compareEvaluation{
 	},
 	{
 		eval1: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
 			RemainingMove: nil,
 		},
@@ -47,7 +48,7 @@ var compareEvaluations = []compareEvaluation{
 			RemainingMove: nil,
 		},
 		eval2: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
 			RemainingMove: nil,
 		},
@@ -55,12 +56,12 @@ var compareEvaluations = []compareEvaluation{
 	},
 	{
 		eval1: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
 			RemainingMove: nil,
 		},
 		eval2: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(-1)),
+			Score:         utils.Float64Ptr(math.Inf(-1)),
 			BestMove:      nil,
 			RemainingMove: nil,
 		},
@@ -68,12 +69,12 @@ var compareEvaluations = []compareEvaluation{
 	},
 	{
 		eval1: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(-1)),
+			Score:         utils.Float64Ptr(math.Inf(-1)),
 			BestMove:      nil,
 			RemainingMove: nil,
 		},
 		eval2: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
 			RemainingMove: nil,
 		},
@@ -81,53 +82,53 @@ var compareEvaluations = []compareEvaluation{
 	},
 	{
 		eval1: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(5),
+			RemainingMove: utils.IntPtr(5),
 		},
 		eval2: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(10),
+			RemainingMove: utils.IntPtr(10),
 		},
 		isBetter: true,
 	},
 	{
 		eval1: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(10),
+			RemainingMove: utils.IntPtr(10),
 		},
 		eval2: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(1)),
+			Score:         utils.Float64Ptr(math.Inf(1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(5),
+			RemainingMove: utils.IntPtr(5),
 		},
 		isBetter: false,
 	},
 	{
 		eval1: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(-1)),
+			Score:         utils.Float64Ptr(math.Inf(-1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(5),
+			RemainingMove: utils.IntPtr(5),
 		},
 		eval2: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(-1)),
+			Score:         utils.Float64Ptr(math.Inf(-1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(10),
+			RemainingMove: utils.IntPtr(10),
 		},
 		isBetter: false,
 	},
 	{
 		eval1: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(-1)),
+			Score:         utils.Float64Ptr(math.Inf(-1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(10),
+			RemainingMove: utils.IntPtr(10),
 		},
 		eval2: &evaluation.Evaluation{
-			Score:         evaluation.Float64Ptr(math.Inf(-1)),
+			Score:         utils.Float64Ptr(math.Inf(-1)),
 			BestMove:      nil,
-			RemainingMove: evaluation.IntPtr(5),
+			RemainingMove: utils.IntPtr(5),
 		},
 		isBetter: true,
 	},
