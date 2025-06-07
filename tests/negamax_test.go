@@ -65,7 +65,7 @@ func createGrid(sequence string) *grid.Grid {
 	grid := grid.InitGrid()
 	for i := range sequence {
 		col := int(sequence[i] - '0')
-		grid.DropPiece(col, player)
+		grid.DropPiece(col-1, player)
 		if player == 1 {
 			player = 2
 		} else {
