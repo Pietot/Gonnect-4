@@ -16,6 +16,12 @@ func InitGrid() *Grid {
 	return grid
 }
 
+func InitCustomGrid(custom_grid [][]int) *Grid {
+	return &Grid{
+		Grid: custom_grid,
+	}
+}
+
 func (grid *Grid) String() string {
 	var output string
 	for _, row := range grid.Grid {
