@@ -53,10 +53,3 @@ func (grid *Grid) Negamax(player int) *evaluation.Evaluation {
 
 	return bestEvaluation
 }
-
-func getOpponent(player int) int {
-	if player == COMPUTER {
-		return 2
-	}
-	return 1
-}
