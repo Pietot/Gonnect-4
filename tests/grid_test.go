@@ -37,16 +37,10 @@ type game struct {
 	column int
 }
 
-func initGrid(custom_grid [][]int) *grid.Grid {
-	return &grid.Grid{
-		Grid: custom_grid,
-	}
-}
-
 func initGame() []game {
 	return []game{
 		{
-			Grid: initGrid([][]int{
+			Grid: grid.InitCustomGrid([][]int{
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
@@ -58,7 +52,7 @@ func initGame() []game {
 			line:   5,
 			column: 1},
 		{
-			Grid: initGrid([][]int{
+			Grid: grid.InitCustomGrid([][]int{
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
@@ -70,7 +64,7 @@ func initGame() []game {
 			line:   5,
 			column: 4},
 		{
-			Grid: initGrid([][]int{
+			Grid: grid.InitCustomGrid([][]int{
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
 				{1, 0, 0, 0, 0, 0, 0},
@@ -82,7 +76,7 @@ func initGame() []game {
 			line:   2,
 			column: 0},
 		{
-			Grid: initGrid([][]int{
+			Grid: grid.InitCustomGrid([][]int{
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 1, 0},
@@ -94,7 +88,7 @@ func initGame() []game {
 			line:   2,
 			column: 5},
 		{
-			Grid: initGrid([][]int{
+			Grid: grid.InitCustomGrid([][]int{
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 1, 0},
@@ -106,7 +100,7 @@ func initGame() []game {
 			line:   5,
 			column: 2},
 		{
-			Grid: initGrid([][]int{
+			Grid: grid.InitCustomGrid([][]int{
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 1, 0, 0, 0, 0},
@@ -118,7 +112,7 @@ func initGame() []game {
 			line:   2,
 			column: 2},
 		{
-			Grid: initGrid([][]int{
+			Grid: grid.InitCustomGrid([][]int{
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 0, 0, 0, 0, 0},
 				{0, 0, 1, 0, 0, 0, 0},
