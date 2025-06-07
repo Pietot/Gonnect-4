@@ -20,7 +20,7 @@ func TestNegamax(t *testing.T) {
 	for _, file := range files {
 		lines := readFile(currentPath + "/data/" + file.Name())
 		for _, line := range lines {
-			// split the line from space
+			// split the line every space
 			parts := strings.Fields(line)
 			grid := createGrid(parts[0])
 			expected := int([]rune(parts[1])[0] - '0')
