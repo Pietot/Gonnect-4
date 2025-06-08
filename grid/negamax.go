@@ -60,10 +60,11 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64) *evaluation.Evaluation 
 		*nbPos++
 		movedPlayed++
 		if copyGrid.CheckWinFromIndex(player, line, column) {
+			movedPlayed--
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(math.Inf(1)),
 				BestMove:      &column,
-				RemainingMove: utils.IntPtr(movedPlayed),
+				RemainingMove: utils.IntPtr(movedPlayed + 1),
 			}
 		}
 		movedPlayed--
