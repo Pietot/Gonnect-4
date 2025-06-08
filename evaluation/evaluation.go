@@ -21,7 +21,7 @@ func (s *Evaluation) String() string {
 	}
 
 	if s.BestMove != nil {
-		bestMoveStr = fmt.Sprintf("%d", *s.BestMove+1)
+		bestMoveStr = fmt.Sprintf("C%d", *s.BestMove+1)
 	} else {
 		bestMoveStr = "None"
 	}
@@ -33,7 +33,7 @@ func (s *Evaluation) String() string {
 	}
 
 	return "Score: " + scoreStr +
-		", \nBest Move: C" + bestMoveStr +
+		", \nBest Move: " + bestMoveStr +
 		", \nRemaining Moves: " + remainingMoveStr
 }
 
