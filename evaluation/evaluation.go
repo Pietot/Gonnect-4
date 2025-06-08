@@ -38,33 +38,37 @@ func (s *Evaluation) String() string {
 }
 
 func (eval1 *Evaluation) IsBetterThan(eval2 *Evaluation) bool {
-	if eval1.Score == nil && eval2.Score == nil {
+	// If one score is nil, the other is better
+	if eval1.Score == nil {
 		return false
 	}
-	// A defined score is always better than a nil score
-	if eval1.Score != nil && eval2.Score == nil {
+	if eval2.Score == nil {
 		return true
 	}
-	if eval1.Score == nil && eval2.Score != nil {
-		return false
-	}
 
-	// If both scores are defined and different, compare them
+	// If scores differ, compare them
 	if *eval1.Score != *eval2.Score {
 		return *eval1.Score > *eval2.Score
 	}
 
-	// If scores are equal and victory is imminent, minimize the remaining moves
+	// If scores are equal, compare remaining moves (nil = worse)
+	if eval1.RemainingMove == nil {
+		return false
+	}
+	if eval2.RemainingMove == nil {
+		return true
+	}
+
+	// If winning, fewer remaining moves is better
 	if *eval1.Score == math.Inf(1) {
 		return *eval1.RemainingMove < *eval2.RemainingMove
 	}
-
-	// If scores are equal and defeat is imminent, maximize the remaining moves
+	// If losing, more remaining moves is better
 	if *eval1.Score == math.Inf(-1) {
 		return *eval1.RemainingMove > *eval2.RemainingMove
 	}
 
-	// Useless case, never reached
+	// Never reach here if both scores are non-nil and equal
 	return false
 }
 
