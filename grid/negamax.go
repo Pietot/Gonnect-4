@@ -9,7 +9,7 @@ import (
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
-var movedPlayed = 0
+var movePlayed = 0
 
 func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
@@ -46,7 +46,7 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 		return &evaluation.Evaluation{
 			Score:         utils.Float64Ptr(0.0),
 			BestMove:      nil,
-			RemainingMove: utils.IntPtr(movedPlayed),
+			RemainingMove: utils.IntPtr(movePlayed),
 		}
 	}
 
@@ -59,16 +59,16 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 			continue
 		}
 		*nbPos++
-		movedPlayed++
+		movePlayed++
 		if copyGrid.CheckWinFromIndex(player, line, column) {
-			movedPlayed--
+			movePlayed--
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(math.Inf(1)),
 				BestMove:      &column,
-				RemainingMove: utils.IntPtr(movedPlayed + 1),
+				RemainingMove: utils.IntPtr(movePlayed + 1),
 			}
 		}
-		movedPlayed--
+		movePlayed--
 		copyGrid.Grid[line][column] = 0
 	}
 
@@ -89,13 +89,13 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 	for column := range 7 {
 		droppedPiece, line := copyGrid.DropPiece(column, player)
 		if droppedPiece {
-			movedPlayed++
+			movePlayed++
 			childEvaluation := copyGrid.negamaxStats(
 				utils.GetOpponent(player),
 				nbPos,
 				alpha,
 				beta).Negate()
-			movedPlayed--
+			movePlayed--
 			*nbPos++
 			newEvaluation := &evaluation.Evaluation{
 				Score:         childEvaluation.Score,
