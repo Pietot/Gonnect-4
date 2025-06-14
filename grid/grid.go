@@ -18,7 +18,7 @@ func InitGrid() *Grid {
 
 func InitCustomGrid(custom_grid [][]int) *Grid {
 	return &Grid{
-		Grid: custom_grid,
+		Grid:    custom_grid,
 		nbMoves: getNbMoves(custom_grid),
 	}
 }
