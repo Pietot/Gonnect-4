@@ -50,6 +50,7 @@ func (grid *Grid) DropPiece(column int, player int) (bool, int) {
 	for i := len(grid.Grid) - 1; i >= 0; i-- {
 		if grid.Grid[i][column] == 0 {
 			grid.Grid[i][column] = player
+			grid.nbMoves++
 			return true, i
 		}
 	}
