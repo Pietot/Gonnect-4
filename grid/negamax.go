@@ -15,7 +15,8 @@ func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
 	nbPos := int64(0)
 
-	result := grid.negamaxStats(player, &nbPos)
+	// Strong solver, use alpha = -1 and beta = 1 for a weaker solver
+	result := grid.negamaxStats(player, &nbPos, math.Inf(-1), math.Inf(1))
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
@@ -39,7 +40,7 @@ func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	return result, stats
 }
 
-func (grid *Grid) negamaxStats(player int, nbPos *int64) *evaluation.Evaluation {
+func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta float64) *evaluation.Evaluation {
 	if grid.IsDraw() {
 		*nbPos++
 		return &evaluation.Evaluation{
@@ -71,12 +72,29 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64) *evaluation.Evaluation 
 		copyGrid.Grid[line][column] = 0
 	}
 
+	max := float64((6*7 - 1 - grid.nbMoves)) / 2.0
+
+	if beta > max {
+		beta = max
+		if alpha >= beta {
+			return &evaluation.Evaluation{
+				Score:         utils.Float64Ptr(beta),
+				BestMove:      nil,
+				RemainingMove: nil,
+			}
+		}
+	}
+
 	copyGrid = grid.DeepCopy()
 	for column := range 7 {
 		droppedPiece, line := copyGrid.DropPiece(column, player)
 		if droppedPiece {
 			movedPlayed++
-			childEvaluation := copyGrid.negamaxStats(utils.GetOpponent(player), nbPos).Negate()
+			childEvaluation := copyGrid.negamaxStats(
+				utils.GetOpponent(player),
+				nbPos,
+				alpha,
+				beta).Negate()
 			movedPlayed--
 			*nbPos++
 			newEvaluation := &evaluation.Evaluation{
@@ -89,7 +107,17 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64) *evaluation.Evaluation 
 			}
 			copyGrid.Grid[line][column] = 0
 		}
+		if bestEvaluation.Score != nil && *bestEvaluation.Score >= beta {
+			return bestEvaluation
+		}
+		if bestEvaluation.Score != nil && *bestEvaluation.Score > alpha {
+			alpha = *bestEvaluation.Score
+		}
 	}
 
-	return bestEvaluation
+	return &evaluation.Evaluation{
+		Score:         utils.Float64Ptr(alpha),
+		BestMove:      bestEvaluation.BestMove,
+		RemainingMove: bestEvaluation.RemainingMove,
+	}
 }

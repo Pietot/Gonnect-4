@@ -19,6 +19,7 @@ func InitGrid() *Grid {
 func InitCustomGrid(custom_grid [][]int) *Grid {
 	return &Grid{
 		Grid: custom_grid,
+		nbMoves: getNbMoves(custom_grid),
 	}
 }
 
@@ -137,4 +138,16 @@ func (grid *Grid) DeepCopy() *Grid {
 		Grid:    newGrid,
 		nbMoves: grid.nbMoves,
 	}
+}
+
+func getNbMoves(custom_grid [][]int) int {
+	count := 0
+	for _, row := range custom_grid {
+		for _, cell := range row {
+			if cell != 0 {
+				count++
+			}
+		}
+	}
+	return count
 }
