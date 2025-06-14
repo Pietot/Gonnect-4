@@ -9,7 +9,8 @@ import (
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
-var movedPlayed = 0
+var movePlayed = 0
+var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 
 func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
@@ -24,17 +25,17 @@ func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	nbPosPerSec := 0.0
 	meanTimePerPos := 0.0
 	if meanNbPos > 0 {
-		meanTimePerPos = (elapsed.Seconds() * 1000) / meanNbPos
+		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / meanNbPos
 	}
 	if elapsedSeconds > 0 {
 		nbPosPerSec = meanNbPos / elapsedSeconds
 	}
 
 	stats := &stats.Stats{
-		TotalTimeMs:         elapsed.Seconds() * 1000,
-		NumPositions:        nbPos,
-		MeanTimePerPosition: meanTimePerPos,
-		PositionsPerSecond:  nbPosPerSec,
+		TotalTimeMicroseconds: elapsed.Seconds() * 1_000_000,
+		NumberPositions:       nbPos,
+		MeanTimePerPosition:   meanTimePerPos,
+		PositionsPerSecond:    nbPosPerSec,
 	}
 
 	return result, stats
@@ -46,7 +47,7 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 		return &evaluation.Evaluation{
 			Score:         utils.Float64Ptr(0.0),
 			BestMove:      nil,
-			RemainingMove: utils.IntPtr(movedPlayed),
+			RemainingMove: utils.IntPtr(movePlayed),
 		}
 	}
 
@@ -59,16 +60,16 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 			continue
 		}
 		*nbPos++
-		movedPlayed++
+		movePlayed++
 		if copyGrid.CheckWinFromIndex(player, line, column) {
-			movedPlayed--
+			movePlayed--
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(math.Inf(1)),
 				BestMove:      &column,
-				RemainingMove: utils.IntPtr(movedPlayed + 1),
+				RemainingMove: utils.IntPtr(movePlayed + 1),
 			}
 		}
-		movedPlayed--
+		movePlayed--
 		copyGrid.Grid[line][column] = 0
 	}
 
@@ -86,16 +87,17 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 	}
 
 	copyGrid = grid.DeepCopy()
-	for column := range 7 {
+	for index := range 7 {
+		column := columnOrder[index]
 		droppedPiece, line := copyGrid.DropPiece(column, player)
 		if droppedPiece {
-			movedPlayed++
+			movePlayed++
 			childEvaluation := copyGrid.negamaxStats(
 				utils.GetOpponent(player),
 				nbPos,
 				alpha,
 				beta).Negate()
-			movedPlayed--
+			movePlayed--
 			*nbPos++
 			newEvaluation := &evaluation.Evaluation{
 				Score:         childEvaluation.Score,

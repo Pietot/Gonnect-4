@@ -18,7 +18,7 @@ func InitGrid() *Grid {
 
 func InitCustomGrid(custom_grid [][]int) *Grid {
 	return &Grid{
-		Grid: custom_grid,
+		Grid:    custom_grid,
 		nbMoves: getNbMoves(custom_grid),
 	}
 }
@@ -50,6 +50,7 @@ func (grid *Grid) DropPiece(column int, player int) (bool, int) {
 	for i := len(grid.Grid) - 1; i >= 0; i-- {
 		if grid.Grid[i][column] == 0 {
 			grid.Grid[i][column] = player
+			grid.nbMoves++
 			return true, i
 		}
 	}
@@ -113,18 +114,6 @@ func (grid *Grid) CheckWinFromIndex(player int, line int, column int) bool {
 }
 
 func (grid *Grid) IsDraw() bool {
-	// For debugging purposes when I directly initialize the grid
-	if grid.nbMoves == 0 {
-		count := 0
-		for _, row := range grid.Grid {
-			for _, cell := range row {
-				if cell != 0 {
-					count++
-				}
-			}
-		}
-		return count == 6*7
-	}
 	return grid.nbMoves == 6*7
 }
 
