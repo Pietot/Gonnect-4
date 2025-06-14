@@ -10,6 +10,7 @@ import (
 )
 
 var movePlayed = 0
+var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 
 func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
@@ -86,7 +87,8 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 	}
 
 	copyGrid = grid.DeepCopy()
-	for column := range 7 {
+	for index := range 7 {
+		column := columnOrder[index]
 		droppedPiece, line := copyGrid.DropPiece(column, player)
 		if droppedPiece {
 			movePlayed++
