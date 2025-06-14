@@ -113,18 +113,6 @@ func (grid *Grid) CheckWinFromIndex(player int, line int, column int) bool {
 }
 
 func (grid *Grid) IsDraw() bool {
-	// For debugging purposes when I directly initialize the grid
-	if grid.nbMoves == 0 {
-		count := 0
-		for _, row := range grid.Grid {
-			for _, cell := range row {
-				if cell != 0 {
-					count++
-				}
-			}
-		}
-		return count == 6*7
-	}
 	return grid.nbMoves == 6*7
 }
 
