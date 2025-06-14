@@ -15,6 +15,7 @@ func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
 	nbPos := int64(0)
 
+	// Strong solver, use alpha = -1 and beta = 1 for a weaker solver
 	result := grid.negamaxStats(player, &nbPos, math.Inf(-1), math.Inf(1))
 
 	elapsed := time.Since(start)
