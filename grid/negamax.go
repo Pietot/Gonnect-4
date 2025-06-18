@@ -21,14 +21,13 @@ func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
-	meanNbPos := float64(nbPos)
 	nbPosPerSec := 0.0
 	meanTimePerPos := 0.0
-	if meanNbPos > 0 {
-		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / meanNbPos
+	if nbPos > 0 {
+		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nbPos)
 	}
 	if elapsedSeconds > 0 {
-		nbPosPerSec = meanNbPos / elapsedSeconds
+		nbPosPerSec = float64(nbPos) / elapsedSeconds
 	}
 
 	stats := &stats.Stats{
