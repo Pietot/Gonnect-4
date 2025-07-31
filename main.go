@@ -7,14 +7,7 @@ import (
 )
 
 func main() {
-	testGrid := grid.InitGrid()
-	testGrid.Grid = [][]int{
-		{0, 2, 2, 2, 1, 0, 0},
-		{0, 1, 1, 1, 2, 2, 2},
-		{0, 1, 2, 2, 1, 1, 1},
-		{1, 2, 1, 1, 2, 2, 2},
-		{2, 2, 1, 2, 1, 2, 1},
-		{1, 2, 1, 1, 2, 1, 1},
-	}
-	fmt.Println(testGrid.Negamax(2))
+	testGrid, _ := grid.InitGrid("3446666575")
+	eval, stats := testGrid.Negamax()
+	fmt.Printf("%v\n%v", eval, stats)
 }
