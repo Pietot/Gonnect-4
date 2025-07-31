@@ -22,9 +22,9 @@ func TestNegamax(t *testing.T) {
 		for _, line := range lines {
 			// split the line every space
 			parts := strings.Fields(line)
-			grid := createGrid(parts[0])
+			grid, _ := grid.InitGrid(parts[0])
 			expected := int([]rune(parts[1])[0] - '0')
-			evaluation, _ := grid.Negamax(1)
+			evaluation, _ := grid.Negamax()
 			if *evaluation.Score > 0 && expected < 0 {
 				t.Errorf("Unexpected positive evaluation for file: %s", file.Name())
 			}
@@ -58,19 +58,4 @@ func readFile(filename string) []string {
 	}
 
 	return lines
-}
-
-func createGrid(sequence string) *grid.Grid {
-	player := 1
-	grid := grid.InitGrid()
-	for i := range sequence {
-		col := int(sequence[i] - '0')
-		grid.DropPiece(col-1, player)
-		if player == 1 {
-			player = 2
-		} else {
-			player = 1
-		}
-	}
-	return grid
 }

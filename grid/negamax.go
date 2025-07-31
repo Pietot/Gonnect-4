@@ -12,23 +12,22 @@ import (
 var movePlayed = 0
 var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 
-func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
+func (grid *Grid) Negamax() (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
 	nbPos := int64(0)
 
-	// Strong solver, use alpha = -1 and beta = 1 for a weaker solver
-	result := grid.negamaxStats(player, &nbPos, math.Inf(-1), math.Inf(1))
+	// Strong solver, use alpha = -1 and beta = 1 for a weak solver
+	result := grid.negamaxStats(&nbPos, math.Inf(-1), math.Inf(1))
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
-	meanNbPos := float64(nbPos)
 	nbPosPerSec := 0.0
 	meanTimePerPos := 0.0
-	if meanNbPos > 0 {
-		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / meanNbPos
+	if nbPos > 0 {
+		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nbPos)
 	}
 	if elapsedSeconds > 0 {
-		nbPosPerSec = meanNbPos / elapsedSeconds
+		nbPosPerSec = float64(nbPos) / elapsedSeconds
 	}
 
 	stats := &stats.Stats{
@@ -41,9 +40,9 @@ func (grid *Grid) Negamax(player int) (*evaluation.Evaluation, *stats.Stats) {
 	return result, stats
 }
 
-func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta float64) *evaluation.Evaluation {
+func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evaluation.Evaluation {
+	*nbPos++
 	if grid.IsDraw() {
-		*nbPos++
 		return &evaluation.Evaluation{
 			Score:         utils.Float64Ptr(0.0),
 			BestMove:      nil,
@@ -51,29 +50,18 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 		}
 	}
 
-	var bestEvaluation = &evaluation.Evaluation{Score: nil, BestMove: nil, RemainingMove: nil}
-
-	copyGrid := grid.DeepCopy()
 	for column := range 7 {
-		droppedPiece, line := copyGrid.DropPiece(column, player)
-		if !droppedPiece {
-			continue
-		}
 		*nbPos++
-		movePlayed++
-		if copyGrid.CheckWinFromIndex(player, line, column) {
-			movePlayed--
+		if grid.CanPlay(column) && grid.IsWinningMove(column) {
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(math.Inf(1)),
 				BestMove:      &column,
 				RemainingMove: utils.IntPtr(movePlayed + 1),
 			}
 		}
-		movePlayed--
-		copyGrid.Grid[line][column] = 0
 	}
 
-	max := float64((6*7 - 1 - grid.nbMoves)) / 2.0
+	max := float64((WIDTH*HEIGHT - 1 - grid.nbMoves) / 2)
 
 	if beta > max {
 		beta = max
@@ -81,45 +69,45 @@ func (grid *Grid) negamaxStats(player int, nbPos *int64, alpha float64, beta flo
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(beta),
 				BestMove:      nil,
-				RemainingMove: nil,
+				RemainingMove: utils.IntPtr(movePlayed + 1),
 			}
 		}
 	}
 
-	copyGrid = grid.DeepCopy()
-	for index := range 7 {
-		column := columnOrder[index]
-		droppedPiece, line := copyGrid.DropPiece(column, player)
-		if droppedPiece {
+	var bestMove *int
+	var bestScore = alpha
+	var bestRemainingMove *int
+
+	for _, column := range columnOrder {
+		if grid.CanPlay(column) {
+			childGrid := *grid
+			childGrid.Play(column)
 			movePlayed++
-			childEvaluation := copyGrid.negamaxStats(
-				utils.GetOpponent(player),
+			childEvaluation := childGrid.negamaxStats(
 				nbPos,
-				alpha,
-				beta).Negate()
+				-beta,
+				-alpha).Negate()
 			movePlayed--
 			*nbPos++
-			newEvaluation := &evaluation.Evaluation{
-				Score:         childEvaluation.Score,
-				BestMove:      &column,
-				RemainingMove: childEvaluation.RemainingMove,
+			if *childEvaluation.Score >= beta {
+				return &evaluation.Evaluation{
+					Score:         childEvaluation.Score,
+					BestMove:      &column,
+					RemainingMove: childEvaluation.RemainingMove,
+				}
 			}
-			if newEvaluation.IsBetterThan(bestEvaluation) {
-				bestEvaluation = newEvaluation
+			if *childEvaluation.Score > bestScore || bestMove == nil {
+				bestScore = *childEvaluation.Score
+				bestMove = &column
+				bestRemainingMove = childEvaluation.RemainingMove
+				alpha = bestScore
 			}
-			copyGrid.Grid[line][column] = 0
-		}
-		if bestEvaluation.Score != nil && *bestEvaluation.Score >= beta {
-			return bestEvaluation
-		}
-		if bestEvaluation.Score != nil && *bestEvaluation.Score > alpha {
-			alpha = *bestEvaluation.Score
 		}
 	}
 
 	return &evaluation.Evaluation{
-		Score:         utils.Float64Ptr(alpha),
-		BestMove:      bestEvaluation.BestMove,
-		RemainingMove: bestEvaluation.RemainingMove,
+		Score:         utils.Float64Ptr(bestScore),
+		BestMove:      bestMove,
+		RemainingMove: bestRemainingMove,
 	}
 }
