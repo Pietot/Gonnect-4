@@ -40,20 +40,20 @@ func (grid *Grid) key() uint64 {
 	return grid.CurrentPosition + grid.Mask
 }
 
-func InitGrid(columnsSequence string) (*Grid, error) {
+func InitGrid(columnsSequence string) (*Grid) {
 	grid := &Grid{}
 	for _, columnRune := range columnsSequence {
 		column, err := strconv.Atoi(string(columnRune))
 		if err != nil {
-			return grid, fmt.Errorf("invalid column character: %v", err)
+			panic(fmt.Sprintf("Invalid column character: %v", err))
 		}
 		column -= 1
 		if column < 0 || column >= WIDTH || !grid.CanPlay(column) || grid.IsWinningMove(column) {
-			return grid, fmt.Errorf("can't play at column %d", column+1)
+			panic(fmt.Sprintf("Can't play at column %d", column+1))
 		}
 		grid.Play(column)
 	}
-	return grid, nil
+	return grid
 }
 
 func CheckWin(position uint64) bool {

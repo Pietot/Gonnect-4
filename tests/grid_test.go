@@ -24,22 +24,22 @@ type game struct {
 func initGames() []game {
 	return []game{
 		{
-			Grid:   func() *grid.Grid { g, _ := grid.InitGrid("213141"); return g }(),
+			Grid:   grid.InitGrid("213141"),
 			player: 1,
 			column: 4,
 		},
 		{
-			Grid:   func() *grid.Grid { g, _ := grid.InitGrid("131415"); return g }(),
+			Grid:   grid.InitGrid("131415"),
 			player: 1,
 			column: 0,
 		},
 		{
-			Grid:   func() *grid.Grid { g, _ := grid.InitGrid("3446666575"); return g }(),
+			Grid:   grid.InitGrid("3446666575"),
 			player: 1,
 			column: 4,
 		},
 		{
-			Grid:   func() *grid.Grid { g, _ := grid.InitGrid("7554644333"); return g }(),
+			Grid:   grid.InitGrid("7554644333"),
 			player: 1,
 			column: 2,
 		},
