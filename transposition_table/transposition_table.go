@@ -1,5 +1,7 @@
 package transposition_table
 
+const MASK_56 uint64 = (1 << 56) - 1 
+
 type TranspositionTable struct {
 	table []Entry
 }
@@ -26,7 +28,7 @@ func (trans_table *TranspositionTable) Put(key uint64, value uint8) {
 		panic("Key out of range (must be < 2^56)")
 	}
 	entryIndex := trans_table.index(key)
-	trans_table.table[entryIndex].key_56_bit = key
+	trans_table.table[entryIndex].key_56_bit = key & MASK_56
 	trans_table.table[entryIndex].value = value
 }
 
