@@ -12,12 +12,12 @@ import (
 var movePlayed = 0
 var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 
-func (grid *Grid) Negamax() (*evaluation.Evaluation, *stats.Stats) {
+func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
 	nbPos := int64(0)
 
 	// Strong solver, use alpha = -1 and beta = 1 for a weak solver
-	result := grid.negamaxStats(&nbPos, math.Inf(-1), math.Inf(1))
+	result := grid.negamax(&nbPos, math.Inf(-1), math.Inf(1))
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
@@ -40,7 +40,7 @@ func (grid *Grid) Negamax() (*evaluation.Evaluation, *stats.Stats) {
 	return result, stats
 }
 
-func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evaluation.Evaluation {
+func (grid *Grid) negamax(nbPos *int64, alpha float64, beta float64) *evaluation.Evaluation {
 	*nbPos++
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
@@ -83,7 +83,7 @@ func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evalu
 			childGrid := *grid
 			childGrid.Play(column)
 			movePlayed++
-			childEvaluation := childGrid.negamaxStats(
+			childEvaluation := childGrid.negamax(
 				nbPos,
 				-beta,
 				-alpha).Negate()
