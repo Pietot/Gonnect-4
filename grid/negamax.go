@@ -54,7 +54,7 @@ func (grid *Grid) negamax(nbPos *int64, alpha float64, beta float64) *evaluation
 		*nbPos++
 		if grid.CanPlay(column) && grid.IsWinningMove(column) {
 			return &evaluation.Evaluation{
-				Score:         utils.Float64Ptr(math.Inf(1)),
+				Score:         utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
 				BestMove:      &column,
 				RemainingMove: utils.IntPtr(movePlayed + 1),
 			}
