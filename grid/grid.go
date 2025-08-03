@@ -6,8 +6,10 @@ import (
 )
 
 const (
-	WIDTH  = 7
-	HEIGHT = 6
+	WIDTH     = 7
+	HEIGHT    = 6
+	MIN_SCORE = -(WIDTH*HEIGHT)/2 + 3
+	MAX_SCORE = (WIDTH*HEIGHT+1)/2 - 3
 )
 
 type Grid struct {
