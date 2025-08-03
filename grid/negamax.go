@@ -11,28 +11,28 @@ import (
 
 var movePlayed = 0
 var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
+var nodeCount = int64(0)
 
 func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
-	nbPos := int64(0)
 
 	// Strong solver, use alpha = -1 and beta = 1 for a weak solver
-	result := grid.negamax(&nbPos, math.Inf(-1), math.Inf(1))
+	result := grid.negamax(math.Inf(-1), math.Inf(1))
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
 	nbPosPerSec := 0.0
 	meanTimePerPos := 0.0
-	if nbPos > 0 {
-		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nbPos)
+	if nodeCount > 0 {
+		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
 	}
 	if elapsedSeconds > 0 {
-		nbPosPerSec = float64(nbPos) / elapsedSeconds
+		nbPosPerSec = float64(nodeCount) / elapsedSeconds
 	}
 
 	stats := &stats.Stats{
 		TotalTimeMicroseconds: elapsed.Seconds() * 1_000_000,
-		NumberPositions:       nbPos,
+		NodeCount:             nodeCount,
 		MeanTimePerPosition:   meanTimePerPos,
 		PositionsPerSecond:    nbPosPerSec,
 	}
@@ -40,8 +40,8 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	return result, stats
 }
 
-func (grid *Grid) negamax(nbPos *int64, alpha float64, beta float64) *evaluation.Evaluation {
-	*nbPos++
+func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
+	nodeCount++
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
 			Score:         utils.Float64Ptr(0.0),
@@ -51,7 +51,6 @@ func (grid *Grid) negamax(nbPos *int64, alpha float64, beta float64) *evaluation
 	}
 
 	for column := range 7 {
-		*nbPos++
 		if grid.CanPlay(column) && grid.IsWinningMove(column) {
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
@@ -84,11 +83,9 @@ func (grid *Grid) negamax(nbPos *int64, alpha float64, beta float64) *evaluation
 			childGrid.Play(column)
 			movePlayed++
 			childEvaluation := childGrid.negamax(
-				nbPos,
 				-beta,
 				-alpha).Negate()
 			movePlayed--
-			*nbPos++
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{
 					Score:         childEvaluation.Score,
