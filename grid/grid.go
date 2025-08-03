@@ -38,7 +38,7 @@ func (grid *Grid) IsDraw() bool {
 	return grid.nbMoves == WIDTH*HEIGHT
 }
 
-func (grid *Grid) key() uint64 {
+func (grid *Grid) Key() uint64 {
 	return grid.CurrentPosition + grid.Mask
 }
 
