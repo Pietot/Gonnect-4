@@ -18,6 +18,22 @@ type Grid struct {
 	nbMoves         int
 }
 
+func InitGrid(columnsSequence string) *Grid {
+	grid := &Grid{}
+	for _, columnRune := range columnsSequence {
+		column, err := strconv.Atoi(string(columnRune))
+		if err != nil {
+			panic(fmt.Sprintf("Invalid column character: %v", err))
+		}
+		column -= 1
+		if column < 0 || column >= WIDTH || !grid.CanPlay(column) || grid.IsWinningMove(column) {
+			panic(fmt.Sprintf("Can't play at column %d", column+1))
+		}
+		grid.Play(column)
+	}
+	return grid
+}
+
 func (grid *Grid) CanPlay(column int) bool {
 	return (grid.Mask & topMask(column)) == 0
 }
@@ -40,22 +56,6 @@ func (grid *Grid) IsDraw() bool {
 
 func (grid *Grid) Key() uint64 {
 	return grid.CurrentPosition + grid.Mask
-}
-
-func InitGrid(columnsSequence string) (*Grid) {
-	grid := &Grid{}
-	for _, columnRune := range columnsSequence {
-		column, err := strconv.Atoi(string(columnRune))
-		if err != nil {
-			panic(fmt.Sprintf("Invalid column character: %v", err))
-		}
-		column -= 1
-		if column < 0 || column >= WIDTH || !grid.CanPlay(column) || grid.IsWinningMove(column) {
-			panic(fmt.Sprintf("Can't play at column %d", column+1))
-		}
-		grid.Play(column)
-	}
-	return grid
 }
 
 func CheckWin(position uint64) bool {
