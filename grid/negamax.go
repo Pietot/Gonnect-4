@@ -6,12 +6,14 @@ import (
 
 	"github.com/Pietot/Gonnect-4/evaluation"
 	"github.com/Pietot/Gonnect-4/stats"
+	"github.com/Pietot/Gonnect-4/transposition_table"
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
 var movePlayed = 0
 var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 var nodeCount = int64(0)
+var trans_table = transposition_table.NewTranspositionTable()
 
 func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
@@ -61,6 +63,10 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 	}
 
 	max := float64((WIDTH*HEIGHT - 1 - grid.nbMoves) / 2)
+	value := trans_table.Get(grid.Key())
+	if value != 0 {
+		max = float64(int(value) + MIN_SCORE - 1)
+	}
 
 	if beta > max {
 		beta = max
@@ -68,7 +74,7 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(beta),
 				BestMove:      nil,
-				RemainingMove: utils.IntPtr(movePlayed + 1),
+				RemainingMove: utils.IntPtr(movePlayed+1),
 			}
 		}
 	}
@@ -101,6 +107,8 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 			}
 		}
 	}
+
+	trans_table.Put(grid.Key(), uint8(int(alpha)-MIN_SCORE+1))
 
 	return &evaluation.Evaluation{
 		Score:         utils.Float64Ptr(bestScore),
