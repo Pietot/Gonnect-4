@@ -4,8 +4,6 @@ import (
 	"fmt"
 )
 
-const COMPUTER = 1
-
 func FormatFloat(value float64) string {
 	if value == 0 {
 		return "0.00"
