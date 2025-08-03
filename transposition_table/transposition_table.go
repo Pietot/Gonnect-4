@@ -9,8 +9,10 @@ type Entry struct {
 	value      uint8
 }
 
-func (trans_table *TranspositionTable) Init() {
-	trans_table.table = make([]Entry, 1610612741)
+func NewTranspositionTable() *TranspositionTable {
+	return &TranspositionTable{
+		table: make([]Entry, 8388593),
+	}
 }
 
 func (trans_table *TranspositionTable) Reset() {
