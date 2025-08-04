@@ -24,7 +24,7 @@ func TestNegamax(t *testing.T) {
 			parts := strings.Fields(line)
 			grid := grid.InitGrid(parts[0])
 			expected := int([]rune(parts[1])[0] - '0')
-			evaluation, _ := grid.Negamax()
+			evaluation, _ := grid.Solve()
 			if *evaluation.Score > 0 && expected < 0 {
 				t.Errorf("Unexpected positive evaluation for file: %s", file.Name())
 			}
