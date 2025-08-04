@@ -22,7 +22,7 @@ func TestNegamax(t *testing.T) {
 		for _, line := range lines {
 			// split the line every space
 			parts := strings.Fields(line)
-			grid, _ := grid.InitGrid(parts[0])
+			grid := grid.InitGrid(parts[0])
 			expected := int([]rune(parts[1])[0] - '0')
 			evaluation, _ := grid.Negamax()
 			if *evaluation.Score > 0 && expected < 0 {

@@ -6,33 +6,35 @@ import (
 
 	"github.com/Pietot/Gonnect-4/evaluation"
 	"github.com/Pietot/Gonnect-4/stats"
+	"github.com/Pietot/Gonnect-4/transposition_table"
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
 var movePlayed = 0
 var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
+var nodeCount = int64(0)
+var trans_table = transposition_table.NewTranspositionTable()
 
-func (grid *Grid) Negamax() (*evaluation.Evaluation, *stats.Stats) {
+func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	start := time.Now()
-	nbPos := int64(0)
 
 	// Strong solver, use alpha = -1 and beta = 1 for a weak solver
-	result := grid.negamaxStats(&nbPos, math.Inf(-1), math.Inf(1))
+	result := grid.negamax(math.Inf(-1), math.Inf(1))
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
 	nbPosPerSec := 0.0
 	meanTimePerPos := 0.0
-	if nbPos > 0 {
-		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nbPos)
+	if nodeCount > 0 {
+		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
 	}
 	if elapsedSeconds > 0 {
-		nbPosPerSec = float64(nbPos) / elapsedSeconds
+		nbPosPerSec = float64(nodeCount) / elapsedSeconds
 	}
 
 	stats := &stats.Stats{
 		TotalTimeMicroseconds: elapsed.Seconds() * 1_000_000,
-		NumberPositions:       nbPos,
+		NodeCount:             nodeCount,
 		MeanTimePerPosition:   meanTimePerPos,
 		PositionsPerSecond:    nbPosPerSec,
 	}
@@ -40,8 +42,8 @@ func (grid *Grid) Negamax() (*evaluation.Evaluation, *stats.Stats) {
 	return result, stats
 }
 
-func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evaluation.Evaluation {
-	*nbPos++
+func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
+	nodeCount++
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
 			Score:         utils.Float64Ptr(0.0),
@@ -51,7 +53,6 @@ func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evalu
 	}
 
 	for column := range 7 {
-		*nbPos++
 		if grid.CanPlay(column) && grid.IsWinningMove(column) {
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
@@ -62,6 +63,10 @@ func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evalu
 	}
 
 	max := float64((WIDTH*HEIGHT - 1 - grid.nbMoves) / 2)
+	value := trans_table.Get(grid.Key())
+	if value != 0 {
+		max = float64(int(value) + MIN_SCORE - 1)
+	}
 
 	if beta > max {
 		beta = max
@@ -83,12 +88,8 @@ func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evalu
 			childGrid := *grid
 			childGrid.Play(column)
 			movePlayed++
-			childEvaluation := childGrid.negamaxStats(
-				nbPos,
-				-beta,
-				-alpha).Negate()
+			childEvaluation := childGrid.negamax(-beta, -alpha).Negate()
 			movePlayed--
-			*nbPos++
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{
 					Score:         childEvaluation.Score,
@@ -104,6 +105,8 @@ func (grid *Grid) negamaxStats(nbPos *int64, alpha float64, beta float64) *evalu
 			}
 		}
 	}
+
+	trans_table.Put(grid.Key(), uint8(int(alpha)-MIN_SCORE+1))
 
 	return &evaluation.Evaluation{
 		Score:         utils.Float64Ptr(bestScore),

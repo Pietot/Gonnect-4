@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	testGrid, _ := grid.InitGrid("3446666575")
-	eval, stats := testGrid.Negamax()
+	testGrid := grid.InitGrid("3446666575")
+	eval, stats := testGrid.Solve()
 	fmt.Printf("%v\n%v", eval, stats)
 }
