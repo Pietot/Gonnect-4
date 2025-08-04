@@ -74,7 +74,7 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(beta),
 				BestMove:      nil,
-				RemainingMove: utils.IntPtr(movePlayed+1),
+				RemainingMove: utils.IntPtr(movePlayed + 1),
 			}
 		}
 	}
@@ -88,9 +88,7 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 			childGrid := *grid
 			childGrid.Play(column)
 			movePlayed++
-			childEvaluation := childGrid.negamax(
-				-beta,
-				-alpha).Negate()
+			childEvaluation := childGrid.negamax(-beta, -alpha).Negate()
 			movePlayed--
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{
