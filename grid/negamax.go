@@ -9,7 +9,6 @@ import (
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
-var movePlayed = 0
 var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 var nodeCount = int64(0)
 
@@ -46,7 +45,7 @@ func (grid *Grid) negamaxStats(alpha float64, beta float64) *evaluation.Evaluati
 		return &evaluation.Evaluation{
 			Score:         utils.Float64Ptr(0.0),
 			BestMove:      nil,
-			RemainingMove: utils.IntPtr(movePlayed),
+			RemainingMove: utils.IntPtr(0),
 		}
 	}
 
@@ -55,7 +54,7 @@ func (grid *Grid) negamaxStats(alpha float64, beta float64) *evaluation.Evaluati
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
 				BestMove:      &column,
-				RemainingMove: utils.IntPtr(movePlayed + 1),
+				RemainingMove: utils.IntPtr(1),
 			}
 		}
 	}
@@ -68,7 +67,7 @@ func (grid *Grid) negamaxStats(alpha float64, beta float64) *evaluation.Evaluati
 			return &evaluation.Evaluation{
 				Score:         utils.Float64Ptr(beta),
 				BestMove:      nil,
-				RemainingMove: utils.IntPtr(movePlayed + 1),
+				RemainingMove: utils.IntPtr(1),
 			}
 		}
 	}
@@ -81,22 +80,20 @@ func (grid *Grid) negamaxStats(alpha float64, beta float64) *evaluation.Evaluati
 		if grid.CanPlay(column) {
 			childGrid := *grid
 			childGrid.Play(column)
-			movePlayed++
-			childEvaluation := childGrid.negamaxStats(
-				-beta,
-				-alpha).Negate()
-			movePlayed--
+			childEvaluation := childGrid.negamaxStats(-beta, -alpha).Negate()
+
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{
 					Score:         childEvaluation.Score,
 					BestMove:      &column,
-					RemainingMove: childEvaluation.RemainingMove,
+					RemainingMove: utils.IntPtr(*childEvaluation.RemainingMove + 1),
 				}
 			}
+
 			if *childEvaluation.Score > bestScore || bestMove == nil {
 				bestScore = *childEvaluation.Score
 				bestMove = &column
-				bestRemainingMove = childEvaluation.RemainingMove
+				bestRemainingMove = utils.IntPtr(*childEvaluation.RemainingMove + 1)
 				alpha = bestScore
 			}
 		}
