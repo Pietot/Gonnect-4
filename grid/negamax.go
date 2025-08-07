@@ -43,18 +43,18 @@ func (grid *Grid) negamaxStats(alpha float64, beta float64) *evaluation.Evaluati
 	nodeCount++
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
-			Score:         utils.Float64Ptr(0.0),
-			BestMove:      nil,
-			RemainingMove: utils.IntPtr(0),
+			Score:          utils.Float64Ptr(0.0),
+			BestMove:       nil,
+			RemainingMoves: utils.IntPtr(0),
 		}
 	}
 
 	for column := range 7 {
 		if grid.CanPlay(column) && grid.IsWinningMove(column) {
 			return &evaluation.Evaluation{
-				Score:         utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
-				BestMove:      &column,
-				RemainingMove: utils.IntPtr(1),
+				Score:          utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
+				BestMove:       &column,
+				RemainingMoves: utils.IntPtr(1),
 			}
 		}
 	}
@@ -65,9 +65,9 @@ func (grid *Grid) negamaxStats(alpha float64, beta float64) *evaluation.Evaluati
 		beta = max
 		if alpha >= beta {
 			return &evaluation.Evaluation{
-				Score:         utils.Float64Ptr(beta),
-				BestMove:      nil,
-				RemainingMove: utils.IntPtr(1),
+				Score:          utils.Float64Ptr(beta),
+				BestMove:       nil,
+				RemainingMoves: utils.IntPtr(1),
 			}
 		}
 	}
@@ -84,24 +84,24 @@ func (grid *Grid) negamaxStats(alpha float64, beta float64) *evaluation.Evaluati
 
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{
-					Score:         childEvaluation.Score,
-					BestMove:      &column,
-					RemainingMove: utils.IntPtr(*childEvaluation.RemainingMove + 1),
+					Score:          childEvaluation.Score,
+					BestMove:       &column,
+					RemainingMoves: utils.IntPtr(*childEvaluation.RemainingMoves + 1),
 				}
 			}
 
 			if *childEvaluation.Score > bestScore || bestMove == nil {
 				bestScore = *childEvaluation.Score
 				bestMove = &column
-				bestRemainingMove = utils.IntPtr(*childEvaluation.RemainingMove + 1)
+				bestRemainingMove = utils.IntPtr(*childEvaluation.RemainingMoves + 1)
 				alpha = bestScore
 			}
 		}
 	}
 
 	return &evaluation.Evaluation{
-		Score:         utils.Float64Ptr(bestScore),
-		BestMove:      bestMove,
-		RemainingMove: bestRemainingMove,
+		Score:          utils.Float64Ptr(bestScore),
+		BestMove:       bestMove,
+		RemainingMoves: bestRemainingMove,
 	}
 }
