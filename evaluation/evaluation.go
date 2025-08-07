@@ -7,7 +7,7 @@ import (
 type Evaluation struct {
 	Score         *float64
 	BestMove      *int
-	RemainingMove *int
+	RemainingMoves *int
 }
 
 func (s *Evaluation) String() string {
@@ -25,8 +25,8 @@ func (s *Evaluation) String() string {
 		bestMoveStr = "None"
 	}
 
-	if s.RemainingMove != nil {
-		remainingMoveStr = fmt.Sprintf("%d", *s.RemainingMove)
+	if s.RemainingMoves != nil {
+		remainingMoveStr = fmt.Sprintf("%d", *s.RemainingMoves)
 	} else {
 		remainingMoveStr = "None"
 	}
@@ -41,13 +41,13 @@ func (e *Evaluation) Negate() *Evaluation {
 		return &Evaluation{
 			Score:         e.Score,
 			BestMove:      e.BestMove,
-			RemainingMove: e.RemainingMove,
+			RemainingMoves: e.RemainingMoves,
 		}
 	}
 	neg := -(*e.Score)
 	return &Evaluation{
 		Score:         &neg,
 		BestMove:      e.BestMove,
-		RemainingMove: e.RemainingMove,
+		RemainingMoves: e.RemainingMoves,
 	}
 }
