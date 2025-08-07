@@ -46,3 +46,15 @@ func Float64Ptr(f float64) *float64 {
 func IntPtr(i int) *int {
 	return &i
 }
+
+func GetTime(microseconds float64) string {
+	if microseconds < 1_000 {
+		return fmt.Sprintf("%.2f µs", microseconds)
+	} else if microseconds < 1_000_000 {
+		return fmt.Sprintf("%.2f ms", microseconds/1_000)
+	} else if microseconds < 1_000_000_000 {
+		return fmt.Sprintf("%.2f s", microseconds/1_000_000)
+	} else {
+		return fmt.Sprintf("%.2f ns", microseconds*1_000)
+	}
+}

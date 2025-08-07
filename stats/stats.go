@@ -10,7 +10,7 @@ type Stats struct {
 }
 
 func (s *Stats) String() string {
-	return "Total Time (µs): " + utils.FormatFloat(s.TotalTimeMicroseconds) +
+	return "Total Time: " + utils.GetTime(s.TotalTimeMicroseconds) +
 		", \nNumber of Nodes: " + utils.FormatInt(s.NodeCount) +
 		", \nMean Time per Position (µs): " + utils.FormatFloat(s.MeanTimePerPosition) +
 		", \nPositions per Second: " + utils.FormatFloat(s.PositionsPerSecond)
