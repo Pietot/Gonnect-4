@@ -10,7 +10,6 @@ import (
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
-var movePlayed = 0
 var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 var nodeCount = int64(0)
 var trans_table = transposition_table.NewTranspositionTable()
@@ -46,71 +45,68 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 	nodeCount++
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
-			Score:         utils.Float64Ptr(0.0),
-			BestMove:      nil,
-			RemainingMove: utils.IntPtr(movePlayed),
+			Score:          utils.Float64Ptr(0.0),
+			BestMove:       nil,
+			RemainingMoves: utils.IntPtr(0),
 		}
 	}
 
 	for column := range 7 {
 		if grid.CanPlay(column) && grid.IsWinningMove(column) {
 			return &evaluation.Evaluation{
-				Score:         utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
-				BestMove:      &column,
-				RemainingMove: utils.IntPtr(movePlayed + 1),
+				Score:          utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
+				BestMove:       &column,
+				RemainingMoves: utils.IntPtr(1),
 			}
 		}
 	}
 
 	max := float64((WIDTH*HEIGHT - 1 - grid.nbMoves) / 2)
-	value := trans_table.Get(grid.Key())
-	if value != 0 {
+	value, remaining, found := trans_table.Get(grid.Key())
+	if found {
 		max = float64(int(value) + MIN_SCORE - 1)
 	}
-
 	if beta > max {
 		beta = max
 		if alpha >= beta {
 			return &evaluation.Evaluation{
-				Score:         utils.Float64Ptr(beta),
-				BestMove:      nil,
-				RemainingMove: utils.IntPtr(movePlayed + 1),
+				Score:          utils.Float64Ptr(beta),
+				BestMove:       nil,
+				RemainingMoves: utils.IntPtr(int(remaining)),
 			}
 		}
 	}
 
 	var bestMove *int
 	var bestScore = alpha
-	var bestRemainingMove *int
+	var bestRemainingMoves *int
 
 	for _, column := range columnOrder {
 		if grid.CanPlay(column) {
 			childGrid := *grid
 			childGrid.Play(column)
-			movePlayed++
 			childEvaluation := childGrid.negamax(-beta, -alpha).Negate()
-			movePlayed--
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{
-					Score:         childEvaluation.Score,
-					BestMove:      &column,
-					RemainingMove: childEvaluation.RemainingMove,
+					Score:          childEvaluation.Score,
+					BestMove:       &column,
+					RemainingMoves: utils.IntPtr(*childEvaluation.RemainingMoves + 1),
 				}
 			}
 			if *childEvaluation.Score > bestScore || bestMove == nil {
 				bestScore = *childEvaluation.Score
 				bestMove = &column
-				bestRemainingMove = childEvaluation.RemainingMove
+				bestRemainingMoves = utils.IntPtr(*childEvaluation.RemainingMoves + 1)
 				alpha = bestScore
 			}
 		}
 	}
 
-	trans_table.Put(grid.Key(), uint8(int(alpha)-MIN_SCORE+1))
+	trans_table.Put(grid.Key(), uint8(int(alpha)-MIN_SCORE+1), uint8(*bestRemainingMoves))
 
 	return &evaluation.Evaluation{
-		Score:         utils.Float64Ptr(bestScore),
-		BestMove:      bestMove,
-		RemainingMove: bestRemainingMove,
+		Score:          utils.Float64Ptr(bestScore),
+		BestMove:       bestMove,
+		RemainingMoves: bestRemainingMoves,
 	}
 }

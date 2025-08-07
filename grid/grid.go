@@ -10,6 +10,7 @@ const (
 	HEIGHT    = 6
 	MIN_SCORE = -(WIDTH*HEIGHT)/2 + 3
 	MAX_SCORE = (WIDTH*HEIGHT+1)/2 - 3
+	BOTTOM    = 0b0000001000000100000010000001000000100000010000001
 )
 
 type Grid struct {
@@ -55,7 +56,7 @@ func (grid *Grid) IsDraw() bool {
 }
 
 func (grid *Grid) Key() uint64 {
-	return grid.CurrentPosition + grid.Mask
+	return grid.CurrentPosition + grid.Mask + BOTTOM
 }
 
 func CheckWin(position uint64) bool {
