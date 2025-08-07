@@ -1,6 +1,6 @@
 package transposition_table
 
-const MASK_56 uint64 = (1 << 56) - 1 
+const MASK_49 uint64 = (1 << 49) - 1
 
 type TranspositionTable struct {
 	table []Entry
