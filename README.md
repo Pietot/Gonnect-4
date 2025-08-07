@@ -14,7 +14,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to play 
 
 ### 3. [How to use](#3---how-to-use)
 
-### 4. [Algorithms](#4---algorithms)
+### 4. [Algorithms & optimizations](#4---algorithms--optimizations)
 
 ### 5. [Benchmark](#5---benchmark)
 
@@ -27,16 +27,11 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to play 
 
 ## 1 - Features
 
-- Find the largest Fibonacci number that can be calculated in less than a second (limit can be changed)
-- Calculate the time it takes to calculate a specific Fibonacci number
-- Use different algorithms to calculate the Fibonacci number among [6 of them](#4---algorithms)
-- Use the package in your own project
-
 ## 2 - Installation
 
 ## 3 - How to use
 
-## 4 - Algorithms
+## 4 - Algorithms & optimizations
 
 - ### Negamax
 
@@ -45,6 +40,22 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to play 
   It works by recursively exploring the game tree, evaluating the positions, and returning the best move for the current player.
 
 - ### Alpha-Beta Pruning
+
+  Finished
+
+- ### Move explanation order
+
+  Finished
+
+- ### Bitboard
+
+  Finished
+
+- ### Transposition Table
+
+  Finished
+
+- ### Iterative Deepening
 
   In progress...
 
@@ -67,24 +78,19 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to play 
 
 - ### Results
 
-  I ran the tests on each algorithm and collected the results in a CSV file. The results include the **mean** of the following metrics:
-
-  - **Search time**
-  - **Number of positions** searched
-  - **Time per position**
-  - **Positions per second**
+  I ran the tests on each algorithm and collected the results in a CSV file and computed the **mean** for each category.
 
   Here are the algorithms ranked from the most efficient to the least efficient:
 
   | Rank | Algorithm | Search time | Number of positions | Time per position | Positions per second |
   | :--: | :-------: | :---------: | :-----------------: | :---------------: | :------------------: |
-  |  1   |  Negamax  |     N/A     |         N/A         |        N/A        |         N/A          |
+  |  1   |           |             |                     |                   |                      |
   |  2   |           |             |                     |                   |                      |
-  |  3   |           |             |                      "|                   |                      |
+  |  3   |           |             |                     |                   |                      |
   |  4   |           |             |                     |                   |                      |
   |  5   |           |             |                     |                   |                      |
   |  6   |           |             |                     |                   |                      |
-  |  7   |           |             |                     |                   |                      |
+  |  7   |  Negamax  |             |                     |                   |                      |
 
 <br>
 
