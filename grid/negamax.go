@@ -42,9 +42,9 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
 	nodesPerSecond := 0.0
-	meanTimePerPos := 0.0
+	meanTimePerNode := 0.0
 	if nodeCount > 0 {
-		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
+		meanTimePerNode = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
 	}
 	if elapsedSeconds > 0 {
 		nodesPerSecond = float64(nodeCount) / elapsedSeconds
@@ -53,8 +53,8 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	stats := &stats.Stats{
 		TotalTimeMicroseconds: elapsed.Seconds() * 1_000_000,
 		NodeCount:             nodeCount,
-		MeanTimePerPosition:   meanTimePerPos,
-		NodesPerSecond:    nodesPerSecond,
+		MeanTimePerNode:       meanTimePerNode,
+		NodesPerSecond:        nodesPerSecond,
 	}
 
 	return min, stats
