@@ -6,12 +6,12 @@ type Stats struct {
 	TotalTimeMicroseconds float64
 	NodeCount             int64
 	MeanTimePerPosition   float64
-	PositionsPerSecond    float64
+	NodesPerSecond        float64
 }
 
 func (s *Stats) String() string {
 	return "Total Time: " + utils.GetTime(s.TotalTimeMicroseconds) +
 		", \nNumber of Nodes: " + utils.FormatInt(s.NodeCount) +
 		", \nMean Time per Position (µs): " + utils.FormatFloat(s.MeanTimePerPosition) +
-		", \nPositions per Second: " + utils.FormatFloat(s.PositionsPerSecond)
+		", \nPositions per Second: " + utils.FormatFloat(s.NodesPerSecond)
 }

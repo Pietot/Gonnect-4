@@ -31,7 +31,7 @@ func TestNegamax(t *testing.T) {
 			if *evaluation.Score < 0 && expected > 0 {
 				t.Errorf("Unexpected negative evaluation for file: %s", file.Name())
 			}
-			fmt.Printf("File: %s, Sequence: %s, Expected: %d, Evaluation: %f\n", file.Name(), parts[0], expected, *evaluation.Score)
+			fmt.Printf("File: %s, Sequence: %s, Expected: %d, Evaluation: %d\n", file.Name(), parts[0], expected, *evaluation.Score)
 		}
 	}
 }

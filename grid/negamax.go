@@ -1,7 +1,6 @@
 package grid
 
 import (
-	"math"
 	"time"
 
 	"github.com/Pietot/Gonnect-4/evaluation"
@@ -10,9 +9,11 @@ import (
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
-var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
-var nodeCount = int64(0)
-var trans_table = transposition_table.NewTranspositionTable()
+var (
+	columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
+	nodeCount   = int64(0)
+	trans_table = transposition_table.NewTranspositionTable()
+)
 
 func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 	// Strong solver, use min = -1 and max = 1 for a weak solver
@@ -40,64 +41,64 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
-	nbPosPerSec := 0.0
+	nodesPerSecond := 0.0
 	meanTimePerPos := 0.0
 	if nodeCount > 0 {
 		meanTimePerPos = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
 	}
 	if elapsedSeconds > 0 {
-		nbPosPerSec = float64(nodeCount) / elapsedSeconds
+		nodesPerSecond = float64(nodeCount) / elapsedSeconds
 	}
 
 	stats := &stats.Stats{
 		TotalTimeMicroseconds: elapsed.Seconds() * 1_000_000,
 		NodeCount:             nodeCount,
 		MeanTimePerPosition:   meanTimePerPos,
-		PositionsPerSecond:    nbPosPerSec,
+		NodesPerSecond:    nodesPerSecond,
 	}
 
-	return result, stats
+	return min, stats
 }
 
-func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
+func (grid *Grid) negamax(alpha int8, beta int8) *evaluation.Evaluation {
 	nodeCount++
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
-			Score:          utils.Float64Ptr(0.0),
+			Score:          utils.Int8Ptr(0),
 			BestMove:       nil,
-			RemainingMoves: utils.IntPtr(0),
+			RemainingMoves: utils.Uint8Ptr(0),
 		}
 	}
 
 	for column := range 7 {
 		if grid.CanPlay(column) && grid.IsWinningMove(column) {
 			return &evaluation.Evaluation{
-				Score:          utils.Float64Ptr(float64(int(WIDTH*HEIGHT+1-grid.nbMoves) / 2)),
+				Score:          utils.Int8Ptr(int8(WIDTH*HEIGHT+1-grid.nbMoves) / 2),
 				BestMove:       &column,
-				RemainingMoves: utils.IntPtr(1),
+				RemainingMoves: utils.Uint8Ptr(1),
 			}
 		}
 	}
 
-	max := float64((WIDTH*HEIGHT - 1 - grid.nbMoves) / 2)
+	max := int8((WIDTH*HEIGHT - 1 - grid.nbMoves) / 2)
 	value, remaining, found := trans_table.Get(grid.Key())
 	if found {
-		max = float64(int(value) + MIN_SCORE - 1)
+		max = int8(int(value) + MIN_SCORE - 1)
 	}
 	if beta > max {
 		beta = max
 		if alpha >= beta {
 			return &evaluation.Evaluation{
-				Score:          utils.Float64Ptr(beta),
+				Score:          utils.Int8Ptr(beta),
 				BestMove:       nil,
-				RemainingMoves: utils.IntPtr(int(remaining)),
+				RemainingMoves: utils.Uint8Ptr(remaining),
 			}
 		}
 	}
 
 	var bestMove *int
 	var bestScore = alpha
-	var bestRemainingMoves *int
+	var bestRemainingMoves *uint8
 
 	for _, column := range columnOrder {
 		if grid.CanPlay(column) {
@@ -108,13 +109,13 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 				return &evaluation.Evaluation{
 					Score:          childEvaluation.Score,
 					BestMove:       &column,
-					RemainingMoves: utils.IntPtr(*childEvaluation.RemainingMoves + 1),
+					RemainingMoves: utils.Uint8Ptr(*childEvaluation.RemainingMoves + 1),
 				}
 			}
 			if *childEvaluation.Score > bestScore || bestMove == nil {
 				bestScore = *childEvaluation.Score
 				bestMove = &column
-				bestRemainingMoves = utils.IntPtr(*childEvaluation.RemainingMoves + 1)
+				bestRemainingMoves = utils.Uint8Ptr(*childEvaluation.RemainingMoves + 1)
 				alpha = bestScore
 			}
 		}
@@ -123,7 +124,7 @@ func (grid *Grid) negamax(alpha float64, beta float64) *evaluation.Evaluation {
 	trans_table.Put(grid.Key(), uint8(int(alpha)-MIN_SCORE+1), uint8(*bestRemainingMoves))
 
 	return &evaluation.Evaluation{
-		Score:          utils.Float64Ptr(bestScore),
+		Score:          utils.Int8Ptr(bestScore),
 		BestMove:       bestMove,
 		RemainingMoves: bestRemainingMoves,
 	}
