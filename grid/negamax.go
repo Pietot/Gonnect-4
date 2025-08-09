@@ -15,10 +15,28 @@ var nodeCount = int64(0)
 var trans_table = transposition_table.NewTranspositionTable()
 
 func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
+	// Strong solver, use min = -1 and max = 1 for a weak solver
+	minScore := int8(-(WIDTH*HEIGHT - grid.nbMoves) / 2)
+	maxScore := int8((WIDTH*HEIGHT + 1 - grid.nbMoves) / 2)
+	min := &evaluation.Evaluation{Score: &minScore}
+	max := &evaluation.Evaluation{Score: &maxScore}
+
 	start := time.Now()
 
-	// Strong solver, use alpha = -1 and beta = 1 for a weak solver
-	result := grid.negamax(math.Inf(-1), math.Inf(1))
+	for *min.Score < *max.Score {
+		middle := int8(*max.Score+*min.Score) / 2
+		if middle <= 0 && *min.Score/2 < middle {
+			middle = *min.Score / 2
+		} else if middle >= 0 && *max.Score/2 > middle {
+			middle = *max.Score / 2
+		}
+		result := grid.negamax(middle, middle+1)
+		if *result.Score <= middle {
+			max = result
+		} else {
+			min = result
+		}
+	}
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
