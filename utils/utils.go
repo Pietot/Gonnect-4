@@ -39,11 +39,11 @@ func addUnderscores(s string) string {
 	return result.String()
 }
 
-func Float64Ptr(f float64) *float64 {
-	return &f
+func Int8Ptr(i int8) *int8 {
+	return &i
 }
 
-func IntPtr(i int) *int {
+func Uint8Ptr(i uint8) *uint8 {
 	return &i
 }
 
