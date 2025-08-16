@@ -24,19 +24,28 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 
 	start := time.Now()
 
-	for *min.Score < *max.Score {
-		middle := int8(*max.Score+*min.Score) / 2
-		if middle <= 0 && *min.Score/2 < middle {
-			middle = *min.Score / 2
-		} else if middle >= 0 && *max.Score/2 > middle {
-			middle = *max.Score / 2
+	if grid.CanWinNext() {
+		min = &evaluation.Evaluation{
+			Score:          utils.Int8Ptr(maxScore),
+			BestMove:       grid.FindNextWinningMove(),
+			RemainingMoves: utils.Uint8Ptr(1),
 		}
-		result := grid.negamax(middle, middle+1)
-		if *result.Score <= middle {
-			max = result
-		} else {
-			min = result
+	} else {
+		for *min.Score < *max.Score {
+			middle := int8(*max.Score+*min.Score) / 2
+			if middle <= 0 && *min.Score/2 < middle {
+				middle = *min.Score / 2
+			} else if middle >= 0 && *max.Score/2 > middle {
+				middle = *max.Score / 2
+			}
+			result := grid.negamax(middle, middle+1)
+			if *result.Score <= middle {
+				max = result
+			} else {
+				min = result
+			}
 		}
+
 	}
 
 	elapsed := time.Since(start)
@@ -66,20 +75,32 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 
 func (grid *Grid) negamax(alpha int8, beta int8) *evaluation.Evaluation {
 	nodeCount++
+
+	nextMoves := grid.possibleNonLoosingMoves()
+	if nextMoves == 0 {
+		return &evaluation.Evaluation{
+			Score:          utils.Int8Ptr(int8(-(WIDTH*HEIGHT - grid.nbMoves) / 2)),
+			BestMove:       grid.getRandomColumn(),
+			RemainingMoves: utils.Uint8Ptr(2),
+		}
+	}
+
 	if grid.IsDraw() {
 		return &evaluation.Evaluation{
 			Score:          utils.Int8Ptr(0),
 			BestMove:       nil,
-			RemainingMoves: utils.Uint8Ptr(0),
+			RemainingMoves: utils.Uint8Ptr(1),
 		}
 	}
 
-	for column := range 7 {
-		if grid.CanPlay(column) && grid.IsWinningMove(column) {
+	min := int8(-(WIDTH*HEIGHT - 2 - grid.nbMoves) / 2)
+	if alpha < min {
+		alpha = min
+		if alpha >= beta {
 			return &evaluation.Evaluation{
-				Score:          utils.Int8Ptr(int8(WIDTH*HEIGHT+1-grid.nbMoves) / 2),
-				BestMove:       &column,
-				RemainingMoves: utils.Uint8Ptr(1),
+				Score:          utils.Int8Ptr(alpha),
+				BestMove:       nil,
+				RemainingMoves: utils.Uint8Ptr(0),
 			}
 		}
 	}
@@ -105,7 +126,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) *evaluation.Evaluation {
 	var bestRemainingMoves *uint8
 
 	for _, column := range columnOrder {
-		if grid.CanPlay(column) {
+		if (nextMoves & columnMask(column)) != 0 {
 			childGrid := *grid
 			childGrid.Play(column)
 			childEvaluation := childGrid.negamax(-beta, -alpha).Negate()
