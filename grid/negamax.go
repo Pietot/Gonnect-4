@@ -57,6 +57,10 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 		NodesPerSecond:        nodesPerSecond,
 	}
 
+	if min.RemainingMoves == nil {
+		min = max
+	}
+
 	return min, stats
 }
 
