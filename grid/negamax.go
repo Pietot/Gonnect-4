@@ -41,13 +41,13 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
-	nodesPerSecond := 0.0
+	nodesPerSecond := int64(0)
 	meanTimePerNode := 0.0
 	if nodeCount > 0 {
 		meanTimePerNode = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
 	}
 	if elapsedSeconds > 0 {
-		nodesPerSecond = float64(nodeCount) / elapsedSeconds
+		nodesPerSecond = int64(float64(nodeCount) / elapsedSeconds)
 	}
 
 	stats := &stats.Stats{
