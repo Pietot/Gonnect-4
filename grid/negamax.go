@@ -24,10 +24,10 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 
 	start := time.Now()
 
-	if grid.CanWinNext() {
+	if grid.canWinNext() {
 		min = &evaluation.Evaluation{
 			Score:          utils.Int8Ptr(maxScore),
-			BestMove:       grid.FindNextWinningMove(),
+			BestMove:       grid.findNextWinningMove(),
 			RemainingMoves: utils.Uint8Ptr(1),
 		}
 	} else {
@@ -85,7 +85,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) *evaluation.Evaluation {
 		}
 	}
 
-	if grid.IsDraw() {
+	if grid.isDraw() {
 		return &evaluation.Evaluation{
 			Score:          utils.Int8Ptr(0),
 			BestMove:       nil,
@@ -128,7 +128,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) *evaluation.Evaluation {
 	for _, column := range columnOrder {
 		if (nextMoves & columnMask(column)) != 0 {
 			childGrid := *grid
-			childGrid.Play(column)
+			childGrid.play(column)
 			childEvaluation := childGrid.negamax(-beta, -alpha).Negate()
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{

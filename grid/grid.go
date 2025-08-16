@@ -28,19 +28,19 @@ func InitGrid(columnsSequence string) *Grid {
 			panic(fmt.Sprintf("Invalid column character: %v", err))
 		}
 		column -= 1
-		if column < 0 || column >= WIDTH || !grid.CanPlay(column) || grid.IsWinningMove(column) {
+		if column < 0 || column >= WIDTH || !grid.canPlay(column) || grid.IsWinningMove(column) {
 			panic(fmt.Sprintf("Can't play at column %d", column+1))
 		}
-		grid.Play(column)
+		grid.play(column)
 	}
 	return grid
 }
 
-func (grid *Grid) CanPlay(column int) bool {
+func (grid *Grid) canPlay(column int) bool {
 	return (grid.Mask & topMask(column)) == 0
 }
 
-func (grid *Grid) Play(column int) {
+func (grid *Grid) play(column int) {
 	grid.CurrentPosition ^= grid.Mask
 	grid.Mask |= grid.Mask + bottomMask(column)
 	grid.nbMoves++
@@ -50,11 +50,11 @@ func (grid *Grid) IsWinningMove(column int) bool {
 	return (grid.winningPositionMask() & grid.possibleMask() & columnMask(column)) != 0
 }
 
-func (grid *Grid) CanWinNext() bool {
+func (grid *Grid) canWinNext() bool {
 	return (grid.winningPositionMask() & grid.possibleMask()) != 0
 }
 
-func (grid *Grid) IsDraw() bool {
+func (grid *Grid) isDraw() bool {
 	return grid.nbMoves >= WIDTH*HEIGHT-2
 }
 
@@ -62,31 +62,7 @@ func (grid *Grid) Key() uint64 {
 	return grid.CurrentPosition + grid.Mask + BOTTOM
 }
 
-func CheckWin(position uint64) bool {
-	// Horizontal
-	mask := position & (position >> (HEIGHT + 1))
-	if mask&(mask>>(2*(HEIGHT+1))) != 0 {
-		return true
-	}
-
-	// Vertical
-	mask = position & (position >> 1)
-	if mask&(mask>>2) != 0 {
-		return true
-	}
-
-	// Diagonal 1 (\)
-	mask = position & (position >> HEIGHT)
-	if mask&(mask>>(2*HEIGHT)) != 0 {
-		return true
-	}
-
-	// Anti-Diagonal (/)
-	mask = position & (position >> (HEIGHT + 2))
-	return mask&(mask>>(2*(HEIGHT+2))) != 0
-}
-
-func (grid *Grid) FindNextWinningMove() *int {
+func (grid *Grid) findNextWinningMove() *int {
 	winningMask := grid.winningPositionMask()
 	possibleMask := grid.possibleMask()
 	winningMoves := winningMask & possibleMask
@@ -103,13 +79,12 @@ func (grid *Grid) FindNextWinningMove() *int {
 
 func (grid *Grid) getRandomColumn() *int {
 	for _, column := range columnOrder {
-		if grid.CanPlay(column) {
+		if grid.canPlay(column) {
 			return &column
 		}
 	}
 	panic("No playable column found")
 }
-
 
 func (grid *Grid) possibleNonLoosingMoves() uint64 {
 	possible_mask := grid.possibleMask()
