@@ -36,6 +36,10 @@ func InitGrid(columnsSequence string) *Grid {
 	return grid
 }
 
+func (grid *Grid) Key() uint64 {
+	return grid.CurrentPosition + grid.Mask + BOTTOM
+}
+
 func (grid *Grid) canPlay(column int) bool {
 	return (grid.Mask & topMask(column)) == 0
 }
@@ -56,10 +60,6 @@ func (grid *Grid) canWinNext() bool {
 
 func (grid *Grid) isDraw() bool {
 	return grid.nbMoves >= WIDTH*HEIGHT-2
-}
-
-func (grid *Grid) Key() uint64 {
-	return grid.CurrentPosition + grid.Mask + BOTTOM
 }
 
 func (grid *Grid) findNextWinningMove() *int {
