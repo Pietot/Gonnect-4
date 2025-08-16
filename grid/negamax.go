@@ -24,30 +24,39 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 
 	start := time.Now()
 
-	for *min.Score < *max.Score {
-		middle := int8(*max.Score+*min.Score) / 2
-		if middle <= 0 && *min.Score/2 < middle {
-			middle = *min.Score / 2
-		} else if middle >= 0 && *max.Score/2 > middle {
-			middle = *max.Score / 2
+	if grid.canWinNext() {
+		min = &evaluation.Evaluation{
+			Score:          utils.Int8Ptr(maxScore),
+			BestMove:       grid.findNextWinningMove(),
+			RemainingMoves: utils.Uint8Ptr(1),
 		}
-		result := grid.negamax(middle, middle+1)
-		if *result.Score <= middle {
-			max = result
-		} else {
-			min = result
+	} else {
+		for *min.Score < *max.Score {
+			middle := int8(*max.Score+*min.Score) / 2
+			if middle <= 0 && *min.Score/2 < middle {
+				middle = *min.Score / 2
+			} else if middle >= 0 && *max.Score/2 > middle {
+				middle = *max.Score / 2
+			}
+			result := grid.negamax(middle, middle+1)
+			if *result.Score <= middle {
+				max = result
+			} else {
+				min = result
+			}
 		}
+
 	}
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
-	nodesPerSecond := 0.0
+	nodesPerSecond := int64(0)
 	meanTimePerNode := 0.0
 	if nodeCount > 0 {
 		meanTimePerNode = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
 	}
 	if elapsedSeconds > 0 {
-		nodesPerSecond = float64(nodeCount) / elapsedSeconds
+		nodesPerSecond = int64(float64(nodeCount) / elapsedSeconds)
 	}
 
 	stats := &stats.Stats{
@@ -57,25 +66,41 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 		NodesPerSecond:        nodesPerSecond,
 	}
 
+	if min.RemainingMoves == nil {
+		min = max
+	}
+
 	return min, stats
 }
 
 func (grid *Grid) negamax(alpha int8, beta int8) *evaluation.Evaluation {
 	nodeCount++
-	if grid.IsDraw() {
+
+	nextMoves := grid.possibleNonLoosingMoves()
+	if nextMoves == 0 {
 		return &evaluation.Evaluation{
-			Score:          utils.Int8Ptr(0),
-			BestMove:       nil,
-			RemainingMoves: utils.Uint8Ptr(0),
+			Score:          utils.Int8Ptr(int8(-(WIDTH*HEIGHT - grid.nbMoves) / 2)),
+			BestMove:       grid.getRandomColumn(),
+			RemainingMoves: utils.Uint8Ptr(2),
 		}
 	}
 
-	for column := range 7 {
-		if grid.CanPlay(column) && grid.IsWinningMove(column) {
+	if grid.isDraw() {
+		return &evaluation.Evaluation{
+			Score:          utils.Int8Ptr(0),
+			BestMove:       nil,
+			RemainingMoves: utils.Uint8Ptr(1),
+		}
+	}
+
+	min := int8(-(WIDTH*HEIGHT - 2 - grid.nbMoves) / 2)
+	if alpha < min {
+		alpha = min
+		if alpha >= beta {
 			return &evaluation.Evaluation{
-				Score:          utils.Int8Ptr(int8(WIDTH*HEIGHT+1-grid.nbMoves) / 2),
-				BestMove:       &column,
-				RemainingMoves: utils.Uint8Ptr(1),
+				Score:          utils.Int8Ptr(alpha),
+				BestMove:       nil,
+				RemainingMoves: utils.Uint8Ptr(0),
 			}
 		}
 	}
@@ -101,9 +126,9 @@ func (grid *Grid) negamax(alpha int8, beta int8) *evaluation.Evaluation {
 	var bestRemainingMoves *uint8
 
 	for _, column := range columnOrder {
-		if grid.CanPlay(column) {
+		if (nextMoves & columnMask(column)) != 0 {
 			childGrid := *grid
-			childGrid.Play(column)
+			childGrid.play(column)
 			childEvaluation := childGrid.negamax(-beta, -alpha).Negate()
 			if *childEvaluation.Score >= beta {
 				return &evaluation.Evaluation{
