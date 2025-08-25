@@ -9,7 +9,7 @@ type Stats struct {
 	NodesPerSecond        uint64
 }
 
-func (s *Stats) String() string {
+func (s Stats) String() string {
 	return "Total Time: " + utils.GetTime(s.TotalTimeMicroseconds) +
 		", \nNumber of Nodes: " + utils.FormatUint64(s.NodeCount) +
 		", \nMean Time per Node (µs): " + utils.FormatFloat(s.MeanTimePerNode) +

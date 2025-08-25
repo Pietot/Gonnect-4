@@ -15,34 +15,35 @@ var (
 	trans_table = transposition_table.NewTranspositionTable()
 )
 
-func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
+func (grid *Grid) GetScore() int8 {
 	// Strong solver, use min = -1 and max = 1 for a weak solver
 	minScore := int8(-(WIDTH*HEIGHT - grid.nbMoves) / 2)
 	maxScore := int8((WIDTH*HEIGHT + 1 - grid.nbMoves) / 2)
-	evaluation := &evaluation.Evaluation{}
-
-	start := time.Now()
 
 	if grid.canWinNext() {
-		evaluation.Score = &maxScore
-		evaluation.RemainingMoves = utils.Uint8Ptr(1)
-	} else {
-		for minScore < maxScore {
-			middle := minScore + (maxScore-minScore)/2
-			if middle <= 0 && minScore/2 < middle {
-				middle = minScore / 2
-			} else if middle >= 0 && maxScore/2 > middle {
-				middle = maxScore / 2
-			}
-			result := grid.negamax(middle, middle+1)
-			if result <= middle {
-				maxScore = result
-			} else {
-				minScore = result
-			}
-		}
-
+		return maxScore
 	}
+	for minScore < maxScore {
+		middle := minScore + (maxScore-minScore)/2
+		if middle <= 0 && minScore/2 < middle {
+			middle = minScore / 2
+		} else if middle >= 0 && maxScore/2 > middle {
+			middle = maxScore / 2
+		}
+		result := grid.negamax(middle, middle+1)
+		if result <= middle {
+			maxScore = result
+		} else {
+			minScore = result
+		}
+	}
+	return minScore
+}
+
+func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
+	start := time.Now()
+
+	score := grid.GetScore()
 
 	elapsed := time.Since(start)
 	elapsedSeconds := elapsed.Seconds()
@@ -55,16 +56,41 @@ func (grid *Grid) Solve() (*evaluation.Evaluation, *stats.Stats) {
 		nodesPerSecond = uint64(float64(nodeCount) / elapsedSeconds)
 	}
 
-	stats := &stats.Stats{
+	stats := stats.Stats{
 		TotalTimeMicroseconds: elapsed.Seconds() * 1_000_000,
 		NodeCount:             nodeCount,
 		MeanTimePerNode:       meanTimePerNode,
 		NodesPerSecond:        nodesPerSecond,
 	}
 
-	evaluation.Score = &minScore
-	evaluation.RemainingMoves = getRemainingMoves(minScore, grid.nbMoves)
-	return evaluation, stats
+	return evaluation.Evaluation{
+		Score:          &score,
+		RemainingMoves: GetRemainingMoves(score, grid.nbMoves),
+	}, stats
+}
+
+func (grid *Grid) Analyze() evaluation.Analyzation {
+	bestRemainingMoves := uint8(0)
+	scores := evaluation.Analyzation{}
+	for column := range 7 {
+		if grid.canPlay(column) {
+			if grid.IsWinningMove(column) {
+				score := int8((WIDTH*HEIGHT + 1 - grid.nbMoves) / 2)
+				scores.Scores[column] = &score
+			} else {
+				childGrid := *grid
+				childGrid.play(column)
+				score := -childGrid.GetScore()
+				scores.Scores[column] = &score
+			}
+			remainingMoves := GetRemainingMoves(*scores.Scores[column], grid.nbMoves)
+			if bestRemainingMoves < *remainingMoves {
+				bestRemainingMoves = *remainingMoves
+			}
+		}
+	}
+	scores.RemainingMoves = &bestRemainingMoves
+	return scores
 }
 
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
@@ -117,7 +143,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	return alpha
 }
 
-func getRemainingMoves(score int8, nbMoves int) *uint8 {
+func GetRemainingMoves(score int8, nbMoves int) *uint8 {
 	if score > 0 {
 		return utils.Uint8Ptr(uint8((45-nbMoves)/2 - int(score)))
 	}

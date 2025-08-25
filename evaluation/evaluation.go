@@ -6,32 +6,13 @@ import (
 
 type Evaluation struct {
 	Score          *int8
-	BestMove       *uint8
 	RemainingMoves *uint8
 }
 
-func (s *Evaluation) String() string {
-	var scoreStr, bestMoveStr, remainingMoveStr string
-
-	if s.Score != nil {
-		scoreStr = fmt.Sprintf("%d", *s.Score)
-	} else {
-		scoreStr = "None"
-	}
-
-	if s.BestMove != nil {
-		bestMoveStr = fmt.Sprintf("C%d", *s.BestMove+1)
-	} else {
-		bestMoveStr = "None"
-	}
-
-	if s.RemainingMoves != nil {
-		remainingMoveStr = fmt.Sprintf("%d", *s.RemainingMoves)
-	} else {
-		remainingMoveStr = "None"
-	}
+func (e Evaluation) String() string {
+	scoreStr := fmt.Sprintf("%d", *e.Score)
+	remainingMoveStr := fmt.Sprintf("%d", *e.RemainingMoves)
 
 	return "Score: " + scoreStr +
-		", \nBest Move: " + bestMoveStr +
 		", \nRemaining Moves: " + remainingMoveStr
 }
