@@ -65,7 +65,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to play 
 
 ### Better move ordering
 
-  In progress...
+  Finished
 
 ## 5 - Benchmark
 
