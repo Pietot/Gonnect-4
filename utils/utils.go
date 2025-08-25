@@ -14,7 +14,7 @@ func FormatFloat(value float64) string {
 	return strings.Join(parts, ".")
 }
 
-func FormatInt(value int64) string {
+func FormatUint64(value uint64) string {
 	return addUnderscores(fmt.Sprintf("%d", value))
 }
 
