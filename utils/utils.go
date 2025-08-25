@@ -18,6 +18,26 @@ func FormatUint64(value uint64) string {
 	return addUnderscores(fmt.Sprintf("%d", value))
 }
 
+func Int8Ptr(i int8) *int8 {
+	return &i
+}
+
+func Uint8Ptr(i uint8) *uint8 {
+	return &i
+}
+
+func GetTime(microseconds float64) string {
+	if microseconds < 1_000 {
+		return fmt.Sprintf("%.2f µs", microseconds)
+	} else if microseconds < 1_000_000 {
+		return fmt.Sprintf("%.2f ms", microseconds/1_000)
+	} else if microseconds < 1_000_000_000 {
+		return fmt.Sprintf("%.2f s", microseconds/1_000_000)
+	} else {
+		return fmt.Sprintf("%.2f ns", microseconds*1_000)
+	}
+}
+
 func addUnderscores(s string) string {
 	n := len(s)
 	if n <= 3 {
@@ -37,24 +57,4 @@ func addUnderscores(s string) string {
 	}
 
 	return result.String()
-}
-
-func Int8Ptr(i int8) *int8 {
-	return &i
-}
-
-func Uint8Ptr(i uint8) *uint8 {
-	return &i
-}
-
-func GetTime(microseconds float64) string {
-	if microseconds < 1_000 {
-		return fmt.Sprintf("%.2f µs", microseconds)
-	} else if microseconds < 1_000_000 {
-		return fmt.Sprintf("%.2f ms", microseconds/1_000)
-	} else if microseconds < 1_000_000_000 {
-		return fmt.Sprintf("%.2f s", microseconds/1_000_000)
-	} else {
-		return fmt.Sprintf("%.2f ns", microseconds*1_000)
-	}
 }
