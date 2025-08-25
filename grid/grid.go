@@ -31,7 +31,7 @@ func InitGrid(columnsSequence string) *Grid {
 		if column < 0 || column >= WIDTH || !grid.canPlay(column) || grid.IsWinningMove(column) {
 			panic(fmt.Sprintf("Can't play at column %d", column+1))
 		}
-		grid.play(column)
+		grid.playColumn(column)
 	}
 	return grid
 }
@@ -40,18 +40,22 @@ func (grid *Grid) Key() uint64 {
 	return grid.CurrentPosition + grid.Mask + BOTTOM
 }
 
+func (grid *Grid) IsWinningMove(column int) bool {
+	return (grid.winningPositionMask() & grid.possibleMask() & columnMask(column)) != 0
+}
+
 func (grid *Grid) canPlay(column int) bool {
 	return (grid.Mask & topMask(column)) == 0
 }
 
-func (grid *Grid) play(column int) {
+func (grid *Grid) play(move uint64) {
 	grid.CurrentPosition ^= grid.Mask
-	grid.Mask |= grid.Mask + bottomMask(column)
+	grid.Mask |= move
 	grid.nbMoves++
 }
 
-func (grid *Grid) IsWinningMove(column int) bool {
-	return (grid.winningPositionMask() & grid.possibleMask() & columnMask(column)) != 0
+func (grid *Grid) playColumn(column int) {
+	grid.play((grid.Mask + bottomMask(column)) & columnMask(column))
 }
 
 func (grid *Grid) canWinNext() bool {
@@ -62,31 +66,7 @@ func (grid *Grid) isDraw() bool {
 	return grid.nbMoves >= WIDTH*HEIGHT-2
 }
 
-func (grid *Grid) findNextWinningMove() *int {
-	winningMask := grid.winningPositionMask()
-	possibleMask := grid.possibleMask()
-	winningMoves := winningMask & possibleMask
-
-	for _, column := range columnOrder {
-		columnMask := columnMask(column)
-		if (winningMoves & columnMask) != 0 {
-			return &column
-		}
-	}
-
-	panic("No winning move found, but expected one")
-}
-
-func (grid *Grid) getRandomColumn() *int {
-	for _, column := range columnOrder {
-		if grid.canPlay(column) {
-			return &column
-		}
-	}
-	panic("No playable column found")
-}
-
-func (grid *Grid) possibleNonLoosingMoves() uint64 {
+func (grid *Grid) possibleNonLosingMoves() uint64 {
 	possible_mask := grid.possibleMask()
 	opponent_win := grid.opponentWinningPositionMask()
 	forced_moves := possible_mask & opponent_win
@@ -154,4 +134,17 @@ func computeWinningPosition(position uint64, mask uint64) uint64 {
 	r |= p & (position >> (3 * (uint_height + 2)))
 
 	return r & (BOARD_MASK ^ mask)
+}
+
+func (grid *Grid) moveScore(move uint64) int {
+	return popCount(computeWinningPosition(grid.CurrentPosition|move, grid.Mask))
+}
+
+func popCount(move uint64) int {
+	count := 0
+	for move != 0 {
+		move &= move - 1
+		count++
+	}
+	return count
 }

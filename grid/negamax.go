@@ -79,7 +79,7 @@ func (grid *Grid) Analyze() evaluation.Analyzation {
 				scores.Scores[column] = &score
 			} else {
 				childGrid := *grid
-				childGrid.play(column)
+				childGrid.playColumn(column)
 				score := -childGrid.GetScore()
 				scores.Scores[column] = &score
 			}
@@ -96,7 +96,7 @@ func (grid *Grid) Analyze() evaluation.Analyzation {
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	nodeCount++
 
-	nextMoves := grid.possibleNonLoosingMoves()
+	nextMoves := grid.possibleNonLosingMoves()
 	if nextMoves == 0 {
 		return -int8((WIDTH * HEIGHT) - grid.nbMoves/2)
 	}
@@ -124,17 +124,23 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 		}
 	}
 
-	for _, column := range columnOrder {
-		if (nextMoves & columnMask(column)) != 0 {
-			childGrid := *grid
-			childGrid.play(column)
-			childGridScore := -childGrid.negamax(-beta, -alpha)
-			if childGridScore >= beta {
-				return childGridScore
-			}
-			if childGridScore > alpha {
-				alpha = childGridScore
-			}
+	moves := newMoveSorter()
+	for i := WIDTH - 1; i >= 0; i-- {
+		column := columnOrder[i]
+		if move := nextMoves & columnMask(column); move != 0 {
+			moves.addMove(move, grid.moveScore(move))
+		}
+	}
+
+	for nextMove := moves.getNextMove(); nextMove != 0; nextMove = moves.getNextMove() {
+		childGrid := *grid
+		childGrid.play(nextMove)
+		childGridScore := -childGrid.negamax(-beta, -alpha)
+		if childGridScore >= beta {
+			return childGridScore
+		}
+		if childGridScore > alpha {
+			alpha = childGridScore
 		}
 	}
 
