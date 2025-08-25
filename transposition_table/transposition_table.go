@@ -7,9 +7,8 @@ type TranspositionTable struct {
 }
 
 type Entry struct {
-	key_49_bit     uint64
-	value          uint8
-	remainingMoves uint8
+	key_49_bit uint64
+	value      uint8
 }
 
 func NewTranspositionTable() *TranspositionTable {
@@ -24,28 +23,27 @@ func (trans_table *TranspositionTable) Reset() {
 	}
 }
 
-func (trans_table *TranspositionTable) Put(key uint64, value uint8, remainingMoves uint8) {
+func (trans_table *TranspositionTable) Put(key uint64, value uint8) {
 	if key >= (1 << 49) {
 		panic("Key out of range (must be < 2^49)")
 	}
 	entryIndex := trans_table.index(key)
 	trans_table.table[entryIndex] = Entry{
-		key_49_bit:     key & MASK_49,
-		value:          value,
-		remainingMoves: remainingMoves,
+		key_49_bit: key & MASK_49,
+		value:      value,
 	}
 }
 
-func (trans_table *TranspositionTable) Get(key uint64) (uint8, uint8, bool) {
+func (trans_table *TranspositionTable) Get(key uint64) uint8 {
 	if key >= (1 << 49) {
 		panic("Key out of range (must be < 2^49)")
 	}
 	entryIndex := trans_table.index(key)
 	entry := trans_table.table[entryIndex]
 	if entry.key_49_bit == key {
-		return entry.value, entry.remainingMoves, true
+		return entry.value
 	}
-	return 0, 0, false
+	return 0
 }
 
 func (trans_table *TranspositionTable) index(key uint64) uint64 {
