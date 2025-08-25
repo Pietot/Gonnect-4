@@ -23,15 +23,11 @@ func TestNegamax(t *testing.T) {
 			// split the line every space
 			parts := strings.Fields(line)
 			grid := grid.InitGrid(parts[0])
-			expected := int([]rune(parts[1])[0] - '0')
-			evaluation, _ := grid.Solve()
-			if *evaluation.Score > 0 && expected < 0 {
-				t.Errorf("Unexpected positive evaluation for file: %s", file.Name())
+			expected := int8([]rune(parts[1])[0] - '0')
+			score := grid.GetScore()
+			if score != expected {
+				t.Errorf("Unexpected score for file: %s and sequence: %s, Expected: %d, Got: %d", file.Name(), parts[0], expected, score)
 			}
-			if *evaluation.Score < 0 && expected > 0 {
-				t.Errorf("Unexpected negative evaluation for file: %s", file.Name())
-			}
-			fmt.Printf("File: %s, Sequence: %s, Expected: %d, Evaluation: %d\n", file.Name(), parts[0], expected, *evaluation.Score)
 		}
 	}
 }
