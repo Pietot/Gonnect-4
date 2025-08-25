@@ -98,7 +98,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 
 	nextMoves := grid.possibleNonLosingMoves()
 	if nextMoves == 0 {
-		return -int8((WIDTH * HEIGHT) - grid.nbMoves/2)
+		return -int8(((WIDTH * HEIGHT) - grid.nbMoves) / 2)
 	}
 
 	if grid.isDraw() {
