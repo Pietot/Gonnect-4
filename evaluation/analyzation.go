@@ -7,23 +7,19 @@ import (
 type Analyzation struct {
 	Scores         [7]*int8
 	RemainingMoves *uint8
-	BestMove       *int
+	BestMove       *uint8
 }
 
 func (a Analyzation) String() string {
-	var scoreStr, bestMoveStr, remainingMoveStr string
-
-	for i := range 7 {
-		if a.Scores[i] != nil {
-			scoreStr += fmt.Sprintf("C%d: %d\n", i+1, *a.Scores[i])
-			if a.BestMove == nil || *a.Scores[i] > *a.Scores[*a.BestMove] {
-				bestMoveStr = fmt.Sprintf("C%d", i+1)
-			}
+	scores := make([]string, len(a.Scores))
+	for i, ptr := range a.Scores {
+		if ptr != nil {
+			scores[i] = fmt.Sprintf("%d", *ptr)
+		} else {
+			scores[i] = "N/A"
 		}
 	}
-	remainingMoveStr = fmt.Sprintf("%d", *a.RemainingMoves)
-
-	return "Score: " + scoreStr +
-		", \nBest Move: " + bestMoveStr +
-		", \nRemaining Moves: " + remainingMoveStr
+	return "Scores: " + fmt.Sprintf("%v", scores) +
+		", \nBest Move: " + fmt.Sprintf("C%d", *a.BestMove+1) +
+		", \nRemaining Moves: " + fmt.Sprintf("%d", *a.RemainingMoves)
 }

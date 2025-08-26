@@ -70,26 +70,31 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 }
 
 func (grid *Grid) Analyze() evaluation.Analyzation {
-	bestRemainingMoves := uint8(0)
 	scores := evaluation.Analyzation{}
+	bestMove := uint8(0)
+	maxScore := int8(-128)
 	for column := range 7 {
 		if grid.canPlay(column) {
+			var score int8
 			if grid.IsWinningMove(column) {
-				score := int8((WIDTH*HEIGHT + 1 - grid.nbMoves) / 2)
-				scores.Scores[column] = &score
+				score = int8((WIDTH*HEIGHT + 1 - grid.nbMoves) / 2)
 			} else {
 				childGrid := *grid
 				childGrid.playColumn(column)
-				score := -childGrid.GetScore()
-				scores.Scores[column] = &score
+				score = -childGrid.GetScore()
 			}
-			remainingMoves := GetRemainingMoves(*scores.Scores[column], grid.nbMoves)
-			if bestRemainingMoves < *remainingMoves {
-				bestRemainingMoves = *remainingMoves
+			scores.Scores[column] = &score
+			if score > maxScore {
+				maxScore = score
+				bestMove = uint8(column)
 			}
 		}
 	}
-	scores.RemainingMoves = &bestRemainingMoves
+
+	bestRemainingMoves := GetRemainingMoves(maxScore, grid.nbMoves)
+
+	scores.RemainingMoves = bestRemainingMoves
+	scores.BestMove = &bestMove
 	return scores
 }
 
