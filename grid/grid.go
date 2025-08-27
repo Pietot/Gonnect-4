@@ -20,20 +20,20 @@ type Grid struct {
 	nbMoves         int
 }
 
-func InitGrid(columnsSequence string) *Grid {
+func InitGrid(columnsSequence string) (*Grid, error) {
 	grid := &Grid{}
 	for _, columnRune := range columnsSequence {
 		column, err := strconv.Atoi(string(columnRune))
 		if err != nil {
-			panic(fmt.Sprintf("Invalid column character: %v", err))
+			return nil, fmt.Errorf("invalid column character: %v", err)
 		}
 		column -= 1
 		if column < 0 || column >= WIDTH || !grid.canPlay(column) || grid.IsWinningMove(column) {
-			panic(fmt.Sprintf("Can't play at column %d", column+1))
+			return nil, fmt.Errorf("can't play at column %d", column+1)
 		}
 		grid.playColumn(column)
 	}
-	return grid
+	return grid, nil
 }
 
 func (grid *Grid) Key() uint64 {
