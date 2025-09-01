@@ -178,7 +178,7 @@ If you like this project and/or want to help or improve it, you can:
 
 - Contact me if you want to talk about the project or anything else (Discord: pietot).
 
-> **Note**: If you want to be guided/helped, you already have a file named <a href="improvements.txt">improvements.txt</a> in the project directory, where you can see all the improvements that can be made.
+> **Note**: If you want to be guided/helped, you already have a file named <a href="IMPROVEMENTS.md">IMPROVEMENTS.md</a> in the project directory, where you can see all the improvements that can be made.
 
 ## 7 - Credits
 
