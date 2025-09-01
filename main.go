@@ -10,11 +10,11 @@ import (
 func printUsage() {
 	fmt.Println("Usage:")
 	fmt.Println("")
-	fmt.Println("    --a | --analyse <sequence>")
+	fmt.Println("    --a | --analyse [sequence]")
 	fmt.Println("")
 	fmt.Println("\033[35m        Analyze a position by giving a score for all possible moves\033[0m")
 	fmt.Println("")
-	fmt.Println("    --s | --solve   <sequence>")
+	fmt.Println("    --s | --solve   [sequence]")
 	fmt.Println("")
 	fmt.Println("\033[35m        Solve a position by giving its score and remaining moves\033[0m")
 	fmt.Println("")
@@ -31,7 +31,7 @@ func parseNumbers(arg string) (string, error) {
 }
 
 func main() {
-	if len(os.Args) < 3 {
+	if len(os.Args) < 2 {
 		fmt.Println("\033[31mError: insufficient arguments\033[0m")
 		printUsage()
 	} else if len(os.Args) > 3 {
@@ -40,7 +40,10 @@ func main() {
 	}
 
 	command := os.Args[1]
-	args := os.Args[2:]
+	args := []string{""}
+	if len(os.Args) > 2 {
+		args = os.Args[2:]
+	}
 
 	isAnalyze := command == "--a" || command == "--analyse"
 	isSolve := command == "--s" || command == "--solve"
