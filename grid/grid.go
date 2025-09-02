@@ -31,7 +31,7 @@ func InitGrid(columnsSequence string) (*Grid, error) {
 		if column < 0 || column >= WIDTH || !grid.canPlay(column) || grid.IsWinningMove(column) {
 			return nil, fmt.Errorf("can't play at column %d", column+1)
 		}
-		grid.playColumn(column)
+		grid.play(column)
 	}
 	return grid, nil
 }
@@ -48,14 +48,10 @@ func (grid *Grid) canPlay(column int) bool {
 	return (grid.Mask & topMask(column)) == 0
 }
 
-func (grid *Grid) play(move uint64) {
+func (grid *Grid) play(column int) {
 	grid.CurrentPosition ^= grid.Mask
-	grid.Mask |= move
+	grid.Mask |= grid.Mask + bottomMask(column)
 	grid.nbMoves++
-}
-
-func (grid *Grid) playColumn(column int) {
-	grid.play((grid.Mask + bottomMask(column)) & columnMask(column))
 }
 
 func (grid *Grid) canWinNext() bool {
@@ -134,17 +130,4 @@ func computeWinningPosition(position uint64, mask uint64) uint64 {
 	r |= p & (position >> (3 * (uint_height + 2)))
 
 	return r & (BOARD_MASK ^ mask)
-}
-
-func (grid *Grid) moveScore(move uint64) int {
-	return popCount(computeWinningPosition(grid.CurrentPosition|move, grid.Mask))
-}
-
-func popCount(move uint64) int {
-	count := 0
-	for move != 0 {
-		move &= move - 1
-		count++
-	}
-	return count
 }
