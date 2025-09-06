@@ -63,6 +63,8 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 		NodesPerSecond:        nodesPerSecond,
 	}
 
+	nodeCount = 0
+	
 	return evaluation.Evaluation{
 		Score:          &score,
 		RemainingMoves: GetRemainingMoves(score, grid.nbMoves),
