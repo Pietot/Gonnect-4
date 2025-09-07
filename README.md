@@ -24,6 +24,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 - #### [Iterative Deepening & null window](#46-iterative-deepening--null-window)
 - #### [Anticipate direct losing moves](#47-anticipate-direct-losing-moves)
 - #### [Better move ordering](#48-better-move-ordering)
+- #### [Lower Bound transposition table](#49-lower-bound-transposition-table)
 
 ### 5. [Benchmark](#5---benchmark)
 
@@ -127,6 +128,12 @@ Then it will print you how to use the tool correctly but I will explain it here 
   **Ordering moves with a score function:**  
   To enhance move ordering, a score function is introduced. This function evaluates each possible move by counting the number of immediate winning positions it creates (such as open 3-alignments). Moves with higher scores are explored first. If two moves have the same score, the central-column heuristic is used as a tiebreaker. This approach prioritizes moves that are more likely to lead to a win, improving the overall search efficiency.
 
+- ### 4.9 Lower Bound transposition table
+
+  In negamax with alpha-beta pruning, fully explored nodes provide upper bounds while pruned nodes provide lower bounds. Traditionally, only upper bounds were stored in the transposition table, but keeping lower bounds as well can improve efficiency, even if the benefit is smaller since pruned nodes are cheaper to evaluate.
+  
+  Instead of using two separate tables, it is more efficient to store both bounds in a single table by adding a flag. This is done by shifting lower bound values by the maximum possible score, effectively doubling the score range and requiring one extra bit of storage per entry.
+
 ## 5 - Benchmark
 
 - ### Testsets
@@ -140,8 +147,8 @@ Then it will print you how to use the tool correctly but I will explain it here 
   |          test_easy_end          |       28 < moves       |      remaining < 14       |
   |        test_easy_middle         |    14 < moves <= 28    |      remaining < 14       |
   |         test_easy_begin         |      moves <= 14       |      remaining < 14       |
-  |       test_medium_middle        |    14 < moves <= 28    |   14 <= remaining < 28    |
-  |        test_medium_begin        |      moves <= 14       |   14 <= remaining < 28    |
+  |         test_medium_end         |    14 < moves <= 28    |   14 <= remaining < 28    |
+  |       test_medium_middle        |      moves <= 14       |   14 <= remaining < 28    |
   |         test_hard_begin         |      moves <= 14       |      28 <= remaining      |
 
 - ### Results
