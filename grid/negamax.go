@@ -46,25 +46,25 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	score := grid.GetScore()
 
 	elapsed := time.Since(start)
-	elapsedSeconds := elapsed.Seconds()
+	elapsedNanoseconds := elapsed.Nanoseconds()
 	nodesPerSecond := uint64(0)
 	meanTimePerNode := 0.0
 	if nodeCount > 0 {
-		meanTimePerNode = (elapsed.Seconds() * 1_000_000) / float64(nodeCount)
+		meanTimePerNode = float64(elapsedNanoseconds) / float64(nodeCount)
 	}
-	if elapsedSeconds > 0 {
-		nodesPerSecond = uint64(float64(nodeCount) / elapsedSeconds)
+	if elapsedNanoseconds > 0 {
+		nodesPerSecond = uint64(float64(nodeCount) * 1_000_000_000 / float64(elapsedNanoseconds))
 	}
 
 	stats := stats.Stats{
-		TotalTimeMicroseconds: elapsed.Seconds() * 1_000_000,
-		NodeCount:             nodeCount,
-		MeanTimePerNode:       meanTimePerNode,
-		NodesPerSecond:        nodesPerSecond,
+		TotalTimeNanoseconds: elapsedNanoseconds,
+		NodeCount:            nodeCount,
+		MeanTimePerNode:      meanTimePerNode,
+		NodesPerSecond:       nodesPerSecond,
 	}
 
 	nodeCount = 0
-	
+
 	return evaluation.Evaluation{
 		Score:          &score,
 		RemainingMoves: GetRemainingMoves(score, grid.nbMoves),

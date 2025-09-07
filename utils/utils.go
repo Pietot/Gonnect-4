@@ -26,15 +26,15 @@ func Uint8Ptr(i uint8) *uint8 {
 	return &i
 }
 
-func GetTime(microseconds float64) string {
-	if microseconds < 1_000 {
-		return fmt.Sprintf("%.2f µs", microseconds)
-	} else if microseconds < 1_000_000 {
-		return fmt.Sprintf("%.2f ms", microseconds/1_000)
-	} else if microseconds < 1_000_000_000 {
-		return fmt.Sprintf("%.2f s", microseconds/1_000_000)
+func GetTime(nanoseconds int64) string {
+	if nanoseconds < 1_000 {
+		return fmt.Sprintf("%d ns", nanoseconds)
+	} else if nanoseconds < 1_000_000 {
+		return fmt.Sprintf("%.2f µs", float64(nanoseconds)/1_000)
+	} else if nanoseconds < 1_000_000_000 {
+		return fmt.Sprintf("%.2f ms", float64(nanoseconds)/1_000_000)
 	} else {
-		return fmt.Sprintf("%.2f ns", microseconds*1_000)
+		return fmt.Sprintf("%.2f s", float64(nanoseconds)/1_000_000_000)
 	}
 }
 
