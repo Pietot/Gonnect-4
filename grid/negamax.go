@@ -121,7 +121,8 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	}
 
 	max := int8((WIDTH*HEIGHT - 1 - grid.nbMoves) / 2)
-	if value := trans_table.Get(grid.Key()); value > 0 {
+	key := grid.Key()
+	if value := trans_table.Get(key); value > 0 {
 		max = int8(int(value) + MIN_SCORE - 1)
 	}
 	if beta > max {
@@ -151,7 +152,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 		}
 	}
 
-	trans_table.Put(grid.Key(), uint8(int(alpha)-MIN_SCORE+1))
+	trans_table.Put(key, uint8(int(alpha)-MIN_SCORE+1))
 
 	return alpha
 }
