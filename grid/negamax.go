@@ -162,6 +162,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 		childGrid.play(nextMove)
 		childGridScore := -childGrid.negamax(-beta, -alpha)
 		if childGridScore >= beta {
+			trans_table.Put(key, uint8(int(childGridScore)+MAX_SCORE-2*MIN_SCORE+2))
 			return childGridScore
 		}
 		if childGridScore > alpha {
