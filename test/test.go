@@ -33,7 +33,7 @@ func TestAnalyze() {
 			continue
 		}
 		if analScore != int8(expectedScoreInt) || analColumn+1 != uint8(expectedColumnUint) {
-			fmt.Printf("Discrepancy found for position %s: expected score %s and best move %s, got score %d and best move %d\n", position, expectedScore, expectedColumn, analScore, analColumn)
+			panic(fmt.Sprintf("Discrepancy found for position %s: expected score %s and best move %s, got score %d and best move %d\n", position, expectedScore, expectedColumn, analScore, analColumn))
 		} else {
 			fmt.Println("Position", position, "analyzed correctly")
 		}
