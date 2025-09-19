@@ -1,0 +1,63 @@
+Algorithm,Testset,Mean search time (ms),Mean number of nodes,Mean time/node (ns),Mean node/second
+Negamax,test_easy_end,N/A,N/A,N/A,N/A
+,test_easy_middle,N/A,N/A,N/A,N/A
+,test_easy_begin,N/A,N/A,N/A,N/A
+,test_medium_end,N/A,N/A,N/A,N/A
+,test_medium_middle,N/A,N/A,N/A,N/A
+,test_hard_begin,N/A,N/A,N/A,N/A
+,,,,,
+Alpha-Beta prunning,test_easy_end,N/A,N/A,N/A,N/A
+,test_easy_middle,N/A,N/A,N/A,N/A
+,test_easy_begin,N/A,N/A,N/A,N/A
+,test_medium_end,N/A,N/A,N/A,N/A
+,test_medium_middle,N/A,N/A,N/A,N/A
+,test_hard_begin,N/A,N/A,N/A,N/A
+,,,,,
+Better column order exploration,test_easy_end,0.03,142,192,166345
+,test_easy_middle,218,1183210,261,2171945
+,test_easy_begin,N/A,N/A,N/A,N/A
+,test_medium_end,N/A,N/A,N/A,N/A
+,test_medium_middle,N/A,N/A,N/A,N/A
+,test_hard_begin,N/A,N/A,N/A,N/A
+,,,,,
+Bitboards,test_easy_end,0.009,142,32,427291
+,test_easy_middle,66,1183210,116,5294116
+,test_easy_begin,N/A,N/A,N/A,N/A
+,test_medium_end,N/A,N/A,N/A,N/A
+,test_medium_middle,N/A,N/A,N/A,N/A
+,test_hard_begin,N/A,N/A,N/A,N/A
+,,,,,
+Transposition table,test_easy_end,0.01,94,185,3139
+,test_easy_middle,4.8,59213,132,2763288
+,test_easy_begin,14811,205839901,69,9481330
+,test_medium_end,82,1049310,93,9438631
+,test_medium_middle,21498,308723044,82,
+,test_hard_begin,N/A,N/A,N/A,N/A
+,,,,,
+Iterative deepening & null window,test_easy_end,0.011,134,39,12968
+,test_easy_middle,0.42,5007,75,1557108
+,test_easy_begin,23.5,302056,116,8237926
+,test_medium_end,64.2,879809,85,10228193
+,test_medium_middle,13276,206408317,79,12774649
+,test_hard_begin,N/A,N/A,N/A,N/A
+,,,,,
+Skip direct losing moves,test_easy_end,0.006,72,6.9,5968
+,test_easy_middle,0.16,2307,85,865266
+,test_easy_begin,8.4,138872,66,8373534
+,test_medium_end,37,566276,89,9728652
+,test_medium_middle,6591,118451892,73,14100901
+,test_hard_begin,N/A,N/A,N/A,N/A
+,,,,,
+Better Move Ordering,test_easy_end,0.007,55,98,13124
+,test_easy_middle,0.06,515,103,446466
+,test_easy_begin,0.46,3778,64,2190596
+,test_medium_end,6.67,48767,128,5637736
+,test_medium_middle,198.8,1475001,132,7587624
+,test_hard_begin,9633,71105709,135,7405473
+,,,,,
+Lower bound transposition table,test_easy_end,0.006,51,68,1675
+,test_easy_middle,0.05,446,68,145545
+,test_easy_begin,0.4,3356,56,1380546
+,test_medium_end,5.42,40172,131,5491881
+,test_medium_middle,166,1224376,132,7519210
+,test_hard_begin,9263,65210657,140,7105260
