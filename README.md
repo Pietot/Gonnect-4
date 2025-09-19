@@ -57,7 +57,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
 - Solver
 
-  The solver gives the score from a given position and the number of remaining moves to win. Then it shows you some statistics about the search like the total time in microseconds, the number of nodes evaluated, the mean time per node and the number of nodes per second.
+  The solver gives the score from a given position and the number of remaining moves to win. Then it shows you some statistics about the search like the total time in nanoseconds, the number of nodes evaluated, the mean time per node and the number of nodes per second.
 
   ```bash
   gonnect_4.exe --solve | --s <sequence>
@@ -131,7 +131,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
 - ### 4.9 Lower Bound transposition table
 
   In negamax with alpha-beta pruning, fully explored nodes provide upper bounds while pruned nodes provide lower bounds. Traditionally, only upper bounds were stored in the transposition table, but keeping lower bounds as well can improve efficiency, even if the benefit is smaller since pruned nodes are cheaper to evaluate.
-  
+
   Instead of using two separate tables, it is more efficient to store both bounds in a single table by adding a flag. This is done by shifting lower bound values by the maximum possible score, effectively doubling the score range and requiring one extra bit of storage per entry.
 
 ## 5 - Benchmark
@@ -159,21 +159,25 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
   Here are the algorithms ranked from the most efficient to the least efficient:
 
-  | Rank | Algorithm | Test passed | Search time | Number of positions | Time per position | Positions per second |
-  | :--: | :-------: | :---------: | :---------: | :-----------------: | :---------------: | -------------------- |
-  |  1   |           |             |             |                     |                   |                      |
-  |  2   |           |             |             |                     |                   |                      |
-  |  3   |           |             |             |                     |                   |                      |
-  |  4   |           |             |             |                     |                   |                      |
-  |  5   |           |             |             |                     |                   |                      |
-  |  6   |           |             |             |                     |                   |                      |
-  |  7   |  Negamax  |     1/7     |             |                     |                   |                      |
+  | Rank |             Algorithm             | Test passed | Search time (ms) | Number of nodes | Time/node (ns) | Node/second |
+  | :--: | :-------------------------------: | :---------: | :--------------: | :-------------: | :------------: | :---------: |
+  |  1   |  Lower bound transposition table  |     6/6     |      1_572       |   11_079_843    |       99       |  3_607_353  |
+  |  2   |       Better Move Ordering        |     6/6     |      1_640       |   12_105_638    |      110       |  3_880_170  |
+  |  3   |     Skip direct losing moves      |     5/6     |      1_327       |   23_831_884    |       64       |  6_614_864  |
+  |  4   | Iterative deepening & null window |     5/6     |      2_673       |   41_519_065    |       77       |  6_562_169  |
+  |  5   |        Transposition table        |     5/6     |      7_279       |   103_134_312   |      112       |  5_421_597  |
+  |  6   |             Bitboards             |     2/6     |        33        |     591_676     |       74       |  2_860_704  |
+  |  7   |  Better column order exploration  |     2/6     |       109        |     591_676     |      227       |  1_169_145  |
+  |  8   |        Alpha-Beta prunning        |     0/6     |        -         |        -        |       -        |      -      |
+  |  9   |              Negamax              |     0/6     |        -         |        -        |       -        |      -      |
 
 <p align="center">
-  <a href="assets/csv/">Download csv here</a>
+  <a href="csv/benchmark_results.csv">Download csv here</a>
 </p>
 
-> **Note**: Tests have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.22.5 windows/amd64.
+> **Note**: Tests have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.24.4 windows/amd64.
+>
+> In the csv, for all the test with a low mean search time (few ms), the **time per node** and **nodes per second** are not relevant and can vary a lot between runs. This is because when a position is solved in less than a nanosecond, the elapsed time is effectively mesured as zero, leading to misleading statistics.
 
 ## 6 - Improve the project
 
