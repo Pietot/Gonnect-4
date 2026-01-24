@@ -1,41 +1,42 @@
 package test
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
+	"testing"
 
 	"github.com/Pietot/Gonnect-4/grid"
 )
 
-func TestAnalyze() {
-	lines, err := readPositionsFromFile("data/test_easy_end.txt")
+func TestAnalyze(t *testing.T) {
+	lines, err := readPositionsFromFile("../data/test_easy_end.txt")
 	if err != nil {
-		fmt.Println("Error reading file:", err)
+		t.Fatalf("Error reading file: %v", err)
 	}
 	for _, line := range lines {
 		position, expectedScore, expectedColumn := strings.Split(line, " ")[0], strings.Split(line, " ")[1], strings.TrimSpace(strings.Split(line, " ")[2])[1:]
 		game, err := grid.InitGrid(position)
 		if err != nil {
-			fmt.Println("Error initializing grid:", err)
+			t.Fatalf("Error initializing grid: %v", err)
 		}
 		anal := game.Analyze()
 		analScore, analColumn := getFoundValues(anal.Scores)
 		expectedScoreInt, err := strconv.ParseInt(expectedScore, 10, 8)
 		if err != nil {
-			fmt.Println("Error parsing expected score:", err)
+			t.Errorf("Error parsing expected score: %v", err)
 			continue
 		}
 		expectedColumnUint, err := strconv.ParseUint(expectedColumn, 10, 8)
 		if err != nil {
-			fmt.Println("Error parsing expected column:", err)
+			t.Errorf("Error parsing expected column: %v", err)
 			continue
 		}
 		if analScore != int8(expectedScoreInt) || analColumn+1 != uint8(expectedColumnUint) {
-			panic(fmt.Sprintf("Discrepancy found for position %s: expected score %s and best move %s, got score %d and best move %d\n", position, expectedScore, expectedColumn, analScore, analColumn))
+			t.Errorf("Discrepancy found for position %s: expected score %s and best move %s, got score %d and best move %d",
+				position, expectedScore, expectedColumn, analScore, analColumn)
 		} else {
-			fmt.Println("Position", position, "analyzed correctly")
+			t.Logf("Position %s analyzed correctly", position)
 		}
 	}
 }
