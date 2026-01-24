@@ -1,4 +1,4 @@
-package transposition_table
+package transpositiontable
 
 const MASK_49 uint64 = (1 << 49) - 1
 

@@ -5,14 +5,14 @@ import (
 
 	"github.com/Pietot/Gonnect-4/evaluation"
 	"github.com/Pietot/Gonnect-4/stats"
-	"github.com/Pietot/Gonnect-4/transposition_table"
+	"github.com/Pietot/Gonnect-4/transpositiontable"
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
 var (
 	columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 	nodeCount   = uint64(0)
-	trans_table = transposition_table.NewTranspositionTable()
+	transTable = transpositiontable.NewTranspositionTable()
 )
 
 func (grid *Grid) GetScore() int8 {
@@ -129,7 +129,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	}
 
 	key := grid.Key()
-	if value := trans_table.Get(key); value > 0 {
+	if value := transTable.Get(key); value > 0 {
 		if int(value) > MAX_SCORE-MIN_SCORE+1 {
 			min := int8(int(value) + 2*MIN_SCORE - MAX_SCORE - 2)
 			if alpha < min {
@@ -162,7 +162,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 		childGrid.play(nextMove)
 		childGridScore := -childGrid.negamax(-beta, -alpha)
 		if childGridScore >= beta {
-			trans_table.Put(key, uint8(int(childGridScore)+MAX_SCORE-2*MIN_SCORE+2))
+			transTable.Put(key, uint8(int(childGridScore)+MAX_SCORE-2*MIN_SCORE+2))
 			return childGridScore
 		}
 		if childGridScore > alpha {
@@ -170,7 +170,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 		}
 	}
 
-	trans_table.Put(key, uint8(int(alpha)-MIN_SCORE+1))
+	transTable.Put(key, uint8(int(alpha)-MIN_SCORE+1))
 
 	return alpha
 }
