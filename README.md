@@ -28,8 +28,8 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 
 ### 5. [Benchmark](#5---benchmark)
 
-- #### 5.1 [Testsets](#5---testsets)
-- #### 5.2 [Results](#5---results)
+- #### 5.1 [Testsets](#testsets)
+- #### 5.2 [Results](#results)
 
 ### 6. [Improve the project](#6---improve-the-project)
 
