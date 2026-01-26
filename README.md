@@ -39,6 +39,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 
 - Command-line interface for easy interaction
 - Ability to analyze and/or solve Connect 4 positions
+- Uses a book of known positions to solve hard positions instantly
 
 ## 2 - Installation
 
@@ -60,18 +61,29 @@ Then it will print you how to use the tool correctly but I will explain it here 
   The solver gives the score from a given position and the number of remaining moves to win. Then it shows you some statistics about the search like the total time in nanoseconds, the number of nodes evaluated, the mean time per node and the number of nodes per second.
 
   ```bash
-  gonnect_4.exe --solve | --s <sequence>
+  gonnect_4.exe -s <sequence>
   ```
 
 - Analyzer
 
-  The analyzer provides insights into a given position, including the score of all possible moves, the best move to make, and the number of remaining moves until victory.
+  The analyzer provides insights into a given position, including the score of all possible moves, the best move to make, and the number of remaining moves until victory. It also displays statistics like the `-s` command above.
 
   ```bash
-  gonnect_4.exe --analyze | --a <sequence>
+  gonnect_4.exe -a <sequence>
+  ```
+
+- The book
+  
+  The book is a precomputed database of known positions that takes +20M nodes to **analyse** that allows the solver/analyzer to instantly provide results for those positions without performing any search.
+
+  The book is enbaled but if you want to disable it, you can use the following flag:
+  ```bash
+  gonnect_4.exe -s <sequence> --disable-book
   ```
 
 > **Note**: The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right).
+>
+> The flags and sequence can be place in the order you want.
 
 ## 4 - Algorithms & optimizations
 
