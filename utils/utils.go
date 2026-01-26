@@ -58,3 +58,15 @@ func addUnderscores(s string) string {
 
 	return result.String()
 }
+
+func GetBestScoreAndMove(scores [7]*int8) (bestScore int8, bestMove uint8) {
+	bestScore = -128
+	bestMove = 0
+	for i, scorePtr := range scores {
+		if scorePtr != nil && *scorePtr > bestScore {
+			bestScore = *scorePtr
+			bestMove = uint8(i)
+		}
+	}
+	return bestScore, bestMove
+}

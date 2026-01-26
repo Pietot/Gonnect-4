@@ -2,6 +2,7 @@ package grid
 
 import (
 	"fmt"
+	"math/bits"
 	"strconv"
 )
 
@@ -28,10 +29,10 @@ func InitGrid(columnsSequence string) (*Grid, error) {
 			return nil, fmt.Errorf("invalid column character: %v", err)
 		}
 		column -= 1
-		if column < 0 || column >= WIDTH || !grid.canPlay(column) || grid.IsWinningMove(column) {
+		if column < 0 || column >= WIDTH || !grid.CanPlay(column) || grid.IsWinningMove(column) {
 			return nil, fmt.Errorf("can't play at column %d", column+1)
 		}
-		grid.playColumn(column)
+		grid.PlayColumn(column)
 	}
 	return grid, nil
 }
@@ -40,11 +41,55 @@ func (grid *Grid) Key() uint64 {
 	return grid.CurrentPosition + grid.Mask + BOTTOM
 }
 
+func (grid *Grid) MirrorKey() uint64 {
+	return mirror(grid.CurrentPosition) + mirror(grid.Mask) + BOTTOM
+}
+
+func GetCanonicalKey(grid *Grid) uint64 {
+	k, mk := grid.Key(), grid.MirrorKey()
+	if k < mk {
+		return k
+	}
+	return mk
+}
+
+// mirror return the bitboard reversed horizontally
+func mirror(bitboard uint64) uint64 {
+	return ((bitboard & 0x7F) << 42) |
+		((bitboard & (0x7F << 7)) << 28) |
+		((bitboard & (0x7F << 14)) << 14) |
+		(bitboard & (0x7F << 21)) |
+		((bitboard & (0x7F << 28)) >> 14) |
+		((bitboard & (0x7F << 35)) >> 28) |
+		((bitboard & (0x7F << 42)) >> 42)
+}
+
+func FromKey(key uint64) *Grid {
+	g := &Grid{}
+	g.Mask = 0
+	g.CurrentPosition = 0
+	for i := range 7 {
+		colMask := uint64(0x7F) << (i * 7)
+		colBits := key & colMask
+
+		if colBits > 0 {
+			msb := uint64(1) << (63 - bits.LeadingZeros64(colBits))
+			bottomBit := uint64(1) << (i * 7)
+			columnMaskInGrid := (msb - bottomBit) & colMask
+			g.Mask |= columnMaskInGrid
+			g.CurrentPosition |= (colBits ^ msb)
+		}
+	}
+	g.nbMoves = bits.OnesCount64(g.Mask)
+
+	return g
+}
+
 func (grid *Grid) IsWinningMove(column int) bool {
 	return (grid.winningPositionMask() & grid.possibleMask() & columnMask(column)) != 0
 }
 
-func (grid *Grid) canPlay(column int) bool {
+func (grid *Grid) CanPlay(column int) bool {
 	return (grid.Mask & topMask(column)) == 0
 }
 
@@ -54,7 +99,7 @@ func (grid *Grid) play(move uint64) {
 	grid.nbMoves++
 }
 
-func (grid *Grid) playColumn(column int) {
+func (grid *Grid) PlayColumn(column int) {
 	grid.play((grid.Mask + bottomMask(column)) & columnMask(column))
 }
 

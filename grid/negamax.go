@@ -1,18 +1,22 @@
 package grid
 
 import (
+	"log"
 	"time"
 
+	"github.com/Pietot/Gonnect-4/config"
+	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/evaluation"
 	"github.com/Pietot/Gonnect-4/stats"
 	"github.com/Pietot/Gonnect-4/transpositiontable"
 	"github.com/Pietot/Gonnect-4/utils"
+	"go.etcd.io/bbolt"
 )
 
 var (
 	columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 	nodeCount   = uint64(0)
-	transTable = transpositiontable.NewTranspositionTable()
+	transTable  = transpositiontable.NewTranspositionTable()
 )
 
 func (grid *Grid) GetScore() int8 {
@@ -41,6 +45,28 @@ func (grid *Grid) GetScore() int8 {
 }
 
 func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
+
+	if config.IsBookEnabled {
+		db, err := bbolt.Open(database.DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+		results, found := database.GetScores(db, grid.Key(), grid.MirrorKey())
+		if found {
+			score, _ := utils.GetBestScoreAndMove(results)
+			return evaluation.Evaluation{
+					Score:          &score,
+					RemainingMoves: GetRemainingMoves(score, grid.nbMoves),
+				}, stats.Stats{
+					TotalTimeNanoseconds: 0,
+					NodeCount:            0,
+					MeanTimePerNode:      0,
+					NodesPerSecond:       0,
+				}
+		}
+	}
+
 	start := time.Now()
 
 	score := grid.GetScore()
@@ -71,18 +97,43 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	}, stats
 }
 
-func (grid *Grid) Analyze() evaluation.Analyzation {
+func (grid *Grid) Analyze() (evaluation.Analyzation, stats.Stats) {
 	scores := evaluation.Analyzation{}
 	bestMove := uint8(0)
 	maxScore := int8(-128)
+
+	if config.IsBookEnabled {
+		db, err := bbolt.Open(database.DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+
+		results, found := database.GetScores(db, grid.Key(), grid.MirrorKey())
+
+		if found {
+			scores.Scores = results
+			_, bestMove = utils.GetBestScoreAndMove(results)
+			scores.BestMove = &bestMove
+			scores.RemainingMoves = GetRemainingMoves(*results[bestMove], grid.nbMoves)
+			return scores, stats.Stats{
+				TotalTimeNanoseconds: 0,
+				NodeCount:            0,
+				MeanTimePerNode:      0,
+				NodesPerSecond:       0,
+			}
+		}
+	}
+
+	start := time.Now()
 	for column := range 7 {
-		if grid.canPlay(column) {
+		if grid.CanPlay(column) {
 			var score int8
 			if grid.IsWinningMove(column) {
 				score = int8((WIDTH*HEIGHT + 1 - grid.nbMoves) / 2)
 			} else {
 				childGrid := *grid
-				childGrid.playColumn(column)
+				childGrid.PlayColumn(column)
 				score = -childGrid.GetScore()
 			}
 			scores.Scores[column] = &score
@@ -93,14 +144,49 @@ func (grid *Grid) Analyze() evaluation.Analyzation {
 		}
 	}
 
+	elapsed := time.Since(start)
+	elapsedNanoseconds := elapsed.Nanoseconds()
+	nodesPerSecond := uint64(0)
+	meanTimePerNode := 0.0
+	if nodeCount > 0 {
+		meanTimePerNode = float64(elapsedNanoseconds) / float64(nodeCount)
+	}
+	if elapsedNanoseconds > 0 {
+		nodesPerSecond = uint64(float64(nodeCount) * 1_000_000_000 / float64(elapsedNanoseconds))
+	}
+
+	stats := stats.Stats{
+		TotalTimeNanoseconds: elapsedNanoseconds,
+		NodeCount:            nodeCount,
+		MeanTimePerNode:      meanTimePerNode,
+		NodesPerSecond:       nodesPerSecond,
+	}
+
+	nodeCount = 0
+
 	bestRemainingMoves := GetRemainingMoves(maxScore, grid.nbMoves)
 
 	scores.RemainingMoves = bestRemainingMoves
 	scores.BestMove = &bestMove
-	return scores
+	return scores, stats
 }
 
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
+
+	if config.IsBookEnabled {
+		db, err := bbolt.Open(database.DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer db.Close()
+
+		results, found := database.GetScores(db, grid.Key(), grid.MirrorKey())
+		if found {
+			score, _ := utils.GetBestScoreAndMove(results)
+			return score
+		}
+	}
+
 	nodeCount++
 
 	nextMoves := grid.possibleNonLosingMoves()
