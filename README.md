@@ -43,7 +43,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 
 ## 2 - Installation
 
-Download the binary from the [releases page](https://github.com/Pietot/Gonnect-4/releases/latest).
+Download the binary and the book (optional) from the [latest releases](https://github.com/Pietot/Gonnect-4/releases/latest).
 
 ## 3 - How to use
 
@@ -73,10 +73,11 @@ Then it will print you how to use the tool correctly but I will explain it here 
   ```
 
 - The book
-  
+
   The book is a precomputed database of known positions that takes +20M nodes to **analyse** that allows the solver/analyzer to instantly provide results for those positions without performing any search.
 
   The book is enbaled but if you want to disable it, you can use the following flag:
+
   ```bash
   gonnect_4.exe -s <sequence> --disable-book
   ```
