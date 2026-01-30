@@ -4,13 +4,13 @@ import (
 	"fmt"
 )
 
-type Analyzation struct {
+type Analysis struct {
 	Scores         [7]*int8
 	RemainingMoves *uint8
 	BestMove       *uint8
 }
 
-func (a Analyzation) String() string {
+func (a Analysis) String() string {
 	scores := make([]string, len(a.Scores))
 	for i, ptr := range a.Scores {
 		if ptr != nil {

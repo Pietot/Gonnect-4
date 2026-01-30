@@ -97,8 +97,8 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	}, stats
 }
 
-func (grid *Grid) Analyze() (evaluation.Analyzation, stats.Stats) {
-	scores := evaluation.Analyzation{}
+func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
+	scores := evaluation.Analysis{}
 	bestMove := uint8(0)
 	maxScore := int8(-128)
 
