@@ -76,15 +76,15 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
   The book is a precomputed database of known positions that takes +20M nodes to **analyse** that allows the solver/analyzer to instantly provide results for those positions without performing any search.
 
-  The book is enbaled but if you want to disable it, you can use the following flag:
+  The book is enabled by default but if you want to disable it, you can use the following flag:
 
   ```bash
-  gonnect_4.exe -s <sequence> --disable-book
+  gonnect_4.exe -s --disable-book <sequence>
   ```
 
 > **Note**: The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right).
 >
-> The flags and sequence can be place in the order you want.
+> The flags can by placed in the order you want but they must be before the sequence.
 
 ## 4 - Algorithms & optimizations
 
