@@ -65,18 +65,21 @@ func CreateBook(maxDepth int) {
 			if stats.NodeCount >= NODE_THRESHOLD {
 				database.SaveResult(tx, key, analysis.Scores)
 				fmt.Printf("[D:%d] %d saved (%d nodes)\n", depth, key, stats.NodeCount)
-			}
+				for col := range 7 {
+					if g.CanPlay(col) && !g.IsWinningMove(col) {
+						child := *g
+						child.PlayColumn(col)
+						cKey := grid.GetCanonicalKey(&child)
 
-			for col := range 7 {
-				if g.CanPlay(col) {
-					child := *g
-					child.PlayColumn(col)
-					cKey := grid.GetCanonicalKey(&child)
-
-					if !database.IsAnalyzed(tx, cKey) && !database.IsInQueue(tx, cKey) {
-						database.AddToQueue(tx, cKey, depth+1)
+						if !database.IsAnalyzed(tx, cKey) && !database.IsInQueue(tx, cKey) {
+							database.AddToQueue(tx, cKey, depth+1)
+						}
+					} else {
+						fmt.Printf("[D:%d] %d winning move in col %d, skipping childs from this node.\n", depth, key, col)
 					}
 				}
+			} else {
+				fmt.Printf("[D:%d] %d skipped (%d nodes). No children from this node will be added to the queue nor analyzed.\n", depth, key, stats.NodeCount)
 			}
 			return nil
 		})
