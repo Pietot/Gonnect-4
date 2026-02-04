@@ -44,6 +44,7 @@ func parseNumbers(arg string) (string, error) {
 }
 
 func main() {
+	defer database.DB.Close()
 	// Don't forget to import the book package.
 	// Uncomment the following line to continue/recreate building the book.
 	// book.CreateBook(42)

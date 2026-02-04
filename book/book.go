@@ -2,8 +2,6 @@ package book
 
 import (
 	"fmt"
-	"log"
-	"time"
 
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
@@ -13,14 +11,7 @@ import (
 const NODE_THRESHOLD = 20_000_000
 
 func CreateBook(maxDepth int) {
-	db, err := bbolt.Open(database.DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
-	if err != nil {
-		log.Fatalf("Critical error: cannot open database."+
-			"Check if another instance is running: %v", err)
-	}
-	defer db.Close()
-
-	db.Update(func(tx *bbolt.Tx) error {
+	database.DB.Update(func(tx *bbolt.Tx) error {
 		tx.CreateBucketIfNotExists([]byte(database.BucketResults))
 		tx.CreateBucketIfNotExists([]byte(database.BucketQueue))
 		tx.CreateBucketIfNotExists([]byte(database.BucketPending))
@@ -28,21 +19,21 @@ func CreateBook(maxDepth int) {
 	})
 
 	var isEmpty bool
-	db.View(func(tx *bbolt.Tx) error {
+	database.DB.View(func(tx *bbolt.Tx) error {
 		isEmpty = tx.Bucket([]byte(database.BucketQueue)).Stats().KeyN == 0
 		return nil
 	})
 
 	if isEmpty {
 		startGrid, _ := grid.InitGrid("")
-		db.Update(func(tx *bbolt.Tx) error {
+		database.DB.Update(func(tx *bbolt.Tx) error {
 			database.AddToQueue(tx, grid.GetCanonicalKey(startGrid), 0)
 			return nil
 		})
 	}
 
 	for {
-		key, depth, found := database.PopFromQueue(db)
+		key, depth, found := database.PopFromQueue(database.DB)
 		if !found || depth > maxDepth {
 			fmt.Println("End of calculation.")
 			break
@@ -51,7 +42,7 @@ func CreateBook(maxDepth int) {
 		g := grid.FromKey(key)
 
 		var alreadyDone bool
-		db.View(func(tx *bbolt.Tx) error {
+		database.DB.View(func(tx *bbolt.Tx) error {
 			alreadyDone = database.IsAnalyzed(tx, key)
 			return nil
 		})
@@ -61,10 +52,10 @@ func CreateBook(maxDepth int) {
 		}
 
 		analysis, stats := g.Analyze()
-		db.Update(func(tx *bbolt.Tx) error {
+		database.DB.Update(func(tx *bbolt.Tx) error {
 			if stats.NodeCount >= NODE_THRESHOLD {
 				database.SaveResult(tx, key, analysis.Scores)
-				fmt.Printf("[D:%d] %d saved (%d nodes)\n", depth, key, stats.NodeCount)
+				fmt.Printf("\033[32m[D:%d] %d saved (%d nodes)\033[0m\n", depth, key, stats.NodeCount)
 				for col := range 7 {
 					if g.CanPlay(col) && !g.IsWinningMove(col) {
 						child := *g
@@ -75,11 +66,11 @@ func CreateBook(maxDepth int) {
 							database.AddToQueue(tx, cKey, depth+1)
 						}
 					} else {
-						fmt.Printf("[D:%d] %d winning move in col %d, skipping childs from this node.\n", depth, key, col)
+						fmt.Printf("\033[33m[D:%d] %d winning move in col %d, skipping childs from this node.\033[0m\n", depth, key, col)
 					}
 				}
 			} else {
-				fmt.Printf("[D:%d] %d skipped (%d nodes). No children from this node will be added to the queue nor analyzed.\n", depth, key, stats.NodeCount)
+				fmt.Printf("\033[31m[D:%d] %d skipped (%d nodes). No children from this node will be added to the queue nor analyzed.\033[0m\n", depth, key, stats.NodeCount)
 			}
 			return nil
 		})

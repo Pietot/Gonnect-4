@@ -16,9 +16,10 @@ var (
 	BucketResults = "Results"
 	BucketQueue   = "Queue"
 	BucketPending = "Pending"
+	DB            = getDatabase()
 )
 
-func GetDatabase() *bbolt.DB {
+func getDatabase() *bbolt.DB {
 	db, err := bbolt.Open(DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		log.Fatal(err)
