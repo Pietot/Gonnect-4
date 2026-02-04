@@ -1,7 +1,6 @@
 package grid
 
 import (
-	"log"
 	"time"
 
 	"github.com/Pietot/Gonnect-4/config"
@@ -10,13 +9,13 @@ import (
 	"github.com/Pietot/Gonnect-4/stats"
 	"github.com/Pietot/Gonnect-4/transpositiontable"
 	"github.com/Pietot/Gonnect-4/utils"
-	"go.etcd.io/bbolt"
 )
 
 var (
 	columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 	nodeCount   = uint64(0)
 	transTable  = transpositiontable.NewTranspositionTable()
+	db          = database.GetDatabase()
 )
 
 func (grid *Grid) GetScore() int8 {
@@ -46,12 +45,8 @@ func (grid *Grid) GetScore() int8 {
 
 func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 
+	defer db.Close()
 	if config.IsBookEnabled {
-		db, err := bbolt.Open(database.DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer db.Close()
 		results, found := database.GetScores(db, grid.Key(), grid.MirrorKey())
 		if found {
 			score, _ := utils.GetBestScoreAndMove(results)
@@ -98,17 +93,13 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 }
 
 func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
+	defer db.Close()
+
 	scores := evaluation.Analysis{}
 	bestMove := uint8(0)
 	maxScore := int8(-128)
 
 	if config.IsBookEnabled {
-		db, err := bbolt.Open(database.DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer db.Close()
-
 		results, found := database.GetScores(db, grid.Key(), grid.MirrorKey())
 
 		if found {
@@ -174,12 +165,6 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 
 	if config.IsBookEnabled {
-		db, err := bbolt.Open(database.DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer db.Close()
-
 		results, found := database.GetScores(db, grid.Key(), grid.MirrorKey())
 		if found {
 			score, _ := utils.GetBestScoreAndMove(results)

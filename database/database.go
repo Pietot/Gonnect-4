@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"encoding/gob"
 	"fmt"
+	"log"
+	"time"
 
 	"go.etcd.io/bbolt"
 )
@@ -15,6 +17,14 @@ var (
 	BucketQueue   = "Queue"
 	BucketPending = "Pending"
 )
+
+func GetDatabase() *bbolt.DB {
+	db, err := bbolt.Open(DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+	if err != nil {
+		log.Fatal(err)
+	}
+	return db
+}
 
 func Uint64ToBytes(v uint64) []byte {
 	b := make([]byte, 8)
