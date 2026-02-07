@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/Pietot/Gonnect-4/config"
+	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
 )
 
