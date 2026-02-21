@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/Pietot/Gonnect-4/book"
+	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
+	"go.etcd.io/bbolt"
 )
 
 var files = []string{
@@ -51,6 +55,28 @@ func BenchmarkAnalyze() {
 	fmt.Println("Mean time per node (ns):", meanTimesPerNode/float64(totalAnalyses))
 	fmt.Println("Mean nodes per second:", nodesPerSecond/uint64(totalAnalyses))
 	fmt.Println()
+}
+
+func BenchmarkBookCreation() {
+	// warm up
+	gameTest, _ := grid.InitGrid("533422")
+	gameTest.Analyze()
+
+	os.Remove("benchmark/book_benchmark_d8.db")
+
+	bookD8, err := bbolt.Open("benchmark/book_benchmark_d8.db", 0600, nil)
+	if err != nil {
+		fmt.Println("Error opening database:", err)
+		return
+	}
+	defer bookD8.Close()
+
+	database.DB = bookD8
+
+	start := time.Now()
+	book.CreateBook(8)
+	elapsed := time.Since(start)
+	fmt.Printf("Book creation completed in %s\n", elapsed)
 }
 
 func readPositionsFromFile(filename string) ([]string, error) {
