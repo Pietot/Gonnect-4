@@ -49,6 +49,7 @@ func BenchmarkAnalyze() {
 			nodesPerSecond += stat.NodesPerSecond
 			totalAnalyses++
 		}
+		fmt.Println("File:", file, "analyzed")
 	}
 	fmt.Println("Mean total time (ns):", totalTimes/int64(totalAnalyses))
 	fmt.Println("Mean node count:", nodeCounts/uint64(totalAnalyses))
