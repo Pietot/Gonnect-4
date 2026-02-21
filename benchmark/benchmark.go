@@ -9,6 +9,7 @@ import (
 	"github.com/Pietot/Gonnect-4/book"
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
+	"github.com/schollz/progressbar/v3"
 	"go.etcd.io/bbolt"
 )
 
@@ -35,6 +36,7 @@ func BenchmarkAnalyze() {
 		if err != nil {
 			fmt.Println("Error reading file:", err)
 		}
+		bar := progressbar.Default(int64(len(lines)))
 		for _, line := range lines {
 			position := strings.Split(line, " ")[0]
 			game, err := grid.InitGrid(position)
@@ -46,6 +48,7 @@ func BenchmarkAnalyze() {
 			nodeCounts += stat.NodeCount
 			meanTimesPerNode += stat.MeanTimePerNode
 			nodesPerSecond += stat.NodesPerSecond
+			bar.Add(1)
 		}
 		fmt.Println("File:", file, "analyzed")
 		fmt.Println("Mean total time (ns):", totalTimes/int64(len(lines)))
