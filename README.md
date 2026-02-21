@@ -157,12 +157,12 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
   | Test Set (1000 test cases each) | Number of played moves | Number of remaining moves |
   | :-----------------------------: | :--------------------: | :-----------------------: |
-  |          test_easy_end          |       28 < moves       |      remaining < 14       |
+  |          test_easy_end          |       moves > 28       |      remaining < 14       |
   |        test_easy_middle         |    14 < moves <= 28    |      remaining < 14       |
   |         test_easy_begin         |      moves <= 14       |      remaining < 14       |
   |         test_medium_end         |    14 < moves <= 28    |   14 <= remaining < 28    |
   |       test_medium_middle        |      moves <= 14       |   14 <= remaining < 28    |
-  |         test_hard_begin         |      moves <= 14       |      28 <= remaining      |
+  |         test_hard_begin         |      moves <= 14       |      remaining >= 28      |
 
 - ### Results
 
