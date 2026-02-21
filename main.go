@@ -8,6 +8,7 @@ import (
 	"github.com/Pietot/Gonnect-4/config"
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
+	c "github.com/fatih/color"
 )
 
 func printUsage() {
@@ -15,22 +16,22 @@ func printUsage() {
 	fmt.Println("Usage:")
 	fmt.Println()
 	fmt.Println("    -a")
-	fmt.Println("\033[35m    Analyze a position by giving a score for all possible moves\033[0m")
+	c.Magenta("    Analyze a position by giving a score for all possible moves")
 	fmt.Println()
 	fmt.Println("    -s")
-	fmt.Println("\033[35m    Solve a position by giving its score and remaining moves\033[0m")
+	c.Magenta("    Solve a position by giving its score and remaining moves")
 	fmt.Println()
 	fmt.Println("    --disable-book")
-	fmt.Println("\033[35m    Disable the opening book for analyzing/solving positions\033[0m")
+	c.Magenta("    Disable the opening book for analyzing/solving positions")
 	fmt.Println()
 	fmt.Println("    <sequence>")
-	fmt.Println("\033[35m    A sequence of digits representing the moves played so far.\n    Columns are numbered from 1 to 7.\033[0m")
+	c.Magenta("    A sequence of digits representing the moves played so far.\n    Columns are numbered from 1 to 7.")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println()
-	fmt.Println("\033[32m    ./gonnect4 -s")
-	fmt.Println("    ./gonnect4 -a 32164625")
-	fmt.Println("    ./gonnect4 -s --disable-book 5654767662\033[0m")
+	c.Green("    ./gonnect4 -s")
+	c.Green("    ./gonnect4 -a 32164625")
+	fmt.Println("    ./gonnect4 -s --disable-book 5654767662")
 	fmt.Println()
 	os.Exit(1)
 }
@@ -38,7 +39,7 @@ func printUsage() {
 func parseNumbers(arg string) (string, error) {
 	for _, r := range arg {
 		if !('0' <= r && r <= '9') {
-			return "", fmt.Errorf("\033[31minvalid argument: %s (must contain only digits)\033[0m", arg)
+			return "", fmt.Errorf("%s", c.RedString("invalid argument: %s (must contain only digits)", arg))
 		}
 	}
 	return arg, nil
@@ -60,13 +61,13 @@ func main() {
 	flag.Parse()
 
 	if (*analyze && *solve) || (!*analyze && !*solve) {
-		fmt.Println("\033[31mError: you must provide exactly one of -a or -s\033[0m")
+		c.Red("Error: you must provide exactly one of -a or -s")
 		printUsage()
 	}
 
 	args := flag.Args()
 	if len(args) > 1 {
-		fmt.Println("\033[31mError: too many sequences\033[0m")
+		c.Red("Error: too many sequences")
 		printUsage()
 	}
 
@@ -76,13 +77,13 @@ func main() {
 
 	sequence, err := parseNumbers(args[0])
 	if err != nil {
-		fmt.Println("\033[31mError:\033[0m", err)
+		c.Red("Error: %s", err)
 		printUsage()
 	}
 
 	grid, err := grid.InitGrid(sequence)
 	if err != nil {
-		fmt.Println("\033[31mError:\033[0m", err)
+		c.Red("Error: %s", err)
 		printUsage()
 	}
 

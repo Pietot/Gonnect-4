@@ -10,6 +10,7 @@ import (
 	"github.com/Pietot/Gonnect-4/evaluation"
 	"github.com/Pietot/Gonnect-4/grid"
 	"github.com/Pietot/Gonnect-4/stats"
+	c "github.com/fatih/color"
 	"go.etcd.io/bbolt"
 )
 
@@ -77,7 +78,7 @@ func CreateBook(maxDepth int) {
 		}
 
 		if depth > maxDepth {
-			fmt.Printf("\033[33m[D:%d] %d reached max depth. End of calculation.\033[0m\n", depth, key)
+			c.Magenta("[D:%d] %d reached max depth. End of calculation.", depth, key)
 			continue
 		}
 
@@ -127,7 +128,7 @@ func collector(results <-chan Result) {
 
 			if res.Stats.NodeCount >= NODE_THRESHOLD {
 				database.SaveResult(tx, res.Key, res.Analysis.Scores)
-				fmt.Printf("\033[32m[D:%d-W:%d] %d saved (%d nodes)\033[0m\n", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
+				c.Green("[D:%d-W:%d] %d saved (%d nodes)", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
 
 				for col := range 7 {
 					if res.Grid.CanPlay(col) && !res.Grid.IsWinningMove(col) {
@@ -138,12 +139,12 @@ func collector(results <-chan Result) {
 							database.AddToQueue(tx, cKey, res.Depth+1)
 						}
 					} else {
-						fmt.Printf("\033[33m[D:%d-W:%d] %d winning move in col %d, skipping childs from this node.\033[0m\n", res.Depth, res.WorkerID, res.Key, col)
+						c.Yellow("[D:%d-W:%d] %d winning move in col %d, skipping childs from this node.", res.Depth, res.WorkerID, res.Key, col)
 					}
 				}
 
 			} else {
-				fmt.Printf("\033[31m[D:%d-W:%d] %d skipped (%d nodes).No children from this node will be added to the queue nor analyzed.\033[0m\n", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
+				c.Red("[D:%d-W:%d] %d skipped (%d nodes).No children from this node will be added to the queue nor analyzed.", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
 			}
 			return nil
 		})
