@@ -34,8 +34,6 @@ type Result struct {
 }
 
 func CreateBook(maxDepth int) {
-	initDB()
-
 	jobs := make(chan Job, JOB_QUEUE_SIZE)
 	results := make(chan Result, JOB_QUEUE_SIZE)
 
@@ -150,13 +148,4 @@ func collector(results <-chan Result) {
 			return nil
 		})
 	}
-}
-
-func initDB() {
-	database.DB.Update(func(tx *bbolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte(database.BucketResults))
-		tx.CreateBucketIfNotExists([]byte(database.BucketQueue))
-		tx.CreateBucketIfNotExists([]byte(database.BucketPending))
-		return nil
-	})
 }
