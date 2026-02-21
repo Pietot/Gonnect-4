@@ -26,12 +26,11 @@ func BenchmarkAnalyze() {
 	gameTest, _ := grid.InitGrid("533422")
 	gameTest.Analyze()
 
-	totalTimes := int64(0)
-	nodeCounts := uint64(0)
-	meanTimesPerNode := float64(0)
-	nodesPerSecond := uint64(0)
-	totalAnalyses := 0
 	for _, file := range files {
+		totalTimes := int64(0)
+		nodeCounts := uint64(0)
+		meanTimesPerNode := float64(0)
+		nodesPerSecond := uint64(0)
 		lines, err := readPositionsFromFile(file)
 		if err != nil {
 			fmt.Println("Error reading file:", err)
@@ -47,14 +46,13 @@ func BenchmarkAnalyze() {
 			nodeCounts += stat.NodeCount
 			meanTimesPerNode += stat.MeanTimePerNode
 			nodesPerSecond += stat.NodesPerSecond
-			totalAnalyses++
 		}
 		fmt.Println("File:", file, "analyzed")
+		fmt.Println("Mean total time (ns):", totalTimes/int64(len(lines)))
+		fmt.Println("Mean node count:", nodeCounts/uint64(len(lines)))
+		fmt.Println("Mean time per node (ns):", meanTimesPerNode/float64(len(lines)))
+		fmt.Println("Mean nodes per second:", nodesPerSecond/uint64(len(lines)))
 	}
-	fmt.Println("Mean total time (ns):", totalTimes/int64(totalAnalyses))
-	fmt.Println("Mean node count:", nodeCounts/uint64(totalAnalyses))
-	fmt.Println("Mean time per node (ns):", meanTimesPerNode/float64(totalAnalyses))
-	fmt.Println("Mean nodes per second:", nodesPerSecond/uint64(totalAnalyses))
 	fmt.Println()
 }
 
