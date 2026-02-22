@@ -65,9 +65,9 @@ func BenchmarkBookCreation() {
 	gameTest, _ := grid.InitGrid("533422")
 	gameTest.Analyze()
 
-	os.Remove("benchmark/book_benchmark_d8.db")
+	os.Remove("benchmark/book_benchmark.db")
 
-	bookD8, err := bbolt.Open("benchmark/book_benchmark_d8.db", 0600, nil)
+	bookD8, err := bbolt.Open("benchmark/book_benchmark.db", 0600, nil)
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
