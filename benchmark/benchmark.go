@@ -10,7 +10,6 @@ import (
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
 	"github.com/schollz/progressbar/v3"
-	"go.etcd.io/bbolt"
 )
 
 var files = []string{
@@ -61,17 +60,10 @@ func BenchmarkAnalyze() {
 }
 
 func BenchmarkBookCreation() {
-	// warm up
-	gameTest, _ := grid.InitGrid("533422")
-	gameTest.Analyze()
+	dbName := "benchmark/book_benchmark.db"
+	os.Remove(dbName)
 
-	os.Remove("benchmark/book_benchmark.db")
-
-	bookD8, err := bbolt.Open("benchmark/book_benchmark.db", 0600, nil)
-	if err != nil {
-		fmt.Println("Error opening database:", err)
-		return
-	}
+	bookD8 := database.GetDatabase(dbName)
 	defer bookD8.Close()
 
 	database.DB = bookD8

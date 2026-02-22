@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	dBName        = "database/gonnect4_book.db"
 	BucketResults = "Results"
 	BucketQueue   = "Queue"
 	BucketPending = "Pending"
@@ -21,8 +20,8 @@ var (
 
 const KEY_EMPTY_POSITION uint64 = 4432676798593
 
-func GetDatabase() *bbolt.DB {
-	db, err := bbolt.Open(dBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+func GetDatabase(dbName string) *bbolt.DB {
+	db, err := bbolt.Open(dbName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		log.Fatal(err)
 	}
