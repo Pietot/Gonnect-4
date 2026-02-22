@@ -65,6 +65,6 @@ The `BenchmarkBookCreation` function is designed to benchmark the performance of
 The benchmark then measures the time taken to create a book of depth 8.
 
 > **[!WARNING]**
-> The **BenchmarkBookCreation** is designed to create a new **.db** file called `book_benchmark_d8.db` in the **benchmark** directory.
+> The **BenchmarkBookCreation** is designed to create a new **.db** file called `book_benchmark.db` in the **benchmark** directory.
 >
-> **_DO NOT COMMIT_** `book_benchmark_d8.db` to the repository. It is only used for benchmarking purposes and should not be part of the repository.
+> **_DO NOT COMMIT_** `book_benchmark.db` to the repository. It is only used for benchmarking purposes and should not be part of the repository.
