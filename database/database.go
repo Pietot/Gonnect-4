@@ -19,6 +19,8 @@ var (
 	DB            *bbolt.DB
 )
 
+const KEY_EMPTY_POSITION uint64 = 4432676798593
+
 func GetDatabase() *bbolt.DB {
 	db, err := bbolt.Open(dBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
@@ -26,10 +28,15 @@ func GetDatabase() *bbolt.DB {
 	}
 	db.Update(func(tx *bbolt.Tx) error {
 		tx.CreateBucketIfNotExists([]byte(BucketResults))
-		tx.CreateBucketIfNotExists([]byte(BucketQueue))
+		q, _ := tx.CreateBucketIfNotExists([]byte(BucketQueue))
 		tx.CreateBucketIfNotExists([]byte(BucketPending))
+		// Add initial position to queue if empty
+		if q.Stats().KeyN == 0 {
+			AddToQueue(tx, KEY_EMPTY_POSITION, 0)
+		}
 		return nil
 	})
+
 	return db
 }
 
