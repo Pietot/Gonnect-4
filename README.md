@@ -147,11 +147,13 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
   Instead of using two separate tables, it is more efficient to store both bounds in a single table by adding a flag. This is done by shifting lower bound values by the maximum possible score, effectively doubling the score range and requiring one extra bit of storage per entry.
 
-## 5 - Benchmark
+## 5 - Performance
 
 - ### Testsets
 
   To benchmark the different algorithms, I've re-created 6 datasets from [here](http://blog.gamesolver.org/solving-connect-four/02-test-protocol/) and placed them in the <a href="tests/data/">data</a> directory.
+
+  Each file contains 1000 positions for a total of 6000 positions. More information about the test files can be found in [this README](benchmark/README.md).
 
   Here are the datasets sorted from the easiest to the hardest:
 
@@ -166,31 +168,37 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
 - ### Results
 
-  I ran the tests on each algorithm and collected the results in a CSV file and computed the **mean** for each category.
+  I ran my solver and anoother (from [benjaminrall](https://github.com/benjaminrall/connect-four-ai)) on these test files.
 
-  Each algorithm had around 12 hours to solve all positions from a test set. If a test was not solved within this time frame, it was marked as failed and the other tests were not tested.
+  |   Test Set    |         Solver         | Mean search time (ms) | Means Nodes | Speed (KNode/second) |
+  | :-----------: | :--------------------: | :-------------------: | :---------: | :------------------: |
+  |   Easy End    |       Gonnect 4        |         0.01          |     80      |        0.437         |
+  |               |    connect-four-ai     |                       |             |                      |
+  |               |    Gonnect 4 (book)    |                       |             |                      |
+  |               | connect-four-ai (book) |                       |             |                      |
+  |  Easy Middle  |       Gonnect 4        |         1.44          |     11K     |         1184         |
+  |               |    connect-four-ai     |                       |             |                      |
+  |               |    Gonnect 4 (book)    |                       |             |                      |
+  |               | connect-four-ai (book) |                       |             |                      |
+  |  Easy Begin   |       Gonnect 4        |         1 155         |    8421K    |         5016         |
+  |               |    connect-four-ai     |                       |             |                      |
+  |               |    Gonnect 4 (book)    |                       |             |                      |
+  |               | connect-four-ai (book) |                       |             |                      |
+  |  Medium End   |       Gonnect 4        |          9.7          |     75K     |         2734         |
+  |               |    connect-four-ai     |                       |             |                      |
+  |               |    Gonnect 4 (book)    |                       |             |                      |
+  |               | connect-four-ai (book) |                       |             |                      |
+  | Medium Middle |       Gonnect 4        |          986          |    7061K    |         7287         |
+  |               |    connect-four-ai     |                       |             |                      |
+  |               |    Gonnect 4 (book)    |                       |             |                      |
+  |               | connect-four-ai (book) |                       |             |                      |
+  |  Hard Begin   |       Gonnect 4        |        29 776         |  207.563M   |         7028         |
+  |               |    connect-four-ai     |                       |             |                      |
+  |               |    Gonnect 4 (book)    |                       |             |                      |
+  |               | connect-four-ai (book) |                       |             |                      |
 
-  Here are the algorithms ranked from the most efficient to the least efficient:
-
-  | Rank |             Algorithm             | Test passed | Search time (ms) | Number of nodes | Time/node (ns) | Node/second |
-  | :--: | :-------------------------------: | :---------: | :--------------: | :-------------: | :------------: | :---------: |
-  |  1   |  Lower bound transposition table  |     6/6     |      1_572       |   11_079_843    |       99       |  3_607_353  |
-  |  2   |       Better Move Ordering        |     6/6     |      1_640       |   12_105_638    |      110       |  3_880_170  |
-  |  3   |     Skip direct losing moves      |     5/6     |      1_327       |   23_831_884    |       64       |  6_614_864  |
-  |  4   | Iterative deepening & null window |     5/6     |      2_673       |   41_519_065    |       77       |  6_562_169  |
-  |  5   |        Transposition table        |     5/6     |      7_279       |   103_134_312   |      112       |  5_421_597  |
-  |  6   |             Bitboards             |     2/6     |        33        |     591_676     |       74       |  2_860_704  |
-  |  7   |  Better column order exploration  |     2/6     |       109        |     591_676     |      227       |  1_169_145  |
-  |  8   |        Alpha-Beta prunning        |     0/6     |        -         |        -        |       -        |      -      |
-  |  9   |              Negamax              |     0/6     |        -         |        -        |       -        |      -      |
-
-<p align="center">
-  <a href="csv/benchmark_results.csv">Download csv here</a>
-</p>
-
-> **Note**: Tests have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.24.4 windows/amd64.
->
-> In the csv, for all the test with a low mean search time (few ms), the **time per node** and **nodes per second** are not relevant and can vary a lot between runs. This is because when a position is solved in less than a nanosecond, the elapsed time is effectively mesured as zero, leading to misleading statistics.
+> [!NOTE]
+> Tests have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.26.0 windows/amd64.
 
 ## 6 - Improve the project
 
@@ -202,7 +210,8 @@ If you like this project and/or want to help or improve it, you can:
 
 - Contact me if you want to talk about the project or anything else (Discord: pietot).
 
-> **Note**: If you want to be guided/helped, you already have a file named <a href="IMPROVEMENTS.md">IMPROVEMENTS.md</a> in the project directory, where you can see all the improvements that can be made.
+> **[!NOTE]**
+> If you want to be guided/helped, you already have a file named <a href="IMPROVEMENTS.md">IMPROVEMENTS.md</a> in the project directory, where you can see all the improvements that can be made.
 
 ## 7 - Credits
 
