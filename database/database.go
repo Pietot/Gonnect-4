@@ -12,18 +12,30 @@ import (
 )
 
 var (
-	DBName        = "gonnect4_book.db"
 	BucketResults = "Results"
 	BucketQueue   = "Queue"
 	BucketPending = "Pending"
-	DB            = getDatabase()
+	DB            *bbolt.DB
 )
 
-func getDatabase() *bbolt.DB {
-	db, err := bbolt.Open(DBName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+const KEY_EMPTY_POSITION uint64 = 4432676798593
+
+func GetDatabase(dbName string) *bbolt.DB {
+	db, err := bbolt.Open(dbName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		log.Fatal(err)
 	}
+	db.Update(func(tx *bbolt.Tx) error {
+		tx.CreateBucketIfNotExists([]byte(BucketResults))
+		q, _ := tx.CreateBucketIfNotExists([]byte(BucketQueue))
+		tx.CreateBucketIfNotExists([]byte(BucketPending))
+		// Add initial position to queue if empty
+		if q.Stats().KeyN == 0 {
+			AddToQueue(tx, KEY_EMPTY_POSITION, 0)
+		}
+		return nil
+	})
+
 	return db
 }
 

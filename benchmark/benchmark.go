@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/Pietot/Gonnect-4/book"
+	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
+	"github.com/schollz/progressbar/v3"
 )
 
 var files = []string{
@@ -22,16 +26,16 @@ func BenchmarkAnalyze() {
 	gameTest, _ := grid.InitGrid("533422")
 	gameTest.Analyze()
 
-	totalTimes := int64(0)
-	nodeCounts := uint64(0)
-	meanTimesPerNode := float64(0)
-	nodesPerSecond := uint64(0)
-	totalAnalyses := 0
 	for _, file := range files {
+		totalTimes := int64(0)
+		nodeCounts := uint64(0)
+		meanTimesPerNode := float64(0)
+		nodesPerSecond := uint64(0)
 		lines, err := readPositionsFromFile(file)
 		if err != nil {
 			fmt.Println("Error reading file:", err)
 		}
+		bar := progressbar.Default(int64(len(lines)))
 		for _, line := range lines {
 			position := strings.Split(line, " ")[0]
 			game, err := grid.InitGrid(position)
@@ -43,14 +47,31 @@ func BenchmarkAnalyze() {
 			nodeCounts += stat.NodeCount
 			meanTimesPerNode += stat.MeanTimePerNode
 			nodesPerSecond += stat.NodesPerSecond
-			totalAnalyses++
+			bar.Add(1)
 		}
+		fmt.Println("File:                    ", file)
+		fmt.Println("Mean total time (ns):   ", totalTimes/int64(len(lines)))
+		fmt.Println("Mean node count:        ", nodeCounts/uint64(len(lines)))
+		fmt.Println("Mean time per node (ns):", meanTimesPerNode/float64(len(lines)))
+		fmt.Println("Mean nodes per second:  ", nodesPerSecond/uint64(len(lines)))
+		fmt.Println()
 	}
-	fmt.Println("Mean total time (ns):", totalTimes/int64(totalAnalyses))
-	fmt.Println("Mean node count:", nodeCounts/uint64(totalAnalyses))
-	fmt.Println("Mean time per node (ns):", meanTimesPerNode/float64(totalAnalyses))
-	fmt.Println("Mean nodes per second:", nodesPerSecond/uint64(totalAnalyses))
 	fmt.Println()
+}
+
+func BenchmarkBookCreation() {
+	dbName := "benchmark/book_benchmark.db"
+	os.Remove(dbName)
+
+	bookD8 := database.GetDatabase(dbName)
+	defer bookD8.Close()
+
+	database.DB = bookD8
+
+	start := time.Now()
+	book.CreateBook(8)
+	elapsed := time.Since(start)
+	fmt.Printf("Book creation completed in %s\n", elapsed)
 }
 
 func readPositionsFromFile(filename string) ([]string, error) {

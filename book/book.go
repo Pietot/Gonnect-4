@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/evaluation"
 	"github.com/Pietot/Gonnect-4/grid"
 	"github.com/Pietot/Gonnect-4/stats"
+	c "github.com/fatih/color"
 	"go.etcd.io/bbolt"
 )
 
@@ -34,12 +36,11 @@ type Result struct {
 }
 
 func CreateBook(maxDepth int) {
-	initDB()
-
 	jobs := make(chan Job, JOB_QUEUE_SIZE)
 	results := make(chan Result, JOB_QUEUE_SIZE)
 
 	var wg sync.WaitGroup
+	var activeJobs int64
 
 	numWorkers := WORKER_COUNT
 	if numWorkers <= 0 {
@@ -58,7 +59,7 @@ func CreateBook(maxDepth int) {
 
 	saveDone := make(chan bool)
 	go func() {
-		collector(results)
+		collector(results, &activeJobs)
 		saveDone <- true
 	}()
 
@@ -70,7 +71,7 @@ func CreateBook(maxDepth int) {
 			// Nothing left in the queue? We wait a bit, because the Collector might
 			// be adding new children.
 			// If the results channel is also empty, it's really finished.
-			if len(results) == 0 && len(jobs) == 0 {
+			if atomic.LoadInt64(&activeJobs) == 0 {
 				fmt.Println("Queue empty and workers inactive. End of calculation.")
 				break
 			}
@@ -79,10 +80,11 @@ func CreateBook(maxDepth int) {
 		}
 
 		if depth > maxDepth {
-			fmt.Printf("\033[33m[D:%d] %d reached max depth. End of calculation.\033[0m\n", depth, key)
+			c.Magenta("[D:%d] %d reached max depth. End of calculation.", depth, key)
 			continue
 		}
 
+		atomic.AddInt64(&activeJobs, 1)
 		jobs <- Job{Key: key, Depth: depth}
 	}
 
@@ -119,7 +121,7 @@ func worker(id int, jobs <-chan Job, results chan<- Result) {
 	}
 }
 
-func collector(results <-chan Result) {
+func collector(results <-chan Result, activeJobs *int64) {
 	// To optimize BoltDB, we can batch writes,
 	// but for simplicity, we keep one transaction per result here.
 	// Ideally: accumulate X results or wait T time before committing.
@@ -129,7 +131,7 @@ func collector(results <-chan Result) {
 
 			if res.Stats.NodeCount >= NODE_THRESHOLD {
 				database.SaveResult(tx, res.Key, res.Analysis.Scores)
-				fmt.Printf("\033[32m[D:%d-W:%d] %d saved (%d nodes)\033[0m\n", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
+				c.Green("[D:%d-W:%d] %d saved (%d nodes)", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
 
 				for col := range 7 {
 					if res.Grid.CanPlay(col) && !res.Grid.IsWinningMove(col) {
@@ -140,23 +142,15 @@ func collector(results <-chan Result) {
 							database.AddToQueue(tx, cKey, res.Depth+1)
 						}
 					} else {
-						fmt.Printf("\033[33m[D:%d-W:%d] %d winning move in col %d, skipping childs from this node.\033[0m\n", res.Depth, res.WorkerID, res.Key, col)
+						c.Yellow("[D:%d-W:%d] %d winning move in col %d, skipping childs from this node.", res.Depth, res.WorkerID, res.Key, col)
 					}
 				}
 
 			} else {
-				fmt.Printf("\033[31m[D:%d-W:%d] %d skipped (%d nodes).No children from this node will be added to the queue nor analyzed.\033[0m\n", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
+				c.Red("[D:%d-W:%d] %d skipped (%d nodes).No children from this node will be added to the queue nor analyzed.", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
 			}
 			return nil
 		})
+		atomic.AddInt64(activeJobs, -1)
 	}
-}
-
-func initDB() {
-	database.DB.Update(func(tx *bbolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte(database.BucketResults))
-		tx.CreateBucketIfNotExists([]byte(database.BucketQueue))
-		tx.CreateBucketIfNotExists([]byte(database.BucketPending))
-		return nil
-	})
 }
