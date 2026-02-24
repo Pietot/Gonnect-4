@@ -68,3 +68,12 @@ The benchmark then measures the time taken to create a book of depth 8.
 > The **BenchmarkBookCreation** is designed to create a new **.db** file called `book_benchmark.db` in the **benchmark** directory.
 >
 > **_DO NOT COMMIT_** `book_benchmark.db` to the repository. It is only used for benchmarking purposes and should not be part of the repository.
+
+### Benchmark History Results
+
+| Gonnect 4 Version |                Book Creation Technique                |      Time       |
+| :---------------: | :---------------------------------------------------: | :-------------: |
+|      v1.12.0      | Multi-Threading + Bbolt + Canonical Key + Early Prune | More than a day |
+
+> [!NOTE]
+> Benchmarks have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.26.0 windows/amd64.
