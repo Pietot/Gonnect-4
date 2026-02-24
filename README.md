@@ -51,7 +51,7 @@ Open a terminal and run the following command:
 
 ```bash
 cd {path to the .exe}
-gonnect_4.exe
+gonnect4.exe
 ```
 
 Then it will print you how to use the tool correctly but I will explain it here further:
@@ -61,7 +61,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
   The solver gives the score from a given position and the number of remaining moves to win. Then it shows you some statistics about the search like the total time in nanoseconds, the number of nodes evaluated, the mean time per node and the number of nodes per second.
 
   ```bash
-  gonnect_4.exe -s <sequence>
+  gonnect4.exe -s <sequence>
   ```
 
 - Analyzer
@@ -69,7 +69,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
   The analyzer provides insights into a given position, including the score of all possible moves, the best move to make, and the number of remaining moves until victory. It also displays statistics like the `-s` command above.
 
   ```bash
-  gonnect_4.exe -a <sequence>
+  gonnect4.exe -a <sequence>
   ```
 
 - The book
@@ -79,7 +79,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
   The book is enabled by default but if you want to disable it, you can use the following flag:
 
   ```bash
-  gonnect_4.exe -s --disable-book <sequence>
+  gonnect4.exe -s --disable-book <sequence>
   ```
 
 > **Note**: The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right).
