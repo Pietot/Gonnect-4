@@ -18,14 +18,6 @@ func FormatUint64(value uint64) string {
 	return addUnderscores(fmt.Sprintf("%d", value))
 }
 
-func Int8Ptr(i int8) *int8 {
-	return &i
-}
-
-func Uint8Ptr(i uint8) *uint8 {
-	return &i
-}
-
 func GetTime(nanoseconds int64) string {
 	if nanoseconds < 1_000 {
 		return fmt.Sprintf("%d ns", nanoseconds)

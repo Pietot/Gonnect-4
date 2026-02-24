@@ -243,10 +243,10 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 
 func GetRemainingMoves(score int8, nbMoves int) *uint8 {
 	if score > 0 {
-		return utils.Uint8Ptr(uint8((45-nbMoves)/2 - int(score)))
+		return new(uint8((45-nbMoves)/2 - int(score)))
 	}
 	if score < 0 {
-		return utils.Uint8Ptr(uint8((44-nbMoves)/2 + int(score)))
+		return new(uint8((44-nbMoves)/2 + int(score)))
 	}
-	return utils.Uint8Ptr(uint8((WIDTH*HEIGHT - nbMoves) / 2))
+	return new(uint8((WIDTH*HEIGHT - nbMoves) / 2))
 }
