@@ -137,7 +137,7 @@ func collector(results <-chan Result, activeJobs *int64) {
 					if res.Grid.CanPlay(col) && !res.Grid.IsWinningMove(col) {
 						child := *res.Grid
 						child.PlayColumn(col)
-						cKey := grid.GetCanonicalKey(&child)
+						cKey := child.GetCanonicalKey()
 						if !database.IsAnalyzed(tx, cKey) && !database.IsInQueue(tx, cKey) {
 							database.AddToQueue(tx, cKey, res.Depth+1)
 						}

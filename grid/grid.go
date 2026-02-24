@@ -45,7 +45,7 @@ func (grid *Grid) MirrorKey() uint64 {
 	return mirror(grid.CurrentPosition) + mirror(grid.Mask) + BOTTOM
 }
 
-func GetCanonicalKey(grid *Grid) uint64 {
+func (grid *Grid) GetCanonicalKey() uint64 {
 	k, mk := grid.Key(), grid.MirrorKey()
 	if k < mk {
 		return k
