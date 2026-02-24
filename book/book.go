@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/Pietot/Gonnect-4/database"
@@ -39,6 +40,7 @@ func CreateBook(maxDepth int) {
 	results := make(chan Result, JOB_QUEUE_SIZE)
 
 	var wg sync.WaitGroup
+	var activeJobs int64
 
 	numWorkers := WORKER_COUNT
 	if numWorkers <= 0 {
@@ -57,7 +59,7 @@ func CreateBook(maxDepth int) {
 
 	saveDone := make(chan bool)
 	go func() {
-		collector(results)
+		collector(results, &activeJobs)
 		saveDone <- true
 	}()
 
@@ -69,7 +71,7 @@ func CreateBook(maxDepth int) {
 			// Nothing left in the queue? We wait a bit, because the Collector might
 			// be adding new children.
 			// If the results channel is also empty, it's really finished.
-			if len(results) == 0 && len(jobs) == 0 {
+			if atomic.LoadInt64(&activeJobs) == 0 {
 				fmt.Println("Queue empty and workers inactive. End of calculation.")
 				break
 			}
@@ -82,6 +84,7 @@ func CreateBook(maxDepth int) {
 			continue
 		}
 
+		atomic.AddInt64(&activeJobs, 1)
 		jobs <- Job{Key: key, Depth: depth}
 	}
 
@@ -118,7 +121,7 @@ func worker(id int, jobs <-chan Job, results chan<- Result) {
 	}
 }
 
-func collector(results <-chan Result) {
+func collector(results <-chan Result, activeJobs *int64) {
 	// To optimize BoltDB, we can batch writes,
 	// but for simplicity, we keep one transaction per result here.
 	// Ideally: accumulate X results or wait T time before committing.
@@ -148,5 +151,6 @@ func collector(results <-chan Result) {
 			}
 			return nil
 		})
+		atomic.AddInt64(activeJobs, -1)
 	}
 }
