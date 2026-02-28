@@ -62,3 +62,17 @@ func GetBestScoreAndMove(scores [7]*int8) (bestScore int8, bestMove uint8) {
 	}
 	return bestScore, bestMove
 }
+
+func GetScores(book *map[uint64][7]*int8, key uint64, mirrorKey uint64) (scores [7]*int8, found bool) {
+	if scores, found = (*book)[key]; found {
+		return scores, true
+	}
+	if scores, found = (*book)[mirrorKey]; found {
+		// Reverse the scores for the mirrored position
+		for i := range 3 {
+			scores[i], scores[6-i] = scores[6-i], scores[i]
+		}
+		return scores, true
+	}
+	return scores, false
+}
