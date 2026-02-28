@@ -5,3 +5,6 @@
 
 # Ignore executable files
 *.exe
+
+# Ignore generated files
+database/map.go
