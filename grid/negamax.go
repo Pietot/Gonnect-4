@@ -158,15 +158,6 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 }
 
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
-
-	if config.IsBookEnabled {
-		scores, found := utils.GetScores(&database.ExportedBook, grid.Key(), grid.MirrorKey())
-		if found {
-			score, _ := utils.GetBestScoreAndMove(scores)
-			return score
-		}
-	}
-
 	nodeCount++
 
 	nextMoves := grid.possibleNonLosingMoves()
