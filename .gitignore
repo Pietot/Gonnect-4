@@ -1,7 +1,8 @@
 .vscode/
 
-# Ignore database files created during benchmarking
+# Ignore database files
 *.db
+*.zip
 
 # Ignore executable files
 *.exe
