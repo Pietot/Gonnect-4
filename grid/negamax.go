@@ -1,3 +1,4 @@
+//go:generate go run ../export/main.go
 package grid
 
 import (
@@ -44,9 +45,9 @@ func (grid *Grid) GetScore() int8 {
 
 func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	if config.IsBookEnabled {
-		results, found := database.GetScores(database.DB, grid.Key(), grid.MirrorKey())
+		scores, found := utils.GetScores(&database.ExportedBook, grid.Key(), grid.MirrorKey())
 		if found {
-			score, _ := utils.GetBestScoreAndMove(results)
+			score, _ := utils.GetBestScoreAndMove(scores)
 			return evaluation.Evaluation{
 					Score:          &score,
 					RemainingMoves: GetRemainingMoves(score, grid.nbMoves),
@@ -95,13 +96,12 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 	maxScore := int8(-128)
 
 	if config.IsBookEnabled {
-		results, found := database.GetScores(database.DB, grid.Key(), grid.MirrorKey())
-
+		sc, found := utils.GetScores(&database.ExportedBook, grid.Key(), grid.MirrorKey())
 		if found {
-			scores.Scores = results
-			_, bestMove = utils.GetBestScoreAndMove(results)
+			scores.Scores = sc
+			_, bestMove = utils.GetBestScoreAndMove(sc)
 			scores.BestMove = &bestMove
-			scores.RemainingMoves = GetRemainingMoves(*results[bestMove], grid.nbMoves)
+			scores.RemainingMoves = GetRemainingMoves(*sc[bestMove], grid.nbMoves)
 			return scores, stats.Stats{
 				TotalTimeNanoseconds: 0,
 				NodeCount:            0,
@@ -158,15 +158,6 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 }
 
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
-
-	if config.IsBookEnabled {
-		results, found := database.GetScores(database.DB, grid.Key(), grid.MirrorKey())
-		if found {
-			score, _ := utils.GetBestScoreAndMove(results)
-			return score
-		}
-	}
-
 	nodeCount++
 
 	nextMoves := grid.possibleNonLosingMoves()

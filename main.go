@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/Pietot/Gonnect-4/config"
-	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
 	c "github.com/fatih/color"
 )
@@ -46,11 +45,6 @@ func parseNumbers(arg string) (string, error) {
 }
 
 func main() {
-	defer database.DB.Close()
-	// Don't forget to import the book package.
-	// Uncomment the following line to continue/recreate building the book.
-	// book.CreateBook(42)
-
 	flag.Usage = printUsage
 
 	analyze := flag.Bool("a", false, "Analyze a position")

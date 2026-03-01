@@ -9,6 +9,7 @@ import (
 	"github.com/Pietot/Gonnect-4/book"
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
+	"github.com/Pietot/Gonnect-4/utils"
 	"github.com/schollz/progressbar/v3"
 )
 
@@ -31,7 +32,7 @@ func BenchmarkAnalyze() {
 		nodeCounts := uint64(0)
 		meanTimesPerNode := float64(0)
 		nodesPerSecond := uint64(0)
-		lines, err := readPositionsFromFile(file)
+		lines, err := utils.ReadPositionsFromFile(file)
 		if err != nil {
 			fmt.Println("Error reading file:", err)
 		}
@@ -49,7 +50,7 @@ func BenchmarkAnalyze() {
 			nodesPerSecond += stat.NodesPerSecond
 			bar.Add(1)
 		}
-		fmt.Println("File:                    ", file)
+		fmt.Println("File:                   ", file)
 		fmt.Println("Mean total time (ns):   ", totalTimes/int64(len(lines)))
 		fmt.Println("Mean node count:        ", nodeCounts/uint64(len(lines)))
 		fmt.Println("Mean time per node (ns):", meanTimesPerNode/float64(len(lines)))
@@ -72,14 +73,4 @@ func BenchmarkBookCreation() {
 	book.CreateBook(8)
 	elapsed := time.Since(start)
 	fmt.Printf("Book creation completed in %s\n", elapsed)
-}
-
-func readPositionsFromFile(filename string) ([]string, error) {
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	lines := strings.Split(string(data), "\n")
-	return lines, nil
 }

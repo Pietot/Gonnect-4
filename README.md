@@ -31,7 +31,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 - #### 5.1 [Testsets](#testsets)
 - #### 5.2 [Results](#results)
 
-### 6. [Improve the project](#6---improve-the-project)
+### 6. [Contribute](#6---contribute)
 
 ### 7. [Credits](#7---credits)
 
@@ -43,7 +43,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 
 ## 2 - Installation
 
-Download the binary and the book (optional) from the [latest releases](https://github.com/Pietot/Gonnect-4/releases/latest).
+Download the binary from the [latest releases](https://github.com/Pietot/Gonnect-4/releases/latest). If you want to build it yourself, see the [build instructions](SOURCE.md).
 
 ## 3 - How to use
 
@@ -200,7 +200,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
 > [!NOTE]
 > Tests have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.26.0 windows/amd64.
 
-## 6 - Improve the project
+## 6 - Contribute
 
 If you like this project and/or want to help or improve it, you can:
 
@@ -210,7 +210,9 @@ If you like this project and/or want to help or improve it, you can:
 
 - Contact me if you want to talk about the project or anything else (Discord: pietot).
 
-> **[!NOTE]**
+> **[!IMPORTANT]**
+> Before contributing, please make sure to read the [SOURCE.md](SOURCE.md) file for a better understanding of the project structure and how the code works. This will help you a lot to contribute more effectively and avoid any confusion.
+>
 > If you want to be guided/helped, you already have a file named <a href="IMPROVEMENTS.md">IMPROVEMENTS.md</a> in the project directory, where you can see all the improvements that can be made.
 
 ## 7 - Credits
