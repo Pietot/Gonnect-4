@@ -1,12 +1,12 @@
 package test
 
 import (
-	"os"
 	"strconv"
 	"strings"
 	"testing"
 
 	"github.com/Pietot/Gonnect-4/grid"
+	"github.com/Pietot/Gonnect-4/utils"
 )
 
 var files = []string{
@@ -22,7 +22,7 @@ var files = []string{
 // You can only ensure the firsts files are correct and then stop the tests.
 func TestAnalyze(t *testing.T) {
 	for fileIndex, file := range files {
-		lines, err := readPositionsFromFile(file)
+		lines, err := utils.ReadPositionsFromFile(file)
 		if err != nil {
 			t.Fatalf("Error reading file: %v", err)
 		}
@@ -52,16 +52,6 @@ func TestAnalyze(t *testing.T) {
 			}
 		}
 	}
-}
-
-func readPositionsFromFile(filename string) ([]string, error) {
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
-	lines := strings.Split(string(data), "\n")
-	return lines, nil
 }
 
 func getFoundValues(scores [7]*int8) (bestScore int8, bestMove uint8) {

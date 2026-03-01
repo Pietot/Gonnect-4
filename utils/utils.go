@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -75,4 +76,14 @@ func GetScores(book *map[uint64][7]*int8, key uint64, mirrorKey uint64) (scores 
 		return scores, true
 	}
 	return scores, false
+}
+
+func ReadPositionsFromFile(filename string) ([]string, error) {
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	lines := strings.Split(string(data), "\n")
+	return lines, nil
 }
