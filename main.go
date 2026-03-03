@@ -30,7 +30,7 @@ func printUsage() {
 	fmt.Println()
 	c.Green("    ./gonnect4 -s")
 	c.Green("    ./gonnect4 -a 32164625")
-	fmt.Println("    ./gonnect4 -s --disable-book 5654767662")
+	c.Green("    ./gonnect4 -s --disable-book 5654767662")
 	fmt.Println()
 	os.Exit(1)
 }
