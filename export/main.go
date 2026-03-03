@@ -17,7 +17,7 @@ const (
 )
 
 func main() {
-	db, err := bbolt.Open("../database/gonnect4_book.db", 0600, nil)
+	db, err := bbolt.Open("../database/gonnect4_book.db", 0o600, &bbolt.Options{ReadOnly: true})
 	if err != nil {
 		log.Fatal(err)
 	}
