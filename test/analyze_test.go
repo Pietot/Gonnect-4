@@ -1,67 +1,124 @@
 package test
 
 import (
-	"strconv"
+	"encoding/json"
+	"fmt"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/Pietot/Gonnect-4/grid"
-	"github.com/Pietot/Gonnect-4/utils"
 )
 
 var files = []string{
-	"../data/test_easy_end.txt",
-	"../data/test_easy_middle.txt",
-	"../data/test_easy_begin.txt",
-	"../data/test_medium_end.txt",
-	"../data/test_medium_middle.txt",
-	"../data/test_hard_begin.txt",
+	"../data/test_easy_end.json",
+	"../data/test_easy_middle.json",
+	"../data/test_easy_begin.json",
+	"../data/test_medium_end.json",
+	"../data/test_medium_middle.json",
+	"../data/test_hard_begin.json",
+}
+
+type JSONPosition struct {
+	Sequence string   `json:"sequence"`
+	Score    int8     `json:"score"`
+	Analysis [7]*int8 `json:"analysis"`
 }
 
 // You don't need to test all positions from all files every time cause it takes long.
+//
 // You can only ensure the firsts files are correct and then stop the tests.
 func TestAnalyze(t *testing.T) {
 	for fileIndex, file := range files {
-		lines, err := utils.ReadPositionsFromFile(file)
+		f, err := os.Open(file)
 		if err != nil {
-			t.Fatalf("Error reading file: %v", err)
+			t.Fatalf("Error opening file %s: %v", file, err)
 		}
-		for _, line := range lines {
-			position, expectedScore, expectedColumn := strings.Split(line, " ")[0], strings.Split(line, " ")[1], strings.TrimSpace(strings.Split(line, " ")[2])[1:]
-			game, err := grid.InitGrid(position)
+		defer f.Close()
+
+		var positions []JSONPosition
+		if err := json.NewDecoder(f).Decode(&positions); err != nil {
+			t.Fatalf("Error decoding JSON file %s: %v", file, err)
+		}
+
+		for i, pos := range positions {
+			game, err := grid.InitGrid(pos.Sequence)
 			if err != nil {
-				t.Fatalf("Error initializing grid: %v", err)
+				t.Fatalf("Error initializing grid (file %d, entry %d): %v", fileIndex, i, err)
 			}
+
 			anal, _ := game.Analyze()
-			analScore, analColumn := getFoundValues(anal.Scores)
-			expectedScoreInt, err := strconv.ParseInt(expectedScore, 10, 8)
-			if err != nil {
-				t.Errorf("Error parsing expected score: %v", err)
-				continue
-			}
-			expectedColumnUint, err := strconv.ParseUint(expectedColumn, 10, 8)
-			if err != nil {
-				t.Errorf("Error parsing expected column: %v", err)
-				continue
-			}
-			if analScore != int8(expectedScoreInt) || analColumn+1 != uint8(expectedColumnUint) {
-				t.Errorf("Discrepancy found for position %s: expected score %s and best move %s, got score %d and best move %d",
-					position, expectedScore, expectedColumn, analScore, analColumn)
+
+			if !scoresEqual(anal.Scores, pos.Analysis) {
+				t.Errorf(
+					"[File %d, Entry %d] Scores mismatch for position %q\nExpected: %v\nGot:      %v",
+					fileIndex,
+					i,
+					pos.Sequence,
+					formatScores(pos.Analysis),
+					formatScores(anal.Scores),
+				)
 			} else {
-				t.Logf("[File %d] Position %s analyzed correctly", fileIndex, position)
+				t.Logf("[File %d] Position %s analyzed correctly", fileIndex, pos.Sequence)
 			}
 		}
 	}
 }
 
-func getFoundValues(scores [7]*int8) (bestScore int8, bestMove uint8) {
-	bestScore = -128
-	bestMove = 0
-	for i, scorePtr := range scores {
-		if scorePtr != nil && *scorePtr > bestScore {
-			bestScore = *scorePtr
-			bestMove = uint8(i)
+func TestSolve(t *testing.T) {
+	for fileIndex, file := range files {
+		f, err := os.Open(file)
+		if err != nil {
+			t.Fatalf("Error opening file %s: %v", file, err)
+		}
+		defer f.Close()
+
+		var positions []JSONPosition
+		if err := json.NewDecoder(f).Decode(&positions); err != nil {
+			t.Fatalf("Error decoding JSON file %s: %v", file, err)
+		}
+
+		for i, pos := range positions {
+			game, err := grid.InitGrid(pos.Sequence)
+			if err != nil {
+				t.Fatalf("Error initializing grid (file %d, entry %d): %v", fileIndex, i, err)
+			}
+
+			solved, _ := game.Solve()
+			if solved.Score == nil {
+				t.Errorf("[File %d, Entry %d] No solution found for position %q", fileIndex, i, pos.Sequence)
+			} else if *solved.Score != pos.Score {
+				t.Errorf("[File %d, Entry %d] Score mismatch for position %q\nExpected: %d\nGot:      %d", fileIndex, i, pos.Sequence, pos.Score, *solved.Score)
+			} else {
+				t.Logf("[File %d] Position %s solved correctly", fileIndex, pos.Sequence)
+			}
 		}
 	}
-	return bestScore, bestMove
+}
+
+func scoresEqual(a, b [7]*int8) bool {
+	for i := range 7 {
+		if a[i] == nil && b[i] == nil {
+			continue
+		}
+		if a[i] == nil || b[i] == nil {
+			return false
+		}
+		if *a[i] != *b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func formatScores(s [7]*int8) string {
+	out := make([]string, 7)
+	for i, v := range s {
+		if v == nil {
+			out[i] = "null"
+		} else {
+			out[i] = fmt.Sprintf("%d", *v)
+		}
+	}
+	return "[" + strings.Join(out, ", ") + "]"
 }
