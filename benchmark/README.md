@@ -51,7 +51,7 @@ The function iterates over all the position in the test files, from the easiest 
 
 Usually, you will not need to change the `BenchmarkAnalyze` function, but you can run it to see if your changes on the `GetScore` and `negamax` method brings any performance improvement or not.
 
-> **[!IMPORTANT]**
+> [!IMPORTANT]
 > Once changes are made and benchmarked, ydon't forget to run the tests to ensure that your changes do not break the integrity of the solver. You can run the tests using the following command:
 >
 > ```bash
@@ -64,7 +64,7 @@ The `BenchmarkBookCreation` function is designed to benchmark the performance of
 
 The benchmark then measures the time taken to create a book of depth 8.
 
-> **[!WARNING]**
+> [!WARNING]
 > The **BenchmarkBookCreation** is designed to create a new **.db** file called `book_benchmark.db` in the **benchmark** directory.
 >
 > **_DO NOT COMMIT_** `book_benchmark.db` to the repository. It is only used for benchmarking purposes and should not be part of the repository.

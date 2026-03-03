@@ -40,7 +40,7 @@ Here is a brief overview of each folder and its purpose:
 
 - `export/`: Contains the implementation of the export of the book, which is used to export the book in go file to store it directly in the binary when compiling the project.
 
-> **[!NOTE]**
+> [!NOTE]
 > You can also read some README.md files in some folders for more details on the implementation of the code in those folders.
 
 ## 2 - Installation
@@ -56,7 +56,7 @@ cd Gonnect-4
 
 After that, you need to download the database for the book in the [latest releases](https://github.com/Pietot/Gonnect-4/releases/latest), and extract the `book.db` file in the `database/` folder.
 
-> **[!NOTE]**
+> [!NOTE]
 > You can skip the last step if you don't want to generate/use the book, but it will make the analysis of hard positions much slower and you will need to manually update some code (in the next section).
 
 ## 3 - Build instructions

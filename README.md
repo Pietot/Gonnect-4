@@ -82,7 +82,8 @@ Then it will print you how to use the tool correctly but I will explain it here 
   gonnect4.exe -s --disable-book <sequence>
   ```
 
-> **Note**: The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right).
+> [!NOTE]
+> The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right).
 >
 > The flags can by placed in the order you want but they must be before the sequence.
 
@@ -210,7 +211,7 @@ If you like this project and/or want to help or improve it, you can:
 
 - Contact me if you want to talk about the project or anything else (Discord: pietot).
 
-> **[!IMPORTANT]**
+> [!IMPORTANT]
 > Before contributing, please make sure to read the [SOURCE.md](SOURCE.md) file for a better understanding of the project structure and how the code works. This will help you a lot to contribute more effectively and avoid any confusion.
 >
 > If you want to be guided/helped, you already have a file named <a href="IMPROVEMENTS.md">IMPROVEMENTS.md</a> in the project directory, where you can see all the improvements that can be made.
