@@ -50,9 +50,9 @@ func main() {
 	analyze := flag.Bool("a", false, "Analyze a position")
 	solve := flag.Bool("s", false, "Solve a position")
 	disableBookFlag := flag.Bool("disable-book", false, "Disable opening book")
-	config.IsBookEnabled = !*disableBookFlag
-
 	flag.Parse()
+	
+	config.IsBookEnabled = !*disableBookFlag
 
 	if (*analyze && *solve) || (!*analyze && !*solve) {
 		c.Red("Error: you must provide exactly one of -a or -s")
