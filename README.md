@@ -148,7 +148,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
   Instead of using two separate tables, it is more efficient to store both bounds in a single table by adding a flag. This is done by shifting lower bound values by the maximum possible score, effectively doubling the score range and requiring one extra bit of storage per entry.
 
-## 5 - Performance
+## 5 - Benchmark
 
 - ### Testsets
 
@@ -167,9 +167,12 @@ Then it will print you how to use the tool correctly but I will explain it here 
   |       test_medium_middle        |      moves <= 14       |   14 <= remaining < 28    |
   |         test_hard_begin         |      moves <= 14       |      remaining >= 28      |
 
+> [!IMPORTANT]
+> The benchmark was actually performed on the `Analyze` method and not the `Solve` method, even if the `Analyze` method calls the `Solve` method several times. 
+
 - ### Results
 
-  I ran my solver and anoother (from [benjaminrall](https://github.com/benjaminrall/connect-four-ai)) on these test files.
+  I ran my solver and another (from [benjaminrall](https://github.com/benjaminrall/connect-four-ai)) on these test files.
 
   |   Test Set    |         Solver         | Mean search time (ms) | Means Nodes | Speed (KNode/second) |
   | :-----------: | :--------------------: | :-------------------: | :---------: | :------------------: |

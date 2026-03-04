@@ -71,7 +71,7 @@ go build
 ```
 
 > **[!IMPORTANT]**
-> If you want to build the project without the book, you will to comment mutiple lines of code in order to compile the code:
+> If you want to build the project without the book, you will have to comment mutiple lines in order to compile the code:
 
 - Comment the lines related to the book in `grid/negamax.go`:
 

@@ -12,18 +12,40 @@ This README file is to explain the purpose of the benchmark package and how to u
 
 The benchmark package uses a set of test files located in the `data` directory.
 
-Each file contains 1000 positions for a total of 6000 positions. The files originate from the work of **Pascal Pons** and are available on his [blog](http://blog.gamesolver.org/solving-connect-four/02-test-protocol/). I just reorganized/renamed them in a way that is more comprehensible and logical in my sens. Each line of each file contains a position represented as a sequence of digits, the score of the position, and the best move for that position. Each separated by a space. For example:
+Each file contains 1000 positions for a total of 6000 positions. The files originate from the work of **Pascal Pons** and are available on his [blog](http://blog.gamesolver.org/solving-connect-four/02-test-protocol/). I just reorganized/renamed them in a way that is more comprehensible and logical in my sens. Files are just an array of json objects in this format:
 
-```
-74642572132 15 C3
-51756773145177 -10 C2
-165746146225 -11 C7
-1562527227511 13 C4
-43745416472735 -13 C6
+
+
+```json
+[
+  {
+    "sequence": "274552224131661",
+    "score": 0,
+    "analysis": [-9, -11, -12, 0, -11, -11, -11]
+  },
+  {
+    "sequence": "5455174361263362",
+    "score": -1,
+    "analysis": [-12, -1, -12, -13, -12, -12, -12]
+  },
+  {
+    "sequence": "2531276566711153",
+    "score": 2,
+    "analysis": [-2, 2, -1, 0, -1, 0, -12]
+  },
+  {
+    "sequence": "37313333717124171162542",
+    "score": 3,
+    "analysis": [null, -7, null, 3, -8, -2, -7]
+  },
+  ...
+]
 ```
 
 > [!NOTE]
 > The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right).
+>
+> null values in the analysis array indicate that it's column is full, so it is not possible to play in that column. 
 
 The files are categorized based on the depth `d` (number of moves played) and the remaining moves `r` until a forced win.
 
