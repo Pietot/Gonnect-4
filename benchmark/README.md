@@ -43,9 +43,7 @@ Each file contains 1000 positions for a total of 6000 positions. The files origi
 ```
 
 > [!NOTE]
-> The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right).
->
-> null values in the analysis array indicate that it's column is full, so it is not possible to play in that column. 
+> The sequence is a string of numbers representing the columns where the pieces have been played, starting from an empty grid. The columns are numbered from 1 to 7 (left to right). null values in the analysis array indicate that it's column is full, so it is not possible to play in that column. 
 
 The files are categorized based on the depth `d` (number of moves played) and the remaining moves `r` until a forced win.
 
@@ -74,11 +72,11 @@ The function iterates over all the position in the test files, from the easiest 
 Usually, you will not need to change the `BenchmarkAnalyze` function, but you can run it to see if your changes on the `GetScore` and `negamax` method brings any performance improvement or not.
 
 > [!IMPORTANT]
-> Once changes are made and benchmarked, ydon't forget to run the tests to ensure that your changes do not break the integrity of the solver. You can run the tests using the following command:
->
-> ```bash
-> go test -v ./...
-> ```
+> Once changes are made and benchmarked, don't forget to run the tests to ensure that your changes do not break the integrity of the solver. You can run the tests using the following command:
+
+```bash
+go test -v ./...
+```
 
 ## 3 - BenchmarkBookCreation
 
@@ -88,8 +86,6 @@ The benchmark then measures the time taken to create a book of depth 8.
 
 > [!WARNING]
 > The **BenchmarkBookCreation** is designed to create a new **.db** file called `book_benchmark.db` in the **benchmark** directory.
->
-> **_DO NOT COMMIT_** `book_benchmark.db` to the repository. It is only used for benchmarking purposes and should not be part of the repository.
 
 ### Benchmark History Results
 
