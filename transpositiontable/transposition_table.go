@@ -24,9 +24,6 @@ func (trans_table *TranspositionTable) Reset() {
 }
 
 func (trans_table *TranspositionTable) Put(key uint64, value uint8) {
-	if key >= (1 << 49) {
-		panic("Key out of range (must be < 2^49)")
-	}
 	entryIndex := trans_table.index(key)
 	trans_table.table[entryIndex] = Entry{
 		key_49_bit: key & MASK_49,
@@ -35,9 +32,6 @@ func (trans_table *TranspositionTable) Put(key uint64, value uint8) {
 }
 
 func (trans_table *TranspositionTable) Get(key uint64) uint8 {
-	if key >= (1 << 49) {
-		panic("Key out of range (must be < 2^49)")
-	}
 	entryIndex := trans_table.index(key)
 	entry := trans_table.table[entryIndex]
 	if entry.key_49_bit == key {

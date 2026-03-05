@@ -1,93 +1,193 @@
 package database
 
 import (
-	"bytes"
 	"encoding/binary"
-	"encoding/gob"
+	"fmt"
 	"log"
-	"time"
 
-	"go.etcd.io/bbolt"
+	"github.com/dgraph-io/badger/v4"
 )
 
 var (
-	BucketResults = "Results"
-	BucketQueue   = "Queue"
-	BucketPending = "Pending"
-	DB            *bbolt.DB
+	// Prefixes pour simuler des buckets
+	PrefixResults = []byte{0x01}
+	PrefixQueue   = []byte{0x02}
+	PrefixPending = []byte{0x03}
+	DB            *badger.DB
 )
 
 const KEY_EMPTY_POSITION uint64 = 4432676798593
 
-func GetDatabase(dbName string) *bbolt.DB {
-	db, err := bbolt.Open(dbName, 0600, &bbolt.Options{Timeout: 1 * time.Second})
+func GetDatabase(path string) {
+	opts := badger.DefaultOptions(path).
+		WithLoggingLevel(badger.WARNING).
+		WithIndexCacheSize(512 << 20). // 512MB de cache d'index pour accélérer les IsAnalyzed
+		WithSyncWrites(false)          // On privilégie la vitesse pour le pre-compute
+
+	db, err := badger.Open(opts)
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.Update(func(tx *bbolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte(BucketResults))
-		q, _ := tx.CreateBucketIfNotExists([]byte(BucketQueue))
-		tx.CreateBucketIfNotExists([]byte(BucketPending))
-		// Add initial position to queue if empty
-		if q.Stats().KeyN == 0 {
-			AddToQueue(tx, KEY_EMPTY_POSITION, 0)
+	DB = db
+
+	// Initialisation : ajout de la première position si la DB est neuve
+	err = DB.Update(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
+		it.Seek(PrefixQueue)
+		if !it.ValidForPrefix(PrefixQueue) {
+			return AddToQueue(txn, KEY_EMPTY_POSITION, 0)
 		}
 		return nil
 	})
-
-	return db
+	if err != nil {
+		log.Fatal("Erreur init DB:", err)
+	}
 }
 
-func Uint64ToBytes(v uint64) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, v)
-	return b
-}
+func GetScores(key uint64, mirroredKey uint64) (scores [7]*int8, found bool) {
+	err := DB.View(func(txn *badger.Txn) error {
+		// 1. Chercher la clé originale
+		k := make([]byte, 9)
+		k[0] = PrefixResults[0]
+		binary.BigEndian.PutUint64(k[1:], key)
 
-func AddToQueue(tx *bbolt.Tx, key uint64, depth int) {
-	q := tx.Bucket([]byte(BucketQueue))
-	p := tx.Bucket([]byte(BucketPending))
-
-	ck := make([]byte, 9)
-	ck[0] = byte(depth)
-	binary.BigEndian.PutUint64(ck[1:], key)
-
-	q.Put(ck, []byte{byte(depth)})
-	p.Put(Uint64ToBytes(key), []byte{byte(depth)})
-}
-
-func PopFromQueue(db *bbolt.DB) (key uint64, depth int, found bool) {
-	db.Update(func(tx *bbolt.Tx) error {
-		q := tx.Bucket([]byte(BucketQueue))
-		p := tx.Bucket([]byte(BucketPending))
-
-		c := q.Cursor()
-		k, v := c.First()
-		if k == nil {
-			return nil
+		item, err := txn.Get(k)
+		if err == nil {
+			err = item.Value(func(val []byte) error {
+				scores = bytesToScores(val)
+				found = true
+				return nil
+			})
+			return err
 		}
 
-		key = binary.BigEndian.Uint64(k[1:])
-		depth = int(v[0])
-		found = true
+		// 2. Si non trouvé, chercher la clé miroir
+		binary.BigEndian.PutUint64(k[1:], mirroredKey)
+		item, err = txn.Get(k)
+		if err == nil {
+			err = item.Value(func(val []byte) error {
+				rawScores := bytesToScores(val)
+				// Inverser les scores pour la position miroir (col 0 devient col 6, etc.)
+				for i := 0; i < 4; i++ {
+					scores[i], scores[6-i] = rawScores[6-i], rawScores[i]
+				}
+				found = true
+				return nil
+			})
+			return err
+		}
 
-		q.Delete(k)
-		p.Delete(Uint64ToBytes(key))
-		return nil
+		return nil // Pas trouvé
 	})
+
+	if err != nil && err != badger.ErrKeyNotFound {
+		fmt.Printf("Erreur lecture scores: %v\n", err)
+	}
 	return
 }
 
-func IsAnalyzed(tx *bbolt.Tx, key uint64) bool {
-	return tx.Bucket([]byte(BucketResults)).Get(Uint64ToBytes(key)) != nil
+// Helper interne pour décoder les 7 octets vers [7]*int8
+func bytesToScores(b []byte) (scores [7]*int8) {
+	if len(b) < 7 {
+		return
+	}
+	for i := range 7 {
+		if b[i] == 127 { // 127 est notre marqueur pour 'nil' défini dans le collector
+			scores[i] = nil
+		} else {
+			val := int8(b[i])
+			scores[i] = &val
+		}
+	}
+	return
 }
 
-func IsInQueue(tx *bbolt.Tx, key uint64) bool {
-	return tx.Bucket([]byte(BucketPending)).Get(Uint64ToBytes(key)) != nil
+// Uint64ToBytes sans allocation inutile
+func Uint64ToBytes(v uint64, buf []byte) {
+	binary.BigEndian.PutUint64(buf, v)
 }
 
-func SaveResult(tx *bbolt.Tx, key uint64, scores [7]*int8) {
-	var buf bytes.Buffer
-	gob.NewEncoder(&buf).Encode(scores)
-	tx.Bucket([]byte(BucketResults)).Put(Uint64ToBytes(key), buf.Bytes())
+// AddToQueue prépare les clés pour Queue (q + depth + key) et Pending (p + key)
+func AddToQueue(txn *badger.Txn, key uint64, depth int) error {
+	qk := make([]byte, 10) // 1 (prefix) + 1 (depth) + 8 (key)
+	qk[0] = PrefixQueue[0]
+	qk[1] = byte(depth)
+	binary.BigEndian.PutUint64(qk[2:], key)
+
+	pk := make([]byte, 9) // 1 (prefix) + 8 (key)
+	pk[0] = PrefixPending[0]
+	binary.BigEndian.PutUint64(pk[1:], key)
+
+	if err := txn.Set(qk, []byte{byte(depth)}); err != nil {
+		return err
+	}
+	return txn.Set(pk, []byte{byte(depth)})
+}
+
+// PopBatch extrait plusieurs éléments d'un coup pour amortir le coût de la transaction
+func PopBatch(batchSize int) ([]uint64, []int, error) {
+	var keys []uint64
+	var depths []int
+
+	err := DB.Update(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
+
+		for it.Seek(PrefixQueue); it.ValidForPrefix(PrefixQueue) && len(keys) < batchSize; it.Next() {
+			item := it.Item()
+			k := item.Key()
+
+			d := int(k[1])
+			v := binary.BigEndian.Uint64(k[2:])
+
+			keys = append(keys, v)
+			depths = append(depths, d)
+
+			// Supprimer uniquement de la Queue; PrefixPending reste jusqu'à ce que le collecteur finisse
+			if err := txn.Delete(k); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	return keys, depths, err
+}
+
+func IsAnalyzed(txn *badger.Txn, key uint64) bool {
+	var k [9]byte
+	k[0] = PrefixResults[0]
+	binary.BigEndian.PutUint64(k[1:], key)
+	_, err := txn.Get(k[:])
+	return err == nil
+}
+
+func CountQueue() int64 {
+	var count int64
+	DB.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.PrefetchValues = false
+		it := txn.NewIterator(opts)
+		defer it.Close()
+		for it.Seek(PrefixQueue); it.ValidForPrefix(PrefixQueue); it.Next() {
+			count++
+		}
+		return nil
+	})
+	return count
+}
+
+func RemovePending(txn *badger.Txn, key uint64) error {
+	var pk [9]byte
+	pk[0] = PrefixPending[0]
+	binary.BigEndian.PutUint64(pk[1:], key)
+	return txn.Delete(pk[:])
+}
+
+func IsInQueue(txn *badger.Txn, key uint64) bool {
+	var k [9]byte
+	k[0] = PrefixPending[0]
+	binary.BigEndian.PutUint64(k[1:], key)
+	_, err := txn.Get(k[:])
+	return err == nil
 }

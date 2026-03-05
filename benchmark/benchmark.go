@@ -64,10 +64,9 @@ func BenchmarkBookCreation() {
 	dbName := "benchmark/book_benchmark.db"
 	os.Remove(dbName)
 
-	bookD8 := database.GetDatabase(dbName)
-	defer bookD8.Close()
+	database.GetDatabase(dbName)
+	defer database.DB.Close()
 
-	database.DB = bookD8
 
 	start := time.Now()
 	book.CreateBook(8)

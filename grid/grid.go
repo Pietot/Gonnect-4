@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/bits"
 	"strconv"
+
+	"github.com/Pietot/Gonnect-4/transpositiontable"
 )
 
 const (
@@ -19,10 +21,15 @@ type Grid struct {
 	CurrentPosition uint64
 	Mask            uint64
 	nbMoves         int
+	TransTable      *transpositiontable.TranspositionTable
+	nodeCount       *uint64
 }
 
 func InitGrid(columnsSequence string) (*Grid, error) {
-	grid := &Grid{}
+	grid := &Grid{
+		TransTable: transpositiontable.NewTranspositionTable(),
+		nodeCount:  new(uint64),
+	}
 	for _, columnRune := range columnsSequence {
 		column, err := strconv.Atoi(string(columnRune))
 		if err != nil {
@@ -65,9 +72,9 @@ func mirror(bitboard uint64) uint64 {
 }
 
 func FromKey(key uint64) *Grid {
-	g := &Grid{}
-	g.Mask = 0
-	g.CurrentPosition = 0
+	g := &Grid{
+		nodeCount: new(uint64),
+	}
 	for i := range 7 {
 		colMask := uint64(0x7F) << (i * 7)
 		colBits := key & colMask
@@ -186,10 +193,5 @@ func (grid *Grid) moveScore(move uint64) int {
 }
 
 func popCount(move uint64) int {
-	count := 0
-	for move != 0 {
-		move &= move - 1
-		count++
-	}
-	return count
+	return bits.OnesCount64(move)
 }

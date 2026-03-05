@@ -1,6 +1,7 @@
 package book
 
 import (
+	"encoding/binary"
 	"fmt"
 	"runtime"
 	"sync"
@@ -10,15 +11,16 @@ import (
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/evaluation"
 	"github.com/Pietot/Gonnect-4/grid"
+	"github.com/Pietot/Gonnect-4/progressbar"
 	"github.com/Pietot/Gonnect-4/stats"
-	c "github.com/fatih/color"
-	"go.etcd.io/bbolt"
+	"github.com/Pietot/Gonnect-4/transpositiontable"
+	"github.com/dgraph-io/badger/v4"
 )
 
 const (
-	WORKER_COUNT   = 0
-	JOB_QUEUE_SIZE = 1000
+	JOB_QUEUE_SIZE = 5000
 	NODE_THRESHOLD = 20_000_000
+	BATCH_POP_SIZE = 500
 )
 
 type Job struct {
@@ -27,65 +29,65 @@ type Job struct {
 }
 
 type Result struct {
-	Key      uint64
-	Depth    int
-	Analysis evaluation.Analysis
-	Stats    stats.Stats
-	Grid     *grid.Grid
-	WorkerID int
+	Key         uint64
+	Depth       int
+	Analysis    evaluation.Analysis
+	Stats       stats.Stats
+	Grid        *grid.Grid
+	AlreadyDone bool
 }
 
 func CreateBook(maxDepth int) {
+	dbName := "database/badger"
+	database.GetDatabase(dbName)
+	defer database.DB.Close()
+
 	jobs := make(chan Job, JOB_QUEUE_SIZE)
 	results := make(chan Result, JOB_QUEUE_SIZE)
-
-	var wg sync.WaitGroup
 	var activeJobs int64
+	var wg sync.WaitGroup
 
-	numWorkers := WORKER_COUNT
-	if numWorkers <= 0 {
-		numWorkers = runtime.NumCPU()
-	}
+	progress := progressbar.New()
+	progress.InitQueueSize(database.CountQueue())
 
-	fmt.Printf("Starting %d workers...\n", numWorkers)
+	numWorkers := runtime.NumCPU()
+	fmt.Printf("Starting %d workers...\n\n", numWorkers)
 
-	for i := 0; i < numWorkers; i++ {
+	for i := range numWorkers {
 		wg.Add(1)
 		go func(id int) {
 			defer wg.Done()
-			worker(id, jobs, results)
+			worker(jobs, results)
 		}(i)
 	}
 
 	saveDone := make(chan bool)
 	go func() {
-		collector(results, &activeJobs)
+		collector(results, &activeJobs, progress)
 		saveDone <- true
 	}()
 
 	for {
-		// PopFromQueue is a write transaction (Delete), so it's blocking.
-		// Possible optimization: Read in batches of 100 keys to reduce transaction overhead.
-		key, depth, found := database.PopFromQueue(database.DB)
-		if !found {
-			// Nothing left in the queue? We wait a bit, because the Collector might
-			// be adding new children.
-			// If the results channel is also empty, it's really finished.
-			if atomic.LoadInt64(&activeJobs) == 0 {
-				fmt.Println("Queue empty and workers inactive. End of calculation.")
+		keys, depths, err := database.PopBatch(BATCH_POP_SIZE)
+		if err != nil || len(keys) == 0 {
+			if atomic.LoadInt64(&activeJobs) <= 0 {
+				fmt.Println("\nQueue empty and workers inactive. End of calculation.")
 				break
 			}
-			time.Sleep(1 * time.Second)
+			time.Sleep(500 * time.Millisecond)
 			continue
 		}
 
-		if depth > maxDepth {
-			c.Magenta("[D:%d] %d reached max depth. End of calculation.", depth, key)
-			continue
-		}
+		progress.RecordDequeued(int64(len(keys)))
 
-		atomic.AddInt64(&activeJobs, 1)
-		jobs <- Job{Key: key, Depth: depth}
+		for i := range keys {
+			if depths[i] > maxDepth {
+				continue
+			}
+			progress.RecordDispatched(depths[i])
+			atomic.AddInt64(&activeJobs, 1)
+			jobs <- Job{Key: keys[i], Depth: depths[i]}
+		}
 	}
 
 	close(jobs)
@@ -94,19 +96,23 @@ func CreateBook(maxDepth int) {
 	<-saveDone
 }
 
-func worker(id int, jobs <-chan Job, results chan<- Result) {
+func worker(jobs <-chan Job, results chan<- Result) {
+	tt := transpositiontable.NewTranspositionTable()
 	for job := range jobs {
-		var alreadyDone bool
-		database.DB.View(func(tx *bbolt.Tx) error {
-			alreadyDone = database.IsAnalyzed(tx, job.Key)
+		alreadyDone := false
+		database.DB.View(func(txn *badger.Txn) error {
+			alreadyDone = database.IsAnalyzed(txn, job.Key)
 			return nil
 		})
 
 		if alreadyDone {
+			results <- Result{Key: job.Key, AlreadyDone: true}
 			continue
 		}
 
+		tt.Reset()
 		g := grid.FromKey(job.Key)
+		g.TransTable = tt
 		analysis, stats := g.Analyze()
 
 		results <- Result{
@@ -115,42 +121,80 @@ func worker(id int, jobs <-chan Job, results chan<- Result) {
 			Analysis: analysis,
 			Stats:    stats,
 			Grid:     g,
-			WorkerID: id,
 		}
-
 	}
 }
 
-func collector(results <-chan Result, activeJobs *int64) {
-	// To optimize BoltDB, we can batch writes,
-	// but for simplicity, we keep one transaction per result here.
-	// Ideally: accumulate X results or wait T time before committing.
+func collector(results <-chan Result, activeJobs *int64, progress *progressbar.Progress) {
+	wb := database.DB.NewWriteBatch()
+	defer func() { wb.Flush() }()
 
-	for res := range results {
-		database.DB.Update(func(tx *bbolt.Tx) error {
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 
-			if res.Stats.NodeCount >= NODE_THRESHOLD {
-				database.SaveResult(tx, res.Key, res.Analysis.Scores)
-				c.Green("[D:%d-W:%d] %d saved (%d nodes)", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
+	for {
+		select {
+		case res, ok := <-results:
+			if !ok {
+				return
+			}
+			if res.AlreadyDone {
+				database.DB.Update(func(txn *badger.Txn) error {
+					return database.RemovePending(txn, res.Key)
+				})
+				atomic.AddInt64(activeJobs, -1)
+				continue
+			}
 
-				for col := range 7 {
-					if res.Grid.CanPlay(col) && !res.Grid.IsWinningMove(col) {
-						child := *res.Grid
-						child.PlayColumn(col)
-						cKey := child.GetCanonicalKey()
-						if !database.IsAnalyzed(tx, cKey) && !database.IsInQueue(tx, cKey) {
-							database.AddToQueue(tx, cKey, res.Depth+1)
-						}
+			// If NodeCount is equal to 0, it means the position was in map.go. So it's already analyzed and above the threshold.
+			if res.Stats.NodeCount >= NODE_THRESHOLD || res.Stats.NodeCount == 0 {
+				var resKey [9]byte
+				resKey[0] = database.PrefixResults[0]
+				binary.BigEndian.PutUint64(resKey[1:], res.Key)
+
+				scoreBytes := make([]byte, 7)
+				for i, s := range res.Analysis.Scores {
+					if s != nil {
+						scoreBytes[i] = byte(*s)
 					} else {
-						c.Yellow("[D:%d-W:%d] %d winning move in col %d, skipping childs from this node.", res.Depth, res.WorkerID, res.Key, col)
+						scoreBytes[i] = 127
 					}
 				}
+				wb.Set(resKey[:], scoreBytes)
 
+				var childrenQueued int64
+				database.DB.Update(func(txn *badger.Txn) error {
+					database.RemovePending(txn, res.Key)
+					for col := range 7 {
+						if res.Grid.CanPlay(col) && !res.Grid.IsWinningMove(col) {
+							child := *res.Grid
+							child.PlayColumn(col)
+							cKey := child.GetCanonicalKey()
+
+							if !database.IsAnalyzed(txn, cKey) && !database.IsInQueue(txn, cKey) {
+								if err := database.AddToQueue(txn, cKey, res.Depth+1); err == nil {
+									childrenQueued++
+								}
+							}
+						}
+					}
+					return nil
+				})
+
+				progress.RecordSaved(res.Depth)
+				progress.RecordEnqueued(res.Depth, childrenQueued)
 			} else {
-				c.Red("[D:%d-W:%d] %d skipped (%d nodes).No children from this node will be added to the queue nor analyzed.", res.Depth, res.WorkerID, res.Key, res.Stats.NodeCount)
+				database.DB.Update(func(txn *badger.Txn) error {
+					return database.RemovePending(txn, res.Key)
+				})
+				progress.RecordSkipped(res.Depth)
 			}
-			return nil
-		})
-		atomic.AddInt64(activeJobs, -1)
+			atomic.AddInt64(activeJobs, -1)
+
+		case <-ticker.C:
+			progress.Render()
+			wb.Flush()
+			wb = database.DB.NewWriteBatch()
+		}
 	}
 }

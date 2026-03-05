@@ -12,11 +12,7 @@ import (
 	"github.com/Pietot/Gonnect-4/utils"
 )
 
-var (
-	columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
-	nodeCount   = uint64(0)
-	transTable  = transpositiontable.NewTranspositionTable()
-)
+var columnOrder = [7]int{3, 4, 2, 5, 1, 6, 0}
 
 func (grid *Grid) GetScore() int8 {
 	// Strong solver, use min = -1 and max = 1 for a weak solver
@@ -60,29 +56,34 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 		}
 	}
 
+	if grid.TransTable == nil {
+		grid.TransTable = transpositiontable.NewTranspositionTable()
+	}
+
 	start := time.Now()
 
 	score := grid.GetScore()
 
 	elapsed := time.Since(start)
 	elapsedNanoseconds := elapsed.Nanoseconds()
+	nc := *grid.nodeCount
 	nodesPerSecond := uint64(0)
 	meanTimePerNode := 0.0
-	if nodeCount > 0 {
-		meanTimePerNode = float64(elapsedNanoseconds) / float64(nodeCount)
+	if nc > 0 {
+		meanTimePerNode = float64(elapsedNanoseconds) / float64(nc)
 	}
 	if elapsedNanoseconds > 0 {
-		nodesPerSecond = uint64(float64(nodeCount) * 1_000_000_000 / float64(elapsedNanoseconds))
+		nodesPerSecond = uint64(float64(nc) * 1_000_000_000 / float64(elapsedNanoseconds))
 	}
 
 	stats := stats.Stats{
 		TotalTimeNanoseconds: elapsedNanoseconds,
-		NodeCount:            nodeCount,
+		NodeCount:            nc,
 		MeanTimePerNode:      meanTimePerNode,
 		NodesPerSecond:       nodesPerSecond,
 	}
 
-	nodeCount = 0
+	*grid.nodeCount = 0
 
 	return evaluation.Evaluation{
 		Score:          &score,
@@ -111,6 +112,10 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 		}
 	}
 
+	if grid.TransTable == nil {
+		grid.TransTable = transpositiontable.NewTranspositionTable()
+	}
+
 	start := time.Now()
 	for column := range 7 {
 		if grid.CanPlay(column) {
@@ -132,23 +137,24 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 
 	elapsed := time.Since(start)
 	elapsedNanoseconds := elapsed.Nanoseconds()
+	nc := *grid.nodeCount
 	nodesPerSecond := uint64(0)
 	meanTimePerNode := 0.0
-	if nodeCount > 0 {
-		meanTimePerNode = float64(elapsedNanoseconds) / float64(nodeCount)
+	if nc > 0 {
+		meanTimePerNode = float64(elapsedNanoseconds) / float64(nc)
 	}
 	if elapsedNanoseconds > 0 {
-		nodesPerSecond = uint64(float64(nodeCount) * 1_000_000_000 / float64(elapsedNanoseconds))
+		nodesPerSecond = uint64(float64(nc) * 1_000_000_000 / float64(elapsedNanoseconds))
 	}
 
 	stats := stats.Stats{
 		TotalTimeNanoseconds: elapsedNanoseconds,
-		NodeCount:            nodeCount,
+		NodeCount:            nc,
 		MeanTimePerNode:      meanTimePerNode,
 		NodesPerSecond:       nodesPerSecond,
 	}
 
-	nodeCount = 0
+	*grid.nodeCount = 0
 
 	bestRemainingMoves := GetRemainingMoves(maxScore, grid.nbMoves)
 
@@ -158,7 +164,7 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 }
 
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
-	nodeCount++
+	*grid.nodeCount++
 
 	nextMoves := grid.possibleNonLosingMoves()
 	if nextMoves == 0 {
@@ -186,7 +192,8 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	}
 
 	key := grid.Key()
-	if value := transTable.Get(key); value > 0 {
+	tt := grid.TransTable
+	if value := tt.Get(key); value > 0 {
 		if int(value) > MAX_SCORE-MIN_SCORE+1 {
 			min := int8(int(value) + 2*MIN_SCORE - MAX_SCORE - 2)
 			if alpha < min {
@@ -219,7 +226,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 		childGrid.play(nextMove)
 		childGridScore := -childGrid.negamax(-beta, -alpha)
 		if childGridScore >= beta {
-			transTable.Put(key, uint8(int(childGridScore)+MAX_SCORE-2*MIN_SCORE+2))
+			tt.Put(key, uint8(int(childGridScore)+MAX_SCORE-2*MIN_SCORE+2))
 			return childGridScore
 		}
 		if childGridScore > alpha {
@@ -227,7 +234,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 		}
 	}
 
-	transTable.Put(key, uint8(int(alpha)-MIN_SCORE+1))
+	tt.Put(key, uint8(int(alpha)-MIN_SCORE+1))
 
 	return alpha
 }

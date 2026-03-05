@@ -1,3 +1,3 @@
 package config
 
-var IsBookEnabled bool = false
+var IsBookEnabled bool = true

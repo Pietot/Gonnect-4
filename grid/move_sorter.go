@@ -10,10 +10,8 @@ type MoveSorter struct {
 	entries [WIDTH]MoveEntry
 }
 
-func newMoveSorter() *MoveSorter {
-	return &MoveSorter{
-		size: 0,
-	}
+func newMoveSorter() MoveSorter {
+	return MoveSorter{}
 }
 
 func (ms *MoveSorter) addMove(move uint64, score int) {

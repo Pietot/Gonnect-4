@@ -1,12 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
-	"github.com/Pietot/Gonnect-4/config"
-	"github.com/Pietot/Gonnect-4/grid"
+	"github.com/Pietot/Gonnect-4/book"
 	c "github.com/fatih/color"
 )
 
@@ -45,49 +43,7 @@ func parseNumbers(arg string) (string, error) {
 }
 
 func main() {
-	flag.Usage = printUsage
-
-	analyze := flag.Bool("a", false, "Analyze a position")
-	solve := flag.Bool("s", false, "Solve a position")
-	disableBookFlag := flag.Bool("disable-book", false, "Disable opening book")
-	flag.Parse()
-	
-	config.IsBookEnabled = !*disableBookFlag
-
-	if (*analyze && *solve) || (!*analyze && !*solve) {
-		c.Red("Error: you must provide exactly one of -a or -s")
-		printUsage()
-	}
-
-	args := flag.Args()
-	if len(args) > 1 {
-		c.Red("Error: too many sequences")
-		printUsage()
-	}
-
-	if len(args) == 0 {
-		args = append(args, "")
-	}
-
-	sequence, err := parseNumbers(args[0])
-	if err != nil {
-		c.Red("Error: %s", err)
-		printUsage()
-	}
-
-	grid, err := grid.InitGrid(sequence)
-	if err != nil {
-		c.Red("Error: %s", err)
-		printUsage()
-	}
-
-	if *analyze {
-		evaluation, stats := grid.Analyze()
-		fmt.Printf("Evaluation:\n%s\n\nStats: \n%s\n", evaluation, stats)
-	}
-
-	if *solve {
-		evaluation, stats := grid.Solve()
-		fmt.Printf("Evaluation:\n%s\n\nStats: \n%s\n", evaluation, stats)
-	}
+	// Don't forget to import the book package.
+	// Uncomment the following line to continue/recreate building the book.
+	book.CreateBook(42)
 }
