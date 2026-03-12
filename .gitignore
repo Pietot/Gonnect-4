@@ -1,11 +1,8 @@
 .vscode/
 
 # Ignore database files
-*.db
+*/badger*
 *.zip
 
 # Ignore executable files
 *.exe
-
-# Ignore generated files
-database/map.go
