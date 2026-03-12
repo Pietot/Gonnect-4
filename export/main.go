@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/Pietot/Gonnect-4/database"
-	"go.etcd.io/bbolt"
+	"github.com/dgraph-io/badger/v4"
 )
 
 const (
@@ -17,7 +17,9 @@ const (
 )
 
 func main() {
-	db, err := bbolt.Open("../database/gonnect4_book.db", 0o600, &bbolt.Options{ReadOnly: true})
+	opts := badger.DefaultOptions("../database/badger")
+	opts.Logger = nil
+	db, err := badger.Open(opts)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,14 +38,22 @@ func main() {
 	}
 	fmt.Fprintln(f, "var ExportedBook = map[uint64][7]*int8{")
 
-	err = db.View(func(tx *bbolt.Tx) error {
-		b := tx.Bucket([]byte(database.BucketResults))
-		if b == nil {
-			return fmt.Errorf("the bucket results does not exist")
-		}
+	err = db.View(func(txn *badger.Txn) error {
+		opts := badger.DefaultIteratorOptions
+		opts.Prefix = database.PrefixResults
+		it := txn.NewIterator(opts)
+		defer it.Close()
 
-		return b.ForEach(func(k, v []byte) error {
-			key := binary.BigEndian.Uint64(k)
+		for it.Rewind(); it.Valid(); it.Next() {
+			item := it.Item()
+			k := item.KeyCopy(nil)
+			v, err := item.ValueCopy(nil)
+			if err != nil {
+				return err
+			}
+
+			payload := k[len(database.PrefixResults):]
+			key := binary.BigEndian.Uint64(payload)
 
 			var scores [7]*int8
 			buf := bytes.NewBuffer(v)
@@ -63,8 +73,8 @@ func main() {
 				}
 			}
 			fmt.Fprintln(f, "},")
-			return nil
-		})
+		}
+		return nil
 	})
 
 	if err != nil {
