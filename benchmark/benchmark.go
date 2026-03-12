@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/Pietot/Gonnect-4/book"
-	"github.com/Pietot/Gonnect-4/database"
 	"github.com/Pietot/Gonnect-4/grid"
 	"github.com/Pietot/Gonnect-4/utils"
 	"github.com/schollz/progressbar/v3"
@@ -61,16 +60,11 @@ func BenchmarkAnalyze() {
 }
 
 func BenchmarkBookCreation() {
-	dbName := "benchmark/book_benchmark.db"
+	dbName := "benchmark/badger_benchmark"
 	os.Remove(dbName)
 
-	bookD8 := database.GetDatabase(dbName)
-	defer bookD8.Close()
-
-	database.DB = bookD8
-
 	start := time.Now()
-	book.CreateBook(8)
+	book.CreateBook(8, dbName)
 	elapsed := time.Since(start)
 	fmt.Printf("Book creation completed in %s\n", elapsed)
 }
