@@ -35,7 +35,7 @@ func NewProgressBar() *ProgressBar {
 		CurrentDepth:   0,
 		StartTime:      now,
 		DepthStartTime: now,
-		DepthTotal:     1, // A mettre à jour avec la vraie taille si connue
+		DepthTotal:     1,
 	}
 }
 
@@ -45,7 +45,6 @@ func (pb *ProgressBar) SetDepth(depth int) {
 	pb.DepthAnalyzed = 0
 	pb.DepthSaved = 0
 	pb.DepthSkipped = 0
-	// pb.DepthTotal = ... (Logique pour déterminer le max à cette profondeur)
 }
 
 func (pb *ProgressBar) AddAnalyzed() {
@@ -66,6 +65,12 @@ func (pb *ProgressBar) AddSkipped() {
 func (pb *ProgressBar) AddToQueue() {
 	pb.TotalInQueue++
 	pb.DepthAddedQueue++
+}
+
+func (pb *ProgressBar) RemoveFromQueue() {
+	if pb.TotalInQueue > 0 {
+		pb.TotalInQueue--
+	}
 }
 
 func formatDuration(d time.Duration) string {

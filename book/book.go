@@ -32,17 +32,20 @@ func CreateBook(maxDepth int, dbName string) {
 
 	for {
 		key, depth, found := database.PopFromQueue(db)
+		pb.RemoveFromQueue()
 		if !found {
 			break
 		}
 
 		if depth > maxDepth {
+			pb.Render()
 			continue
 		}
 
 		if depth != pb.CurrentDepth {
 			totalForDepth := database.CountKeysForDepth(db, depth) + POPPED_KEY
 			pb.ResetDepth(depth, totalForDepth)
+			pb.Render()
 		}
 
 		g := grid.FromKey(key)
