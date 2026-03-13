@@ -87,3 +87,9 @@ func ReadPositionsFromFile(filename string) ([]string, error) {
 	lines := strings.Split(string(data), "\n")
 	return lines, nil
 }
+
+type JSONPosition struct {
+	Sequence string   `json:"sequence"`
+	Score    int8     `json:"score"`
+	Analysis [7]*int8 `json:"analysis"`
+}
