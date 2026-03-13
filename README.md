@@ -206,6 +206,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
 > [!NOTE]
 > Tests have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.26.0 windows/amd64 for my solver and rustc 1.91.1 for benjaminrall's solver.
+> *Full book* refers to precomputing all positions up to a certain depth, whereas *partial book* means only positions that took more than 20 million nodes to analyze were precomputed.
 
 ## 6 - Contribute
 
