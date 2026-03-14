@@ -61,10 +61,9 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	}
 
 	start := time.Now()
-
 	score := grid.GetScore()
-
 	elapsed := time.Since(start)
+
 	elapsedNanoseconds := elapsed.Nanoseconds()
 	nodesPerSecond := uint64(0)
 	meanTimePerNode := 0.0

@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/Pietot/Gonnect-4/grid"
+	"github.com/Pietot/Gonnect-4/utils"
 )
 
 var files = []string{
@@ -17,12 +18,6 @@ var files = []string{
 	"../data/test_medium_end.json",
 	"../data/test_medium_middle.json",
 	"../data/test_hard_begin.json",
-}
-
-type JSONPosition struct {
-	Sequence string   `json:"sequence"`
-	Score    int8     `json:"score"`
-	Analysis [7]*int8 `json:"analysis"`
 }
 
 // You don't need to test all positions from all files every time cause it takes long.
@@ -36,7 +31,7 @@ func TestAnalyze(t *testing.T) {
 		}
 		defer f.Close()
 
-		var positions []JSONPosition
+		var positions []utils.JSONPosition
 		if err := json.NewDecoder(f).Decode(&positions); err != nil {
 			t.Fatalf("Error decoding JSON file %s: %v", file, err)
 		}
@@ -73,7 +68,7 @@ func TestSolve(t *testing.T) {
 		}
 		defer f.Close()
 
-		var positions []JSONPosition
+		var positions []utils.JSONPosition
 		if err := json.NewDecoder(f).Decode(&positions); err != nil {
 			t.Fatalf("Error decoding JSON file %s: %v", file, err)
 		}
