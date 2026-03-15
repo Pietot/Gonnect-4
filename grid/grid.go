@@ -46,11 +46,7 @@ func (grid *Grid) MirrorKey() uint64 {
 }
 
 func (grid *Grid) GetCanonicalKey() uint64 {
-	k, mk := grid.Key(), grid.MirrorKey()
-	if k < mk {
-		return k
-	}
-	return mk
+	return min(grid.Key(), grid.MirrorKey())
 }
 
 // mirror return the bitboard reversed horizontally
