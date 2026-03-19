@@ -6,6 +6,12 @@ import (
 	"strings"
 )
 
+type JSONPosition struct {
+	Sequence string   `json:"sequence"`
+	Score    int8     `json:"score"`
+	Analysis [7]int8 `json:"analysis"`
+}
+
 func FormatFloat(value float64) string {
 	formatted := fmt.Sprintf("%.2f", value)
 
@@ -52,19 +58,19 @@ func addUnderscores(s string) string {
 	return result.String()
 }
 
-func GetBestScoreAndMove(scores [7]*int8) (bestScore int8, bestMove uint8) {
+func GetBestScoreAndMove(scores [7]int8) (bestScore int8, bestMove uint8) {
 	bestScore = -128
 	bestMove = 0
-	for i, scorePtr := range scores {
-		if scorePtr != nil && *scorePtr > bestScore {
-			bestScore = *scorePtr
+	for i, score := range scores {
+		if score != -128 && score > bestScore {
+			bestScore = score
 			bestMove = uint8(i)
 		}
 	}
 	return bestScore, bestMove
 }
 
-func GetScores(book *map[uint64][7]*int8, key uint64, mirrorKey uint64) (scores [7]*int8, found bool) {
+func GetScores(book *map[uint64][7]int8, key uint64, mirrorKey uint64) (scores [7]int8, found bool) {
 	if scores, found = (*book)[key]; found {
 		return scores, true
 	}
@@ -86,10 +92,4 @@ func ReadPositionsFromFile(filename string) ([]string, error) {
 
 	lines := strings.Split(string(data), "\n")
 	return lines, nil
-}
-
-type JSONPosition struct {
-	Sequence string   `json:"sequence"`
-	Score    int8     `json:"score"`
-	Analysis [7]*int8 `json:"analysis"`
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/Pietot/Gonnect-4/config"
 	"github.com/Pietot/Gonnect-4/grid"
 	"github.com/Pietot/Gonnect-4/utils"
 )
@@ -80,10 +81,10 @@ func TestSolve(t *testing.T) {
 			}
 
 			solved, _ := game.Solve()
-			if solved.Score == nil {
+			if solved.Score == config.NIL_SCORE {
 				t.Errorf("[File %d, Entry %d] No solution found for position %q", fileIndex, i, pos.Sequence)
-			} else if *solved.Score != pos.Score {
-				t.Errorf("[File %d, Entry %d] Score mismatch for position %q\nExpected: %d\nGot:      %d", fileIndex, i, pos.Sequence, pos.Score, *solved.Score)
+			} else if solved.Score != pos.Score {
+				t.Errorf("[File %d, Entry %d] Score mismatch for position %q\nExpected: %d\nGot:      %d", fileIndex, i, pos.Sequence, pos.Score, solved.Score)
 			} else {
 				t.Logf("[File %d] Position %s solved correctly", fileIndex, pos.Sequence)
 			}
@@ -91,28 +92,28 @@ func TestSolve(t *testing.T) {
 	}
 }
 
-func scoresEqual(a, b [7]*int8) bool {
+func scoresEqual(a, b [7]int8) bool {
 	for i := range 7 {
-		if a[i] == nil && b[i] == nil {
+		if a[i] == config.NIL_SCORE && b[i] == config.NIL_SCORE {
 			continue
 		}
-		if a[i] == nil || b[i] == nil {
+		if a[i] == config.NIL_SCORE || b[i] == config.NIL_SCORE {
 			return false
 		}
-		if *a[i] != *b[i] {
+		if a[i] != b[i] {
 			return false
 		}
 	}
 	return true
 }
 
-func formatScores(s [7]*int8) string {
+func formatScores(s [7]int8) string {
 	out := make([]string, 7)
 	for i, v := range s {
-		if v == nil {
-			out[i] = "null"
+		if v == config.NIL_SCORE {
+			out[i] = "N/A"
 		} else {
-			out[i] = fmt.Sprintf("%d", *v)
+			out[i] = fmt.Sprintf("%d", v)
 		}
 	}
 	return "[" + strings.Join(out, ", ") + "]"

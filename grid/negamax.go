@@ -49,7 +49,7 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 		if found {
 			score, _ := utils.GetBestScoreAndMove(scores)
 			return evaluation.Evaluation{
-					Score:          &score,
+					Score:          score,
 					RemainingMoves: GetRemainingMoves(score, grid.nbMoves),
 				}, stats.Stats{
 					TotalTimeNanoseconds: 0,
@@ -84,7 +84,7 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	nodeCount = 0
 
 	return evaluation.Evaluation{
-		Score:          &score,
+		Score:          score,
 		RemainingMoves: GetRemainingMoves(score, grid.nbMoves),
 	}, stats
 }
@@ -99,8 +99,8 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 		if found {
 			scores.Scores = sc
 			_, bestMove = utils.GetBestScoreAndMove(sc)
-			scores.BestMove = &bestMove
-			scores.RemainingMoves = GetRemainingMoves(*sc[bestMove], grid.nbMoves)
+			scores.BestMove = bestMove
+			scores.RemainingMoves = GetRemainingMoves(sc[bestMove], grid.nbMoves)
 			return scores, stats.Stats{
 				TotalTimeNanoseconds: 0,
 				NodeCount:            0,
@@ -121,7 +121,7 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 				childGrid.PlayColumn(column)
 				score = -childGrid.GetScore()
 			}
-			scores.Scores[column] = &score
+			scores.Scores[column] = score
 			if score > maxScore {
 				maxScore = score
 				bestMove = uint8(column)
@@ -152,7 +152,7 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 	bestRemainingMoves := GetRemainingMoves(maxScore, grid.nbMoves)
 
 	scores.RemainingMoves = bestRemainingMoves
-	scores.BestMove = &bestMove
+	scores.BestMove = bestMove
 	return scores, stats
 }
 
@@ -231,12 +231,12 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	return alpha
 }
 
-func GetRemainingMoves(score int8, nbMoves int) *uint8 {
+func GetRemainingMoves(score int8, nbMoves int) uint8 {
 	if score > 0 {
-		return new(uint8((45-nbMoves)/2 - int(score)))
+		return uint8((45-nbMoves)/2 - int(score))
 	}
 	if score < 0 {
-		return new(uint8((44-nbMoves)/2 + int(score)))
+		return uint8((44-nbMoves)/2 + int(score))
 	}
-	return new(uint8((WIDTH*HEIGHT - nbMoves) / 2))
+	return uint8((WIDTH*HEIGHT - nbMoves) / 2)
 }
