@@ -51,7 +51,7 @@ func main() {
 	solve := flag.Bool("s", false, "Solve a position")
 	disableBookFlag := flag.Bool("disable-book", false, "Disable opening book")
 	flag.Parse()
-	
+
 	config.IsBookEnabled = !*disableBookFlag
 
 	if (*analyze && *solve) || (!*analyze && !*solve) {

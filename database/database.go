@@ -111,7 +111,7 @@ func IsInQueue(txn *badger.Txn, key uint64) bool {
 	return err == nil
 }
 
-func SaveResult(txn *badger.Txn, key uint64, scores [7]*int8) error {
+func SaveResult(txn *badger.Txn, key uint64, scores [7]int8) error {
 	var buf bytes.Buffer
 	err := gob.NewEncoder(&buf).Encode(scores)
 	if err != nil {
