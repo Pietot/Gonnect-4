@@ -27,13 +27,17 @@ func FormatUint64(value uint64) string {
 
 func GetTime(nanoseconds int64) string {
 	if nanoseconds < 1_000 {
-		return fmt.Sprintf("%d ns", nanoseconds)
+		return fmt.Sprintf("%dns", nanoseconds)
 	} else if nanoseconds < 1_000_000 {
-		return fmt.Sprintf("%.2f µs", float64(nanoseconds)/1_000)
+		return fmt.Sprintf("%.2fµs", float64(nanoseconds)/1_000)
 	} else if nanoseconds < 1_000_000_000 {
-		return fmt.Sprintf("%.2f ms", float64(nanoseconds)/1_000_000)
+		return fmt.Sprintf("%.2fms", float64(nanoseconds)/1_000_000)
+	} else if nanoseconds < 60_000_000_000 {
+		return fmt.Sprintf("%.2fs", float64(nanoseconds)/1_000_000_000)
+	} else if nanoseconds < 3_600_000_000_000 {
+		return fmt.Sprintf("%02dm%02ds", nanoseconds/60_000_000_000, int64(float64(nanoseconds%60_000_000_000)/1_000_000_000))
 	} else {
-		return fmt.Sprintf("%.2f s", float64(nanoseconds)/1_000_000_000)
+		return fmt.Sprintf("%02dh%02dm%02ds", nanoseconds/3_600_000_000_000, (nanoseconds%3_600_000_000_000)/60_000_000_000, int64(float64(nanoseconds%60_000_000_000)/1_000_000_000))
 	}
 }
 
