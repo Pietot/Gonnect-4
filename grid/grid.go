@@ -153,17 +153,17 @@ func (grid *Grid) opponentWinningPositionMask() uint64 {
 
 // Returns a bitmask containing a single 1 corresponding to the top cell of a given column
 func topMask(column int) uint64 {
-	return (uint64(1) << (HEIGHT - 1)) << (column * (HEIGHT + 1))
+	return (1 << (HEIGHT - 1)) << (column * (HEIGHT + 1))
 }
 
 // Returns a bitmask containing a single 1 corresponding to the bottom cell of a given column
 func bottomMask(column int) uint64 {
-	return uint64(1) << (column * (HEIGHT + 1))
+	return 1 << (column * (HEIGHT + 1))
 }
 
 // Returns a bitmask containing 1s corresponding to all the cells of a given column
 func columnMask(column int) uint64 {
-	return ((uint64(1) << HEIGHT) - 1) << (column * (HEIGHT + 1))
+	return ((1 << HEIGHT) - 1) << (column * (HEIGHT + 1))
 }
 
 // Returns a bitmap of all the winning moves for a player.
