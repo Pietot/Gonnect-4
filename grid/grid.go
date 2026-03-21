@@ -40,12 +40,12 @@ func InitGrid(columnsSequence string) (*Grid, error) {
 
 // Returns a unique key representing the current grid state.
 func (grid *Grid) Key() uint64 {
-	return grid.CurrentPosition + grid.Mask + BOTTOM
+	return grid.CurrentPosition + grid.Mask
 }
 
 // Reverse the grid horizontally and return its unique key.
 func (grid *Grid) MirrorKey() uint64 {
-	return mirror(grid.CurrentPosition) + mirror(grid.Mask) + BOTTOM
+	return mirror(grid.CurrentPosition) + mirror(grid.Mask)
 }
 
 // Returns the smallest key between the current grid and its mirror.
