@@ -182,10 +182,5 @@ func (grid *Grid) moveScore(move uint64) int {
 }
 
 func popCount(move uint64) int {
-	count := 0
-	for move != 0 {
-		move &= move - 1
-		count++
-	}
-	return count
+	return bits.OnesCount64(move)
 }
