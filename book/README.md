@@ -8,7 +8,6 @@ This README file is to explain the purpose of the book package and how to use it
 
 ### 3. [Implementation Details](#3---implementation-details)
 
-
 ## 1 - General Idea
 
 The early a position is in the game, the more possible moves there are, and the more time it takes to solve/analyze it in average.
