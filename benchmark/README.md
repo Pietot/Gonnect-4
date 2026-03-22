@@ -109,8 +109,8 @@ The benchmark then measures the time taken to create a book of depth 8.
 
 ### 3.1 - BenchmarkBookCreation History Results
 
-| Gonnect 4 Version |               Book Creation Techniques                | Depth reached - Progress | Time |
-| :---------------: | :---------------------------------------------------: | :----------------------: | :--: |
+| Gonnect 4 Version |                Book Creation Techniques                 | Depth reached - Progress | Time |
+| :---------------: | :-----------------------------------------------------: | :----------------------: | :--: |
 |      v1.12.0      | Multi-Threading + Bbolt + Canonical Key + early pruning |          4-5/8           | 11h  |
 |      v1.14.0      | Mono-Threading + Badger + Canonical Key + early pruning |  4/8 - 231/568 (40.67%)  | 11h  |
 
