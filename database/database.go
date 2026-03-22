@@ -15,7 +15,7 @@ var (
 	PrefixPending = []byte("P:")
 )
 
-const KEY_EMPTY_POSITION uint64 = 4432676798593
+const KEY_EMPTY_POSITION uint64 = 0
 
 func makeKey(prefix []byte, key []byte) []byte {
 	k := make([]byte, len(prefix)+len(key))
