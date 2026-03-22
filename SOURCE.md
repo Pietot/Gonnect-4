@@ -32,7 +32,7 @@ Here is a brief overview of each folder and its purpose:
 
 - `benchmark/`: Contains the implementation of the benchmarking tools.
 
-- `config/`: Not important for now, it just contains a variable to store if the book is enabled or not.
+- `config/`: Not important for now, it just contains some variables.
 
 - `utils/`: Contains some utility functions used by the other packages.
 

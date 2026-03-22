@@ -18,6 +18,7 @@ var (
 	transTable  = transpositiontable.NewTranspositionTable()
 )
 
+// Gets the score of the current position using a negamax algorithm with alpha-beta pruning and a transposition table.
 func (grid *Grid) GetScore() int8 {
 	// Strong solver, use min = -1 and max = 1 for a weak solver
 	minScore := int8(-(WIDTH*HEIGHT - grid.nbMoves) / 2)
@@ -43,6 +44,7 @@ func (grid *Grid) GetScore() int8 {
 	return minScore
 }
 
+// Solves the current position by returning its score, the remaining moves until a forced win and some statistics about the solving process.
 func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	if config.IsBookEnabled {
 		scores, found := utils.GetScores(&database.ExportedBook, grid.Key(), grid.MirrorKey())
@@ -89,6 +91,7 @@ func (grid *Grid) Solve() (evaluation.Evaluation, stats.Stats) {
 	}, stats
 }
 
+// Analyzes the current position by returning the score for all possible moves, the remaining moves until a forced win and the best move to play, as well as some statistics about the analyzing process.
 func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 	scores := evaluation.Analysis{}
 	bestMove := uint8(0)
@@ -156,6 +159,7 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 	return scores, stats
 }
 
+// Negamax algorithm with alpha-beta pruning transposition table and move ordering.
 func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	nodeCount++
 
@@ -231,6 +235,7 @@ func (grid *Grid) negamax(alpha int8, beta int8) int8 {
 	return alpha
 }
 
+// Returns the number of remaining moves until a forced win for the current position, given its score and the number of moves played so far.
 func GetRemainingMoves(score int8, nbMoves int) uint8 {
 	if score > 0 {
 		return uint8((45-nbMoves)/2 - int(score))

@@ -15,7 +15,7 @@ var (
 	PrefixPending = []byte("P:")
 )
 
-const KEY_EMPTY_POSITION uint64 = 4432676798593
+const KEY_EMPTY_POSITION uint64 = 0
 
 func makeKey(prefix []byte, key []byte) []byte {
 	k := make([]byte, len(prefix)+len(key))
@@ -51,7 +51,7 @@ func GetDatabase(dbName string) *badger.DB {
 	return db
 }
 
-func Uint64ToBytes(v uint64) []byte {
+func uint64ToBytes(v uint64) []byte {
 	b := make([]byte, 8)
 	binary.BigEndian.PutUint64(b, v)
 	return b
@@ -68,7 +68,7 @@ func AddToQueue(txn *badger.Txn, key uint64, depth int) error {
 		return err
 	}
 
-	return txn.Set(makeKey(PrefixPending, Uint64ToBytes(key)), []byte{byte(depth)})
+	return txn.Set(makeKey(PrefixPending, uint64ToBytes(key)), []byte{byte(depth)})
 }
 
 func PopFromQueue(db *badger.DB) (key uint64, depth int, found bool) {
@@ -94,7 +94,7 @@ func PopFromQueue(db *badger.DB) (key uint64, depth int, found bool) {
 		found = true
 
 		txn.Delete(k)
-		txn.Delete(makeKey(PrefixPending, Uint64ToBytes(key)))
+		txn.Delete(makeKey(PrefixPending, uint64ToBytes(key)))
 
 		return nil
 	})
@@ -102,12 +102,12 @@ func PopFromQueue(db *badger.DB) (key uint64, depth int, found bool) {
 }
 
 func IsAnalyzed(txn *badger.Txn, key uint64) bool {
-	_, err := txn.Get(makeKey(PrefixResults, Uint64ToBytes(key)))
+	_, err := txn.Get(makeKey(PrefixResults, uint64ToBytes(key)))
 	return err == nil
 }
 
 func IsInQueue(txn *badger.Txn, key uint64) bool {
-	_, err := txn.Get(makeKey(PrefixPending, Uint64ToBytes(key)))
+	_, err := txn.Get(makeKey(PrefixPending, uint64ToBytes(key)))
 	return err == nil
 }
 
@@ -117,7 +117,7 @@ func SaveResult(txn *badger.Txn, key uint64, scores [7]int8) error {
 	if err != nil {
 		return err
 	}
-	return txn.Set(makeKey(PrefixResults, Uint64ToBytes(key)), buf.Bytes())
+	return txn.Set(makeKey(PrefixResults, uint64ToBytes(key)), buf.Bytes())
 }
 
 func CountKeysForDepth(db *badger.DB, depth int) int {

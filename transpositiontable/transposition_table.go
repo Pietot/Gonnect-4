@@ -1,19 +1,21 @@
 package transpositiontable
 
-const MASK_49 uint64 = (1 << 49) - 1
+// A prime number close but under to 2^23 for better distribution.
+const TT_SIZE = 8388593
 
 type TranspositionTable struct {
 	table []Entry
 }
 
 type Entry struct {
-	key_49_bit uint64
-	value      uint8
+	key   uint64
+	value uint8
 }
 
 func NewTranspositionTable() *TranspositionTable {
 	return &TranspositionTable{
-		table: make([]Entry, 8388593),
+
+		table: make([]Entry, TT_SIZE),
 	}
 }
 
@@ -26,15 +28,15 @@ func (trans_table *TranspositionTable) Reset() {
 func (trans_table *TranspositionTable) Put(key uint64, value uint8) {
 	entryIndex := trans_table.index(key)
 	trans_table.table[entryIndex] = Entry{
-		key_49_bit: key & MASK_49,
-		value:      value,
+		key:   key,
+		value: value,
 	}
 }
 
 func (trans_table *TranspositionTable) Get(key uint64) uint8 {
 	entryIndex := trans_table.index(key)
 	entry := trans_table.table[entryIndex]
-	if entry.key_49_bit == key {
+	if entry.key == key {
 		return entry.value
 	}
 	return 0
