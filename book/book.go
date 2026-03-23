@@ -12,6 +12,7 @@ const (
 	POPPED_KEY     = 1
 )
 
+// for dbName, use config.DEFAULT_DB_PATH for normal use and config.BENCHMARK_DB_PATH for benchmarking
 func CreateBook(maxDepth int, dbName string) {
 	pb := progressbar.NewProgressBar()
 	db := database.GetDatabase(dbName)

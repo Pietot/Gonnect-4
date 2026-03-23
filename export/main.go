@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	opts := badger.DefaultOptions("../database/badger")
+	opts := badger.DefaultOptions(config.DEFAULT_DB_PATH)
 	opts.Logger = nil
 	db, err := badger.Open(opts)
 	if err != nil {
