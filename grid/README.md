@@ -112,27 +112,29 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
   . . o x x o .     0 0 0 1 1 0 0     0 0 1 1 1 1 0
   ```
 
-  With this encoding, we can efficiently compute winning positions, possible moves, and other operations using bitwise operations. In addition, we can get a unique key for each position by adding the `CurrentPosition` and `Mask` fields, which is used for the transposition table and database.
+  With this encoding, we can efficiently compute winning positions, possible moves, and other operations using bitwise operations. In addition, we can get a unique key for each position by adding the `CurrentPosition` and `Mask` + a constant `BOTTOM`, which is a constant to retrieve a position (CurrentPosition and mask) from the key. The key is used for the transposition table and the book.
 
   ```
 
-      Grid         CurrentPosition  +       Mask       =       Key
-  . . . . . . .     0 0 0 0 0 0 0       0 0 0 0 0 0 0     0 1 1 1 0 0 0
-  —————————————     —————————————   +   —————————————     —————————————
-  . . . . . . .     0 0 0 0 0 0 0   +   0 0 0 0 0 0 0     0 0 0 0 0 0 0
-  . . . o . . .     0 0 0 0 0 0 0   +   0 0 0 1 0 0 0     0 0 0 1 0 0 0
-  . . x x . . .     0 0 1 1 0 0 0   +   0 0 1 1 0 0 0     0 0 0 0 0 0 0
-  . . o x . . .     0 0 0 1 0 0 0   +   0 0 1 1 0 0 0     0 0 0 1 0 0 0
-  . . o o x . .     0 0 0 0 1 0 0   +   0 0 1 1 1 0 0     0 0 0 0 0 0 0
-  . . o x x o .     0 0 0 1 1 0 0   +   0 0 1 1 1 1 0     0 1 0 1 0 0 0
+      Grid         CurrentPosition  +       Mask             BOTTOM      =       Key
+  . . . . . . .     0 0 0 0 0 0 0       0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 1 1 1 0 0 0
+  —————————————     —————————————   +   —————————————     —————————————     —————————————
+  . . . . . . .     0 0 0 0 0 0 0   +   0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
+  . . . o . . .     0 0 0 0 0 0 0   +   0 0 0 1 0 0 0     0 0 0 0 0 0 0     0 0 0 1 0 0 0
+  . . x x . . .     0 0 1 1 0 0 0   +   0 0 1 1 0 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
+  . . o x . . .     0 0 0 1 0 0 0   +   0 0 1 1 0 0 0     0 0 0 0 0 0 0     0 0 0 1 0 0 0
+  . . o o x . .     0 0 0 0 1 0 0   +   0 0 1 1 1 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
+  . . o x x o .     0 0 0 1 1 0 0   +   0 0 1 1 1 1 0     1 1 1 1 1 1 1     0 1 0 1 0 0 0
 
   Calculus:
 
-  CurrentPosition = 0000000 1000000 1100000 1111100 1111000 0000000 0000000 (2225055072256)
+  CurrentPosition = 0000000 1000000 1100000 1111100 1111000 0000000 0000000 (2 225 055 072 256)
   +
-  Mask            = 0000000 0000000 1100000 1011000 0001000 0000000 0000000   (25954484224)
+  Mask            = 0000000 0000000 1100000 1011000 0001000 0000000 0000000    (25 954 484 224)
+  +
+  BOTTOM          = 0000001 0000001 0000001 0000001 0000001 0000001 0000001 (4 432 676 798 593)
   =
-  Key             = 0000000 1000001 1000001 1010101 0000000 0000000 0000000 (2251009556480)
+  Key             = 0000001 1000010 1000010 1010110 0000001 0000001 0000001 (6 683 686 355 073)
 
   ```
 
