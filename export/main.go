@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Pietot/Gonnect-4/config"
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/dgraph-io/badger/v4"
 )
