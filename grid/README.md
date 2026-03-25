@@ -143,3 +143,6 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
   The `MoveSorter` is a simple priority structure that sorts moves by their heuristic score. Moves are sorted in ascending order and retrieved in descending order (best moves first), which improves alpha-beta pruning efficiency.
 
   The heuristic scores moves based on how many winning positions they create for the current player.
+
+> [!NOTE]
+> Yes, I could have separated the move sorter from the grid package to it's own package, but I need access to the grid package's WIDTH constant, which creates a circular import. I know there's ways to fix this, but none of them sastisfied me. So for instance, the move sorter is in the grid package, and I don't think it's that bad after all.
