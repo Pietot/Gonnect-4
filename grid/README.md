@@ -116,7 +116,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
   ```
 
-      Grid         CurrentPosition  +       Mask             BOTTOM      =       Key
+      Grid         CurrentPosition  +       Mask       +     BOTTOM      =       Key
   . . . . . . .     0 0 0 0 0 0 0       0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 1 1 1 0 0 0
   —————————————     —————————————   +   —————————————     —————————————     —————————————
   . . . . . . .     0 0 0 0 0 0 0   +   0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
