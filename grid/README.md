@@ -27,7 +27,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
 - ### 2.2 - Score system
 
-  For the negamax algorithm to work, we need to define a score system. So, we'll need to define a score for a given position.If the two player plays perfectly, the score system is defined as follows:
+  For the negamax algorithm to work, we need to define a score system. So, we'll need to define a score for a given position. If the two player plays perfectly, the score system is defined as follows:
   - A positive score means that the current player is winning
   - A negative score means that the current player is losing
   - A score of 0 means that the position leads to a draw
@@ -67,8 +67,8 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
   Instead of using a traditional 7x6 grid representation, the bitboard uses a clever encoding where each column is represented by 7 bits (6 for the cells + 1 separator).
 
-  > [!IMPORTANT]
-  > Since a binary number is "built" from right to left, each bucket of 7 bits corresponds to a column, **FROM RIGHT TO LEFT**.
+> [!IMPORTANT]  
+> Since a binary number is "built" from right to left, each bucket of 7 bits corresponds to a column, **FROM RIGHT TO LEFT**.
 
   For more clarity, here is the order of bits to encode for a 7x6 board.
 
