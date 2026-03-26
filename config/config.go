@@ -6,4 +6,4 @@ const (
 	BENCHMARK_DB_PATH string = "benchmark/gonnect4_benchmark_db"
 )
 
-var IsBookEnabled bool = true
+var IsBookEnabled bool = false
