@@ -105,7 +105,7 @@ The `BenchmarkBookCreation` function is designed to benchmark the performance of
 The benchmark then measures the time taken to create a book of depth 8.
 
 > [!WARNING]
-> The **BenchmarkBookCreation** is designed to create a new **.db** file called `book_benchmark.db` in the **benchmark** directory.
+> The **BenchmarkBookCreation** is designed to create a new **db** folder called `gonnect4_benchmark_db` in the **benchmark** directory.
 
 ### 3.1 - BenchmarkBookCreation History Results
 
