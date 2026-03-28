@@ -52,7 +52,7 @@ func CreateBook(maxDepth int, dbName string) {
 		g := grid.FromKey(key)
 		analysis, stats := g.Analyze()
 
-		if stats.NodeCount >= NODE_THRESHOLD || isAlreadyInBook(stats.NodeCount) {
+		if stats.NodeCount >= NODE_THRESHOLD {
 			err := db.Update(func(txn *badger.Txn) error {
 				database.SaveResult(txn, key, analysis.Scores)
 				pb.AddSaved()
@@ -83,8 +83,4 @@ func CreateBook(maxDepth int, dbName string) {
 		pb.AddAnalyzed()
 		pb.Render()
 	}
-}
-
-func isAlreadyInBook(nodeCount uint64) bool {
-	return nodeCount == 0
 }
