@@ -12,6 +12,7 @@ const (
 	POPPED_KEY     = 1
 )
 
+// for dbName, use config.DEFAULT_DB_PATH for normal use and config.BENCHMARK_DB_PATH for benchmarking
 func CreateBook(maxDepth int, dbName string) {
 	pb := progressbar.NewProgressBar()
 	db := database.GetDatabase(dbName)
@@ -51,7 +52,7 @@ func CreateBook(maxDepth int, dbName string) {
 		g := grid.FromKey(key)
 		analysis, stats := g.Analyze()
 
-		if stats.NodeCount >= NODE_THRESHOLD || stats.NodeCount == 0 {
+		if stats.NodeCount >= NODE_THRESHOLD {
 			err := db.Update(func(txn *badger.Txn) error {
 				database.SaveResult(txn, key, analysis.Scores)
 				pb.AddSaved()

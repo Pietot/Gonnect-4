@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Pietot/Gonnect-4/book"
+	"github.com/Pietot/Gonnect-4/config"
 	"github.com/Pietot/Gonnect-4/grid"
 	"github.com/Pietot/Gonnect-4/stats"
 	"github.com/Pietot/Gonnect-4/utils"
@@ -29,6 +30,8 @@ func runBenchmark(name string, benchFunc benchmarkFunc) {
 	// warm up
 	gameTest, _ := grid.InitGrid("533422")
 	benchFunc(gameTest)
+
+	// config.IsBookEnabled = true
 
 	start := time.Now()
 
@@ -86,11 +89,10 @@ func BenchmarkAnalyze() {
 }
 
 func BenchmarkBookCreation() {
-	dbName := "benchmark/badger_benchmark"
-	os.Remove(dbName)
+	os.Remove(config.BENCHMARK_DB_PATH)
 
 	start := time.Now()
-	book.CreateBook(8, dbName)
+	book.CreateBook(8, config.BENCHMARK_DB_PATH)
 	elapsed := time.Since(start)
 	fmt.Printf("Book creation completed in %s\n", elapsed)
 }

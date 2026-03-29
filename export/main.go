@@ -8,12 +8,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/Pietot/Gonnect-4/config"
 	"github.com/Pietot/Gonnect-4/database"
 	"github.com/dgraph-io/badger/v4"
 )
 
 func main() {
-	opts := badger.DefaultOptions("../database/badger")
+	opts := badger.DefaultOptions("../" + config.DEFAULT_DB_PATH)
 	opts.Logger = nil
 	db, err := badger.Open(opts)
 	if err != nil {
