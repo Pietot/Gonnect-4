@@ -170,43 +170,26 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
 - ### Results
 
-  I ran my solver and another (from [benjaminrall](https://github.com/benjaminrall/connect-four-ai)) on these test files.
+  I ran my solver on these test files.
 
-  |   Test Set    |             Solver              | Mean search time (ms) | Mean Nodes |
-  | :-----------: | :-----------------------------: | :-------------------: | :--------: |
-  |   Easy End    |            Gonnect 4            |         0.01          |     80     |
-  |               |  Gonnect 4 (partial book D12)   |         same          |    same    |
-  |               |         connect-four-ai         |         0.005         |     51     |
-  |               | connect-four-ai (full book D12) |         0.006         |     51     |
-  |               |                                 |                       |            |
-  |  Easy Middle  |            Gonnect 4            |         1.44          |    11K     |
-  |               |  Gonnect 4 (partial book D12)   |         same          |    same    |
-  |               |         connect-four-ai         |         0.04          |    449     |
-  |               | connect-four-ai (full book D12) |         0.05          |    449     |
-  |               |                                 |                       |            |
-  |  Easy Begin   |            Gonnect 4            |         1 155         |   8421K    |
-  |               |  Gonnect 4 (partial book D12)   |          194          |   1335K    |
-  |               |         connect-four-ai         |         0.33          |    3294    |
-  |               | connect-four-ai (full book D12) |         0.07          |    619     |
-  |               |                                 |                       |            |
-  |  Medium End   |            Gonnect 4            |          9.7          |    75K     |
-  |               |  Gonnect 4 (partial book D12)   |         same          |    same    |
-  |               |         connect-four-ai         |         3.87          |    39K     |
-  |               | connect-four-ai (full book D12) |         4.45          |    40K     |
-  |               |                                 |                       |            |
-  | Medium Middle |            Gonnect 4            |          986          |   7061K    |
-  |               |  Gonnect 4 (partial book D12)   |          316          |   2730K    |
-  |               |         connect-four-ai         |          136          |   1191K    |
-  |               | connect-four-ai (full book D12) |          10           |    95K     |
-  |               |                                 |                       |            |
-  |  Hard Begin   |            Gonnect 4            |        29 776         |  207.563M  |
-  |               |  Gonnect 4 (partial book D12)   |          382          |   2620K    |
-  |               |         connect-four-ai         |         6244          |   64186K   |
-  |               | connect-four-ai (full book D12) |          1.9          |   17630    |
+  |   Test Set    |          Solver          | Mean search time (ms) | Mean Nodes |
+  | :-----------: | :----------------------: | :-------------------: | :--------: |
+  |   Easy End    |        Gonnect 4         |         0.01          |     80     |
+  |               | Gonnect 4 (partial book) |         same          |    same    |
+  |  Easy Middle  |        Gonnect 4         |         1.44          |    11K     |
+  |               | Gonnect 4 (partial book) |         same          |    same    |
+  |  Easy Begin   |        Gonnect 4         |         1 155         |   8421K    |
+  |               | Gonnect 4 (partial book) |          171          |   1355K    |
+  |  Medium End   |        Gonnect 4         |          9.7          |    75K     |
+  |               | Gonnect 4 (partial book) |         same          |    same    |
+  | Medium Middle |        Gonnect 4         |          986          |   7061K    |
+  |               | Gonnect 4 (partial book) |          290          |   2276K    |
+  |  Hard Begin   |        Gonnect 4         |        29 776         |  207.563M  |
+  |               | Gonnect 4 (partial book) |          349          |   2.730M   |
 
 > [!NOTE]
 > Tests have been made on a 64-bit Windows 10 computer with a Ryzen 5 3600 and 16GB of RAM clocked at 3600MHz in go1.26.0 windows/amd64 for my solver and rustc 1.91.1 for benjaminrall's solver.
-> **Full book** refers to precomputing all positions up to a certain depth, whereas **partial book** means only positions that took more than 20 million nodes to analyze were precomputed.
+> **Partial book** means only positions that took more than 20 million nodes to analyze were precomputed.
 
 ## 6 - Contribute
 
