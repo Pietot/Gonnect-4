@@ -31,6 +31,8 @@ func runBenchmark(name string, benchFunc benchmarkFunc) {
 	gameTest, _ := grid.InitGrid("533422")
 	benchFunc(gameTest)
 
+	// config.IsBookEnabled = true
+
 	start := time.Now()
 
 	for _, file := range files {
