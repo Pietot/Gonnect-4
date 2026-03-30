@@ -1,4 +1,4 @@
-//go:generate go run ../export/main.go
+//go:generate go run ../cmd/export/main.go
 package grid
 
 import (
