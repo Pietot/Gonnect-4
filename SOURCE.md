@@ -96,7 +96,7 @@ cd Gonnect-4
     To build the web assembly version of the solver, you can use the following command:
 
     ```bash
-    $env:GOOS="js"; $env:GOARCH="wasm"; go build -ldflags="-s -w" -o pages/gonnect4.wasm cmd/web/main.go
+    $env:GOOS="js"; $env:GOARCH="wasm"; go build -ldflags="-s -w" -o vercel/js/gonnect4.wasm cmd/web/main.go
     ```
 
-    This will create a `gonnect4.wasm` in the `pages` directory that you can use in your web projects to solve and analyze positions in the browser.
+    This will create a `gonnect4.wasm` in the `vercel/js` directory that you can use in your web projects to solve and analyze positions in the browser.
