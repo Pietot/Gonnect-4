@@ -24,10 +24,16 @@ func analyze(this js.Value, args []js.Value) any {
 
 	analysis, _ := g.Analyze()
 
+	// Convert scores to int for easier handling in JS
+	scores := make([]any, len(analysis.Scores))
+	for i, score := range analysis.Scores {
+		scores[i] = int(score)
+	}
+
 	return map[string]any{
 		"ok": true,
 		"analysis": map[string]any{
-			"scores":         analysis.Scores,
+			"scores":         scores,
 			"remainingMoves": analysis.RemainingMoves,
 		},
 	}
