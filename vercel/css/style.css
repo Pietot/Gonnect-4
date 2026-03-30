@@ -1,0 +1,18 @@
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #282c34;
+}
+
+body {
+  background: var(--bg);
+  font-family: "Consolas", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

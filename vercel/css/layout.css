@@ -1,0 +1,153 @@
+/* ═══════════════════════════════════════
+   layout.css — Reset, body, page structure
+   ═══════════════════════════════════════ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Sora", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 16px 40px;
+  gap: 18px;
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--text-hi);
+  letter-spacing: -0.03em;
+}
+
+.title em {
+  font-style: normal;
+  color: var(--blue);
+}
+
+.subtitle {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── Game area wrapper ── */
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── Controls row ── */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  max-width: 640px;
+}
+
+.ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.ctrl-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ── Scoreboard ── */
+.scoreboard {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.sb-entry {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+}
+
+.sb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.sb-name {
+  color: var(--text);
+  font-size: 0.72rem;
+}
+.sb-score {
+  color: var(--text-hi);
+  font-weight: 600;
+  font-size: 1rem;
+}
+.sb-sep {
+  color: var(--border);
+  font-size: 0.6rem;
+}
+
+/* ── Responsive adjustments ── */
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 4rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .title {
+    font-size: 5rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+  }
+}

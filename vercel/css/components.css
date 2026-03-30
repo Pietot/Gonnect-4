@@ -1,0 +1,313 @@
+/* ════════════════════════════════════════════════
+   components.css — UI components (buttons, status,
+                    board, score row, arrows…)
+   ════════════════════════════════════════════════ */
+
+/* ── Status bar ── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.82rem;
+  transition: border-color 0.3s;
+  min-width: 220px;
+  justify-content: center;
+}
+
+.status-bar.p1-turn {
+  border-color: var(--blue);
+}
+.status-bar.p2-turn {
+  border-color: var(--red);
+}
+.status-bar.win-p1,
+.status-bar.win-p2 {
+  border-color: var(--green);
+  background: var(--green-t);
+}
+.status-bar.draw {
+  border-color: var(--yellow);
+  background: var(--yellow-t);
+}
+
+.s-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition:
+    background 0.3s,
+    box-shadow 0.3s;
+}
+
+.s-dot.p1 {
+  background: var(--blue);
+  box-shadow: 0 0 6px var(--blue);
+}
+.s-dot.p2 {
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red);
+}
+.s-dot.win {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+.s-dot.draw {
+  background: var(--yellow);
+  box-shadow: 0 0 6px var(--yellow);
+}
+
+#status-text {
+  color: var(--text-hi);
+  font-weight: 600;
+}
+
+/* ── Thinking indicator ── */
+.thinking {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--yellow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  min-height: 16px;
+}
+
+.thinking.show {
+  opacity: 1;
+}
+
+.t-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--yellow);
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+.t-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.t-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ── Score row (above board) ── */
+.score-row {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cs));
+  gap: var(--gap);
+  padding: 0 calc(var(--gap) + 1px);
+  opacity: 1;
+  margin-bottom: 5px;
+  transition: all 0.5s ease-in-out;
+}
+
+.score-row.hidden {
+  opacity: 0;
+}
+
+.sc {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 5px;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.3s;
+}
+
+.sc.score-best {
+  color: var(--green);
+  background: var(--green-t);
+  border-color: rgba(152, 195, 121, 0.3);
+}
+.sc.score-good {
+  color: var(--cyan);
+  background: rgba(86, 182, 194, 0.08);
+  border-color: rgba(86, 182, 194, 0.2);
+}
+.sc.score-neutral {
+  color: var(--text-dim);
+}
+.sc.score-bad {
+  color: var(--orange);
+  background: rgba(209, 154, 102, 0.08);
+  border-color: rgba(209, 154, 102, 0.2);
+}
+.sc.score-worst {
+  color: var(--red);
+  background: var(--red-t);
+  border-color: rgba(224, 108, 117, 0.3);
+}
+.sc.score-invalid {
+  opacity: 0.2;
+}
+
+/* ── Board wrapper ── */
+.board-wrap {
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: var(--gap);
+  position: relative;
+}
+
+/* ── Grid ── */
+.board {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cs));
+  grid-template-rows: repeat(6, var(--cs));
+  gap: var(--gap);
+  user-select: none;
+}
+
+/* ── Column hover highlight layer ── */
+.col-layer {
+  position: absolute;
+  inset: var(--gap);
+  display: grid;
+  grid-template-columns: repeat(7, var(--cs));
+  gap: var(--gap);
+  pointer-events: none;
+}
+
+.col-hi {
+  border-radius: 4px;
+  background: transparent;
+  transition: background 0.15s;
+  pointer-events: none;
+}
+
+.col-hi.hovered {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ── Cells ── */
+.cell {
+  border-radius: 50%;
+  background: var(--bg-panel);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.12s;
+}
+
+.cell.p1 {
+  background: var(--blue);
+}
+.cell.p2 {
+  background: var(--red);
+}
+
+.cell.p1.win-cell {
+  --gc: var(--blue);
+}
+.cell.p2.win-cell {
+  --gc: var(--red);
+}
+
+.cell.win-cell {
+  animation: glow-pulse 0.7s ease-in-out infinite alternate;
+}
+
+/* ── Column drop arrows ── */
+.col-arrows {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cs));
+  gap: var(--gap);
+  padding: 0 calc(var(--gap) + 1px);
+  margin-top: 5px;
+}
+
+.arrow-btn {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.arrow-btn:hover {
+  color: var(--text-hi);
+  background: var(--bg-hover);
+}
+.arrow-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+/* ── Buttons ── */
+.btn-row {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-family: "Sora", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 400;
+  padding: 5px 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-dim);
+  color: var(--text-hi);
+}
+
+.btn.active-blue {
+  background: var(--blue-t);
+  border-color: var(--blue);
+  color: var(--blue);
+  font-weight: 600;
+}
+.btn.active-red {
+  background: var(--red-t);
+  border-color: var(--red);
+  color: var(--red);
+  font-weight: 600;
+}
+.btn.active-green {
+  background: var(--green-t);
+  border-color: var(--green);
+  color: var(--green);
+  font-weight: 600;
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 12px;
+}

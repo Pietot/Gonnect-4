@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════
+   variables.css — Design tokens (One Dark)
+   ═══════════════════════════════════════ */
+
+:root {
+  /* ── Palette ── */
+  --bg: #282c34;
+  --bg-dark: #21252b;
+  --bg-panel: #2c313c;
+  --bg-hover: #353b45;
+  --border: #3e4451;
+  --text: #abb2bf;
+  --text-hi: #dcdfe4;
+  --text-dim: #5c6370;
+
+  --blue: #61afef;
+  --blue-t: rgba(97, 175, 239, 0.15);
+  --red: #e06c75;
+  --red-t: rgba(224, 108, 117, 0.15);
+  --green: #98c379;
+  --green-t: rgba(152, 195, 121, 0.15);
+  --yellow: #e5c07b;
+  --yellow-t: rgba(229, 192, 123, 0.15);
+  --purple: #c678dd;
+  --cyan: #56b6c2;
+  --orange: #d19a66;
+
+  /* ── Board geometry ── */
+  --cs: 7.5vw; /* cell size */
+  --gap: 5px;
+  --r: 8px;
+}
+
+/* Mobile devices */
+@media (max-width: 600px) {
+  :root {
+    --cs: 46px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1600px) {
+  :root {
+    --cs: 120px;
+  }
+}

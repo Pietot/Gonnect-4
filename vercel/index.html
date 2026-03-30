@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gonnect 4</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles (order matters) -->
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+  </head>
+  <body>
+    <!-- ── Header ── -->
+    <div class="header">
+      <h1 class="title">Gonnect <em>4</em></h1>
+      <p class="subtitle">A perfect AI written in Go</p>
+    </div>
+
+    <!-- ── Status bar ── -->
+    <div class="status-bar p1-turn" id="status-bar">
+      <div class="s-dot p1" id="s-dot"></div>
+      <span id="status-text">Player 1's turn</span>
+    </div>
+
+    <!-- ── AI thinking indicator ── -->
+    <div class="thinking" id="thinking">
+      <span>The AI is thinking</span>
+      <div class="t-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- ── Game area ── -->
+    <div class="game-area">
+      <!-- Score hint row (hidden until toggled) -->
+      <div class="score-row" id="score-row"></div>
+
+      <!-- Board -->
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+        <div class="col-layer" id="col-layer"></div>
+      </div>
+
+      <!-- Column drop arrows -->
+      <div class="col-arrows" id="col-arrows"></div>
+    </div>
+
+    <!-- ── Controls ── -->
+    <div class="controls">
+      <!-- Reset + first player -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">First player</span>
+        <div class="btn-row" id="first-btns">
+          <button class="btn" data-first="1">Player 1</button>
+          <button class="btn" data-first="2">Player 2</button>
+        </div>
+        <button class="btn btn-block" id="reset-btn">↺ Reset</button>
+      </div>
+
+      <!-- Opponent -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Opponent</span>
+        <div class="btn-row" id="opp-btns">
+          <button class="btn" data-opp="player">Player 2</button>
+          <button class="btn" data-opp="easy">Easy</button>
+          <button class="btn" data-opp="hard">Hard</button>
+          <button class="btn" data-opp="perfect">Perfect</button>
+        </div>
+      </div>
+
+      <!-- Score hints + win counter -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Analysis & Scores</span>
+        <button class="btn btn-block" id="scores-toggle">Show Scores</button>
+      </div>
+    </div>
+    <!-- /.controls -->
+
+    <!-- ── Scripts (load order: logic → render → game → controls) ── -->
+    <script src="js/wasm_exec.js"></script>
+    <script src="js/board.js"></script>
+    <script src="js/solver.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/controls.js"></script>
+  </body>
+</html>
