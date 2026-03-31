@@ -296,19 +296,16 @@
   background: var(--blue-t);
   border-color: var(--blue);
   color: var(--blue);
-  font-weight: 600;
 }
 .btn.active-red {
   background: var(--red-t);
   border-color: var(--red);
   color: var(--red);
-  font-weight: 600;
 }
 .btn.active-green {
   background: var(--green-t);
   border-color: var(--green);
   color: var(--green);
-  font-weight: 600;
 }
 
 .btn-block {
