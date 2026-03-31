@@ -95,6 +95,9 @@ function placePiece(col) {
   currentPlayer = currentPlayer === 1 ? 2 : 1;
   renderStatus();
 
+  // Update preview token if still hovering over a column
+  setTimeout(setHover, 100, _hoveredCol);
+
   // Show hint scores if enabled and it's a human's turn next
   const nextIsAI = currentPlayer === 2 && opponent !== "player";
   if (showScores && !nextIsAI) {

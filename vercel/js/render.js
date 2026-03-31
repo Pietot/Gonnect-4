@@ -160,7 +160,6 @@ function setThinking(on) {
 let _hoveredCol = -1;
 
 function setHover(col) {
-  if (col === _hoveredCol) return;
   _hoveredCol = col;
 
   // Update column highlights
