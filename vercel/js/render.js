@@ -64,11 +64,11 @@ function renderStatus() {
     if (winner === 0) {
       statusBar.classList.add("draw");
       statusDot.className = "s-dot draw";
-      statusText.textContent = "Match nul !";
+      statusText.textContent = "It's a draw!";
     } else {
       statusBar.classList.add(`win-p${winner}`);
       statusDot.className = "s-dot win";
-      statusText.textContent = `${getPlayerName(winner)} remporte la partie ! 🎉`;
+      statusText.textContent = `${getPlayerName(winner)} is the winner!`;
     }
   } else {
     statusBar.classList.add(`p${currentPlayer}-turn`);
