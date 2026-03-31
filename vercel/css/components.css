@@ -107,7 +107,7 @@
   padding: 0 calc(var(--gap) + 1px);
   opacity: 1;
   margin-bottom: 5px;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease;
 }
 
 .score-row.hidden {
