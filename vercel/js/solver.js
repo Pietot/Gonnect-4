@@ -48,57 +48,51 @@ async function initWasm() {
  * Return the best column for the AI to play.
  * @param {Int8Array[]} b        - Current board
  * @param {string}      diff     - Difficulty key
- * @param {number}      aiPlayer - 1 or 2
  */
-function getAIMove(b, diff, aiPlayer) {
-  if (!wasmReady) {
-    // Fallback to random move if WASM not ready
-    const valid = getValidCols(b);
-    return valid[Math.floor(Math.random() * valid.length)];
-  }
-
+function getAIMove(b, diff) {
   const valid = getValidCols(b);
-
+  // For "easy", pick a random valid move
   if (diff === "easy") {
     return valid[Math.floor(Math.random() * valid.length)];
   }
 
-  try {
-    const sequence = Array.from(moveHistory).map(col => String(Number(col) + 1)).join("");
-    const analysis = window.gonnectAnalyze(sequence);
-    console.log("AI Analysis:", analysis);
+  const sequence = Array.from(moveHistory)
+    .map((col) => String(Number(col) + 1))
+    .join("");
 
-    if (!analysis.ok || !analysis.analysis || !analysis.analysis.scores) {
-      // Fallback to random
-      return valid[Math.floor(Math.random() * valid.length)];
+  const response = window.gonnectAnalyze(sequence);
+  let scores = response.analysis.scores;
+
+  // For "hard", the higher a column's score, the greater its chance of being chosen.
+  if (diff === "hard") {
+    const temp = 0.5;
+    const candidates = scores
+      .map((score, col) => ({ col, score }))
+      .filter(({ score }) => score !== -128);
+
+    const maxScore = Math.max(...candidates.map((c) => c.score));
+    const exps = candidates.map((c) => Math.exp((c.score - maxScore) / temp));
+    const sumExp = exps.reduce((a, b) => a + b, 0);
+    const probs = exps.map((e) => e / sumExp);
+
+    const r = Math.random();
+    let cumulative = 0;
+
+    for (let i = 0; i < candidates.length; i++) {
+      cumulative += probs[i];
+      if (r < cumulative) {
+        return candidates[i].col;
+      }
     }
-
-    const scores = analysis.analysis.scores;
-
-    const topCandidates = valid
-      .filter((col) => scores[col] !== undefined && scores[col] !== -1)
-      .sort((a, b) => {
-        const scoreA = scores[a] ?? -Infinity;
-        const scoreB = scores[b] ?? -Infinity;
-        return scoreB - scoreA;
-      });
-
-    if (topCandidates.length === 0) {
-      return valid[0];
-    }
-
-    // For "hard", pick the best move
-    if (diff === "hard") {
-      return topCandidates[0];
-    }
-
-    // For "perfect", pick from top moves with some randomness
-    const numTopMoves = Math.max(1, Math.floor(topCandidates.length / 3));
-    return topCandidates[Math.floor(Math.random() * Math.min(1, numTopMoves))];
-  } catch (err) {
-    console.error("Error in getAIMove:", err);
-    return valid[0];
   }
+
+  const topCandidates = valid
+    .filter((col) => scores[col] !== undefined && scores[col] !== -128)
+    .sort((a, b) => {
+      return scores[b] - scores[a];
+    });
+  // For "perfect", pick the best move
+  return topCandidates[0];
 }
 
 /**
@@ -114,7 +108,9 @@ function computeColScores(b, player) {
   }
 
   try {
-    const sequence = Array.from(moveHistory).map(col => String(Number(col) + 1)).join("");
+    const sequence = Array.from(moveHistory)
+      .map((col) => String(Number(col) + 1))
+      .join("");
     console.log("Requesting analysis for sequence:", sequence);
     const analysis = window.gonnectAnalyze(sequence);
     console.log("Full analysis object:", analysis);
