@@ -22,6 +22,10 @@ body {
   gap: 18px;
 }
 
+button {
+  flex-grow: 1;
+}
+
 /* ── Header ── */
 .header {
   text-align: center;
@@ -48,7 +52,14 @@ body {
   text-transform: uppercase;
 }
 
-/* ── Game area wrapper ── */
+/* Game wrapper */
+.game-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* ── Game area ── */
 .game-area {
   display: flex;
   flex-direction: column;
@@ -59,11 +70,12 @@ body {
 /* ── Controls row ── */
 .controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  height: 100%;
+  gap: 18px;
   justify-content: center;
   width: 100%;
-  max-width: 640px;
+
 }
 
 .ctrl-group {
@@ -79,9 +91,9 @@ body {
 }
 
 .ctrl-label {
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  color: var(--text-dim);
+  color: var(--text);
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -149,5 +161,17 @@ body {
 
   .subtitle {
     font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 425px) {
+   .game-wrapper {
+     flex-direction: column;
+  }
+
+  .controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: auto;
   }
 }

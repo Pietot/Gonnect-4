@@ -39,50 +39,52 @@
     </div>
 
     <!-- ── Game area ── -->
-    <div class="game-area">
-      <!-- Score hint row (hidden until toggled) -->
-      <div class="score-row" id="score-row"></div>
+    <div class="game-wrapper">
+      <div class="game-area">
+        <!-- Score hint row (hidden until toggled) -->
+        <div class="score-row" id="score-row"></div>
 
-      <!-- Board -->
-      <div class="board-wrap">
-        <div class="board" id="board"></div>
-        <div class="col-layer" id="col-layer"></div>
-      </div>
-
-      <!-- Column drop arrows -->
-      <div class="col-arrows" id="col-arrows"></div>
-    </div>
-
-    <!-- ── Controls ── -->
-    <div class="controls">
-      <!-- Reset + first player -->
-      <div class="ctrl-group">
-        <span class="ctrl-label">First player</span>
-        <div class="btn-row" id="first-btns">
-          <button class="btn" data-first="1">Player 1</button>
-          <button class="btn" data-first="2">Player 2</button>
+        <!-- Board -->
+        <div class="board-wrap">
+          <div class="board" id="board"></div>
+          <div class="col-layer" id="col-layer"></div>
         </div>
-        <button class="btn btn-block" id="reset-btn">↺ Reset</button>
+
+        <!-- Column drop arrows -->
+        <div class="col-arrows" id="col-arrows"></div>
       </div>
 
-      <!-- Opponent -->
-      <div class="ctrl-group">
-        <span class="ctrl-label">Opponent</span>
-        <div class="btn-row" id="opp-btns">
-          <button class="btn" data-opp="player">Player 2</button>
-          <button class="btn" data-opp="easy">Easy</button>
-          <button class="btn" data-opp="hard">Hard</button>
-          <button class="btn" data-opp="perfect">Perfect</button>
+      <!-- ── Controls ── -->
+      <div class="controls">
+        <!-- Reset + first player -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">Player 1</span>
+          <div class="btn-row" id="first-btns">
+            <button class="btn" data-first="1">You</button>
+            <button class="btn" data-first="2">Player 2</button>
+          </div>
+          <button class="btn btn-block" id="reset-btn">↺ Reset</button>
+        </div>
+
+        <!-- Opponent -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">Player 2</span>
+          <div class="btn-row" id="opp-btns">
+            <button class="btn" data-opp="player">Manual</button>
+            <button class="btn" data-opp="easy">Easy AI</button>
+            <button class="btn" data-opp="hard">Hard AI</button>
+            <button class="btn" data-opp="perfect">Perfect AI</button>
+          </div>
+        </div>
+
+        <!-- Score hints + win counter -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">Analysis</span>
+          <button class="btn btn-block" id="scores-toggle">Show scores</button>
         </div>
       </div>
-
-      <!-- Score hints + win counter -->
-      <div class="ctrl-group">
-        <span class="ctrl-label">Analysis & Scores</span>
-        <button class="btn btn-block" id="scores-toggle">Show Scores</button>
-      </div>
+      <!-- /.controls -->
     </div>
-    <!-- /.controls -->
 
     <!-- ── Scripts (load order: logic → render → game → controls) ── -->
     <script src="js/wasm_exec.js"></script>

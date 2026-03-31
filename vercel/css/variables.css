@@ -26,21 +26,31 @@
   --orange: #d19a66;
 
   /* ── Board geometry ── */
-  --cs: 7.5vw; /* cell size */
+  --cs: 95px; /* cell size */
   --gap: 5px;
   --r: 8px;
 }
 
-/* Mobile devices */
-@media (max-width: 600px) {
+@media (max-width: 1024px) {
   :root {
-    --cs: 46px;
+    --cs: 75px;
   }
 }
 
-/* Large screens */
-@media (min-width: 1600px) {
+@media (max-width: 768px) {
   :root {
-    --cs: 120px;
+    --cs: 60px;
+  }
+}
+
+@media (max-width: 425px) {
+  :root {
+    --cs: 50px;
+  }
+}
+
+@media (max-width: 320px) {
+  :root {
+    --cs: 35px;
   }
 }

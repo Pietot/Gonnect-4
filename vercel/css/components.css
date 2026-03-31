@@ -12,7 +12,7 @@
   background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: 100px;
-  font-size: 0.82rem;
+  font-size: 1rem;
   transition: border-color 0.3s;
   min-width: 220px;
   justify-content: center;
@@ -71,7 +71,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: 1rem;
   color: var(--yellow);
   opacity: 0;
   pointer-events: none;
@@ -120,7 +120,7 @@
   align-items: center;
   justify-content: center;
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.68rem;
+  font-size: 1rem;
   font-weight: 600;
   border-radius: 5px;
   color: var(--text-dim);
@@ -140,7 +140,9 @@
   border-color: rgba(86, 182, 194, 0.2);
 }
 .sc.score-neutral {
-  color: var(--text-dim);
+  color: var(--text);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 .sc.score-bad {
   color: var(--orange);
@@ -153,7 +155,7 @@
   border-color: rgba(224, 108, 117, 0.3);
 }
 .sc.score-invalid {
-  opacity: 0.2;
+  opacity: 1;
 }
 
 /* ── Board wrapper ── */
@@ -187,7 +189,7 @@
 .col-hi {
   border-radius: 4px;
   background: transparent;
-  transition: background 0.15s;
+  transition: all 0.15s;
   pointer-events: none;
 }
 
@@ -241,7 +243,7 @@
   border: none;
   background: transparent;
   color: var(--text-dim);
-  font-size: 0.8rem;
+  font-size: 1.5rem;
   transition:
     color 0.15s,
     background 0.15s;
@@ -263,9 +265,14 @@
   flex-wrap: wrap;
 }
 
+.btn-row .btn {
+  flex: 1;
+  text-align: center;
+}
+
 .btn {
   font-family: "Sora", sans-serif;
-  font-size: 0.76rem;
+  font-size: 1rem;
   font-weight: 400;
   padding: 5px 11px;
   border: 1px solid var(--border);
