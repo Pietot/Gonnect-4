@@ -113,7 +113,13 @@ document.querySelectorAll("[data-first]").forEach((btn) => {
 
 // ─── Reset button ────────────────────────────────────────
 
-resetBtn.addEventListener("click", resetGame);
+resetBtn.addEventListener("click", () => {
+  resetGame();
+  // Clear the sequence from the URL
+  const url = new URL(window.location);
+  url.searchParams.delete("seq");
+  window.history.replaceState({}, "", url);
+});
 
 // ─── Score hints toggle ──────────────────────────────────
 
