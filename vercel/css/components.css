@@ -171,23 +171,24 @@
 .board {
   display: grid;
   grid-template-columns: repeat(7, var(--cs));
-  grid-template-rows: repeat(6, var(--cs));
+  grid-template-rows: repeat(6, calc(var(--cs) + var(--gap)));
   gap: var(--gap);
   user-select: none;
 }
 
 /* ── Column hover highlight layer ── */
 .col-layer {
+  height: calc(100% - var(--gap));
   position: absolute;
   inset: var(--gap);
   display: grid;
-  grid-template-columns: repeat(7, var(--cs));
-  gap: var(--gap);
+  grid-template-columns: repeat(7, calc(var(--cs) + var(--gap)));
   pointer-events: none;
+  transform: translateX(calc(var(--gap) / -2)) translateY(calc(var(--gap) / -2));
 }
 
 .col-hi {
-  border-radius: 4px;
+  border-radius: 10px;
   background: transparent;
   transition: all 0.15s;
   pointer-events: none;
