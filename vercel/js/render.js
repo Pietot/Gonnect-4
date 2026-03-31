@@ -9,6 +9,7 @@ const boardEl = document.getElementById("board");
 const scoreRowEl = document.getElementById("score-row");
 const colArrowsEl = document.getElementById("col-arrows");
 const colLayerEl = document.getElementById("col-layer");
+const previewTokenEl = document.getElementById("preview-token");
 const statusBar = document.getElementById("status-bar");
 const statusDot = document.getElementById("s-dot");
 const statusText = document.getElementById("status-text");
@@ -154,15 +155,40 @@ function setThinking(on) {
   thinkingEl.classList.toggle("show", on);
 }
 
-// ─── Column hover ─────────────────────────────────────────
+// ─── Column hover ────────────────────────────────────────
 
 let _hoveredCol = -1;
 
 function setHover(col) {
   if (col === _hoveredCol) return;
   _hoveredCol = col;
+
+  // Update column highlights
   for (let c = 0; c < COLS; c++) {
     const hi = document.getElementById(`chi-${c}`);
     if (hi) hi.classList.toggle("hovered", c === col);
+  }
+
+  // Show/hide preview token
+  if (col === -1 || gameOver || aiThinking || !isValid(board, col)) {
+    previewTokenEl.classList.remove("show");
+  } else {
+    const landingRow = getLowestEmpty(board, col);
+    if (landingRow === -1) {
+      previewTokenEl.classList.remove("show");
+      return;
+    }
+
+    // Get position from the actual cell in the landing row
+    const cell = document.getElementById(`cell-${landingRow}-${col}`);
+    if (!cell) {
+      previewTokenEl.classList.remove("show");
+      return;
+    }
+
+    // Account for board-wrap padding
+    previewTokenEl.style.left =  cell.offsetLeft + "px";
+    previewTokenEl.style.top =  cell.offsetTop + "px";
+    previewTokenEl.className = `preview-token p${currentPlayer} show`;
   }
 }

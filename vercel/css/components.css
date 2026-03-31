@@ -198,6 +198,32 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
+/* ── Preview token on hover ── */
+.preview-token {
+  position: absolute;
+  width: var(--cs);
+  height: var(--cs);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.15s ease;
+  will-change: transform, opacity;
+}
+
+.preview-token.p1 {
+  background: rgba(97, 175, 239, 0.4);
+  border: 2px solid var(--blue);
+}
+
+.preview-token.p2 {
+  background: rgba(224, 108, 117, 0.4);
+  border: 2px solid var(--red);
+}
+
+.preview-token.show {
+  opacity: 1;
+}
+
 /* ── Cells ── */
 .cell {
   border-radius: 50%;

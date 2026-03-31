@@ -140,6 +140,7 @@ function resetGame() {
   winCells = [];
 
   setThinking(false);
+  setHover(-1); // Clear preview token
   renderBoard();
   renderStatus();
   clearColScores();
