@@ -142,3 +142,19 @@ setFirstPlayer(1); // also calls resetGame()
 // Re-apply active states after the double reset above
 document.querySelector('[data-opp="player"]').classList.add("active-blue");
 document.querySelector('[data-first="1"]').classList.add("active-blue");
+
+// Load sequence from URL if present
+loadSequenceFromURL();
+
+// ─── Load sequence from URL parameter ────────────────────
+
+/**
+ * Check if there's a ?seq= parameter and load that sequence.
+ */
+function loadSequenceFromURL() {
+  const url = new URL(window.location);
+  const seq = url.searchParams.get("seq");
+  if (seq) {
+    replaySequence(seq);
+  }
+}

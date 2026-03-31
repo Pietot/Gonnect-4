@@ -30,6 +30,18 @@ function getPlayerName(p) {
   return names[opponent] ?? "Player 2";
 }
 
+/**
+ * Update the URL with the current move sequence (1-indexed).
+ */
+function updateURLWithSequence() {
+  if (moveHistory) {
+    const url = new URL(window.location);
+    const oneIndexedSeq = moveHistory.split('').map(c => String(parseInt(c) + 1)).join('');
+    url.searchParams.set("seq", oneIndexedSeq);
+    window.history.replaceState({}, "", url);
+  }
+}
+
 // ─── Core game flow ──────────────────────────────────────
 
 /**
@@ -54,6 +66,9 @@ function placePiece(col) {
   moveHistory += col;
 
   renderBoard(r, col);
+
+  // ── Update URL with current sequence ──
+  updateURLWithSequence();
 
   // ── Win check ──
   const cells = checkWinner(board, currentPlayer);
@@ -132,4 +147,53 @@ function resetGame() {
   if (currentPlayer === 2 && opponent !== "player") {
     setTimeout(triggerAI, 300);
   }
+}
+
+/**
+ * Replay a sequence of moves (as a string of column numbers 1-7, 1-indexed).
+ * Ignores illegal moves and stops if a move is illegal.
+ */
+function replaySequence(sequence) {
+  resetGame();
+
+  for (let i = 0; i < sequence.length; i++) {
+    const col = parseInt(sequence[i]) - 1; // Convert from 1-indexed to 0-indexed
+
+    // Invalid column number
+    if (col < 0 || col >= COLS) break;
+
+    // Invalid move (column full or game already over)
+    if (!isValid(board, col) || gameOver) break;
+
+    // Place the piece
+    const r = drop(board, col, currentPlayer);
+    if (r === -1) break; // Should not happen if isValid passed, but safety check
+
+    moveHistory += col;
+    renderBoard(r, col);
+
+    // Check for win
+    const cells = checkWinner(board, currentPlayer);
+    if (cells) {
+      winCells = cells;
+      scores[currentPlayer]++;
+      gameOver = true;
+      renderBoard(); // re-render to show glow
+      renderStatus();
+      break; // Stop replay if someone won
+    }
+
+    // Check for draw
+    if (isDraw(board)) {
+      gameOver = true;
+      renderStatus();
+      break; // Stop replay if draw
+    }
+
+    // Switch player
+    currentPlayer = currentPlayer === 1 ? 2 : 1;
+  }
+
+  renderStatus();
+  if (showScores && !gameOver) setTimeout(renderColScores, 20);
 }
