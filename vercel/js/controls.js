@@ -87,7 +87,12 @@ function setOpponent(opp) {
     if (btn.dataset.opp === opp) btn.classList.add("active-blue");
   });
   // Trigger AI if it's player 2's turn and the new opponent is not human
-  if (currentPlayer === 2 && opponent !== "player" && !gameOver && !aiThinking) {
+  if (
+    currentPlayer === 2 &&
+    opponent !== "player" &&
+    !gameOver &&
+    !aiThinking
+  ) {
     triggerAI();
   }
 }

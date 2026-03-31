@@ -75,7 +75,6 @@ button {
   gap: 18px;
   justify-content: center;
   width: 100%;
-
 }
 
 .ctrl-group {
@@ -165,8 +164,8 @@ button {
 }
 
 @media (max-width: 425px) {
-   .game-wrapper {
-     flex-direction: column;
+  .game-wrapper {
+    flex-direction: column;
   }
 
   .controls {

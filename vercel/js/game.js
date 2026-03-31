@@ -36,7 +36,10 @@ function getPlayerName(p) {
 function updateURLWithSequence() {
   if (moveHistory) {
     const url = new URL(window.location);
-    const oneIndexedSeq = moveHistory.split('').map(c => String(parseInt(c) + 1)).join('');
+    const oneIndexedSeq = moveHistory
+      .split("")
+      .map((c) => String(parseInt(c) + 1))
+      .join("");
     url.searchParams.set("seq", oneIndexedSeq);
     window.history.replaceState({}, "", url);
   }
