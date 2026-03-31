@@ -86,7 +86,6 @@ function setOpponent(opp) {
     btn.className = "btn";
     if (btn.dataset.opp === opp) btn.classList.add("active-blue");
   });
-  resetGame();
 }
 
 document.querySelectorAll("[data-opp]").forEach((btn) => {
@@ -102,7 +101,6 @@ function setFirstPlayer(p) {
     if (parseInt(btn.dataset.first) === p)
       btn.classList.add(p === 1 ? "active-blue" : "active-red");
   });
-  resetGame();
 }
 
 document.querySelectorAll("[data-first]").forEach((btn) => {
@@ -142,8 +140,8 @@ scoreToggleBtn.addEventListener("click", () => {
 // ─── Initialise ──────────────────────────────────────────
 
 buildDOM();
-setOpponent("player"); // also calls resetGame()
-setFirstPlayer(1); // also calls resetGame()
+setOpponent("player");
+setFirstPlayer(1);
 
 // Re-apply active states after the double reset above
 document.querySelector('[data-opp="player"]').classList.add("active-blue");
