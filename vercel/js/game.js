@@ -81,6 +81,7 @@ function placePiece(col) {
     gameOver = true;
     renderBoard(); // re-render to show glow
     renderStatus();
+    renderColScores();
     return;
   }
 
@@ -88,6 +89,7 @@ function placePiece(col) {
   if (isDraw(board)) {
     gameOver = true;
     renderStatus();
+    renderColScores();
     return;
   }
 
