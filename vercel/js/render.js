@@ -98,7 +98,7 @@ function renderColScores() {
     for (let c = 0; c < COLS; c++) {
       const el = document.getElementById(`sc-${c}`);
       if (el) {
-        el.textContent = "?";
+        el.textContent = "-";
         el.className = "sc score-neutral";
       }
     }
@@ -107,7 +107,6 @@ function renderColScores() {
 
   const maxS = Math.max(...valid);
   const minS = Math.min(...valid);
-  const range = maxS - minS;
 
   for (let c = 0; c < COLS; c++) {
     const el = document.getElementById(`sc-${c}`);
