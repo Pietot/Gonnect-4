@@ -1,3 +1,5 @@
+# Benchmark package
+
 This README file is to explain the purpose of the benchmark package and how to use it.
 
 ## 📋 Summary

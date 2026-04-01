@@ -14,7 +14,9 @@ This markdown file contains instructions on how to build Gonnect-4 from source, 
 ### 3. [Build instructions](#3---build-instructions)
 
 - #### 3.1 [CLI tool](#31---cli-tool)
+
 - #### 3.2 [Export the book](#32---export-the-book)
+
 - #### 3.3 [Web assembly tool](#33---web-assembly-tool)
 
 ## 1 - Project structure
@@ -71,7 +73,7 @@ cd Gonnect-4
 
 ## 3 - Build instructions
 
-### 3.1 - CLI tool
+- ### 3.1 - CLI tool
 
     If you have followed the installation instructions, you should be able to build the project without any issues.
 
@@ -81,7 +83,7 @@ cd Gonnect-4
     go build -ldflags="-s -w" -o gonnect4.exe cmd/cli/main.go
     ```
 
-### 3.2 - Export the book
+- ### 3.2 - Export the book
 
     If you built your own book and want to export it, you can use the following command:
 
@@ -91,7 +93,7 @@ cd Gonnect-4
 
     Then, you can build the project as usual, and the exported book will be included in the binary.
 
-### 3.3 - Web assembly tool
+- ### 3.3 - Web assembly tool
 
     To build the web assembly version of the solver, you can use the following command:
 

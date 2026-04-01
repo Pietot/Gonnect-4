@@ -1,3 +1,5 @@
+# Database Package
+
 This README file is to explain the purpose of the database package and how to use it.
 
 ## 📋 Summary
@@ -7,6 +9,7 @@ This README file is to explain the purpose of the database package and how to us
 ### 2. [Database Structure](#2---database-structure)
 
 - #### 2.1 [BadgerDB](#21---badgerdb)
+
 - #### 2.2 [Key Prefixes](#22---key-prefixes)
 
 ### 3. [Exporting the Book](#3---exporting-the-book)
@@ -38,6 +41,7 @@ The database package provides persistent storage for the book creation process a
   | `R:`   | Results | `R:[8 bytes: position key]`                | `[7]int8` (scores for each column) |
   | `Q:`   | Queue   | `Q:[1 byte: depth][8 bytes: position key]` | `[1 byte: depth]`                  |
   | `P:`   | Pending | `P:[8 bytes: position key]`                | `[1 byte: depth]`                  |
+
   - **Results** (`R:`): Stores the analysis results for positions that have been solved
   - **Queue** (`Q:`): Stores positions waiting to be analyzed, sorted by depth for efficient BFS
   - **Pending** (`P:`): Fast lookup to check if a position is already in the queue (avoids duplicates)

@@ -17,18 +17,27 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 ### 4. [Algorithms & optimizations](#4---algorithms--optimizations)
 
 - #### [Negamax](#41-negamax)
+
 - #### [Alpha-Beta Pruning](#42-alpha-beta-pruning)
+
 - #### [Move explanation order](#43-move-explanation-order)
+
 - #### [Bitboard](#44-bitboard)
+
 - #### [Transposition Table](#45-transposition-table)
+
 - #### [Iterative Deepening & null window](#46-iterative-deepening--null-window)
+
 - #### [Anticipate direct losing moves](#47-anticipate-direct-losing-moves)
+
 - #### [Better move ordering](#48-better-move-ordering)
+
 - #### [Lower Bound transposition table](#49-lower-bound-transposition-table)
 
 ### 5. [Benchmark](#5---benchmark)
 
 - #### 5.1 [Testsets](#testsets)
+
 - #### 5.2 [Results](#results)
 
 ### 6. [Contribute](#6---contribute)
@@ -150,7 +159,7 @@ Then it will print you how to use the tool correctly but I will explain it here 
 
 - ### Testsets
 
-  To benchmark the different algorithms, I've re-created 6 datasets from [here](http://blog.gamesolver.org/solving-connect-four/02-test-protocol/) and placed them in the <a href="tests/data/">data</a> directory.
+  To benchmark the different algorithms, I've re-created 6 datasets from the [Pascal Pons tutorial](http://blog.gamesolver.org/solving-connect-four/02-test-protocol/) and placed them in the [data](./data) directory.
 
   Each file contains 1000 positions for a total of 6000 positions. More information about the test files can be found in [this README](benchmark/README.md).
 
@@ -202,7 +211,7 @@ If you like this project and/or want to help or improve it, you can:
 - Contact me if you want to talk about the project or anything else (Discord: pietot).
 
 > [!IMPORTANT]
-> Before contributing, please make sure to read the [SOURCE.md](SOURCE.md) file for a better understanding of the project structure and how the code works. This will help you a lot to contribute more effectively and avoid any confusion. If you want to be guided/helped, you already have a file named <a href="IMPROVEMENTS.md">IMPROVEMENTS.md</a> in the project directory, where you can see all the improvements that can be made.
+> Before contributing, please make sure to read the [SOURCE.md](SOURCE.md) file for a better understanding of the project structure and how the code works. This will help you a lot to contribute more effectively and avoid any confusion. If you want to be guided/helped, you already have a file named [IMPROVEMENTS.md](IMPROVEMENTS.md) in the project directory, where you can see all the improvements that can be made.
 
 ## 7 - Credits
 

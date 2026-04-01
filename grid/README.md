@@ -1,3 +1,5 @@
+# Grid Package
+
 This README file is to explain the purpose of the grid package and how to use it.
 
 ## 📋 Summary
@@ -7,8 +9,11 @@ This README file is to explain the purpose of the grid package and how to use it
 ### 2. [Core Components](#2---core-components)
 
 - #### 2.1 [How the engine works ?](#21---how-the-engine-works-)
+
 - #### 2.2 [Score system](#22---score-system)
+
 - #### 2.3 [Bitboard Representation](#23---bitboard-representation)
+
 - #### 2.4 [Move Sorter](#24---move-sorter)
 
 ## 1 - About this package
@@ -23,7 +28,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
 - ### 2.1 - How the engine works ?
 
-  For any 2-player, zero-sum and perfect information game, the basic algorithm to use is the negamax algorithm (it's like the minimax algorithm but with a simpler implementation). All the optimizations of the solver and their explanations are described [here](../README.md#4---algorithms--optimizations).
+  For any 2-player, zero-sum and perfect information game, the basic algorithm to use is the negamax algorithm (it's like the minimax algorithm but with a simpler implementation). All the optimizations of the solver and their explanations are described [in this README](../README.md#4---algorithms--optimizations).
 
 - ### 2.2 - Score system
 
@@ -32,7 +37,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
   - A negative score means that the current player is losing
   - A score of 0 means that the position leads to a draw
 
-  Positive (winning) score can be computed as 22 minus number of stone played by the current player at the end of the game.<br>
+  Positive (winning) score can be computed as 22 minus number of stone played by the current player at the end of the game.\
   Negative (losing) score can be computed as number of stone played by the current player at the end of the game minus 22.
 
   Why 22 ? Because the maximum number of moves in a Connect-4 game is 42, and each player can play at most 21 moves.
@@ -41,7 +46,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
   For example, in this position, the current player `x` can win in 2 moves with he's 5th stone, so the score is 22-5=17.
 
-  ```
+  ```text
   . . . . . . .
   . . . . . . .
   . . . . . . .
@@ -52,7 +57,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
   In this other example, the current player `x` can win in 7 moves (trust me), so try to guess the score.
 
-  ```
+  ```text
   . . . . . . .
   . . . . . . .
   . . . . o . .
@@ -72,7 +77,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
   For more clarity, here is the order of bits to encode for a 7x6 board.
 
-  ```
+  ```text
   .  .  .  .  .  .  . <- extra bit
   48 41 34 27 20 13 6
   47 40 33 26 19 12 5
@@ -84,7 +89,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
   Now, imagine we have the following position where x is the current player.:
 
-  ```
+  ```text
   . . . . . . .
   —————————————
   . . . . . . .
@@ -96,11 +101,12 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
   ```
 
   We can encode this position where
-  - `CurrentPosition`: Contains 1s for the current player's pieces and 0s for the opponent's pieces
-  - `Mask`: Contains 1s for all pieces on the board (both players)
-  - `Bottom`: Contains 1s for the bottom cell of each column (constant used for the key generation)
 
-  ```
+- `CurrentPosition`: Contains 1s for the current player's pieces and 0s for the opponent's pieces
+- `Mask`: Contains 1s for all pieces on the board (both players)
+- `Bottom`: Contains 1s for the bottom cell of each column (constant used for the key generation)
+
+  ```text
       Grid         CurrentPosition        Mask
   . . . . . . .     0 0 0 0 0 0 0     0 0 0 0 0 0 0
   —————————————     —————————————     —————————————
@@ -114,7 +120,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
 
   With this encoding, we can efficiently compute winning positions, possible moves, and other operations using bitwise operations. In addition, we can get a unique key for each position by adding the `CurrentPosition` and `Mask` + a constant `BOTTOM`, which is a constant to retrieve a position (CurrentPosition and mask) from the key. The key is used for the transposition table and the book.
 
-  ```
+  ```text
 
       Grid         CurrentPosition  +       Mask       +     BOTTOM      =       Key
   . . . . . . .     0 0 0 0 0 0 0       0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 1 1 1 0 0 0
