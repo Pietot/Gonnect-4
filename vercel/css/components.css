@@ -127,6 +127,7 @@
   background: transparent;
   border: 1px solid transparent;
   transition: all 0.3s;
+  position: relative;
 }
 
 .sc.score-best {
@@ -156,6 +157,13 @@
 }
 .sc.score-invalid {
   opacity: 1;
+}
+
+.score-star {
+  width: 15px;
+  position: absolute;
+  top: -8px;
+  right: -6px;
 }
 
 /* ── Board wrapper ── */

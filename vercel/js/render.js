@@ -122,12 +122,20 @@ function renderColScores() {
     el.textContent = v;
 
     let cls;
-    if (v === maxS) cls = "score-best";
-    else if (v === minS) cls = "score-worst";
-    else if (v === 0) cls = "score-neutral";
+    if (v === maxS && v > 0) cls = "score-best";
     else if (v > 0) cls = "score-good";
-    else cls = "score-bad";
+    else if (v === 0) cls = "score-neutral";
+    else if (v < 0 && v !== minS) cls = "score-bad";
+    else cls = "score-worst";
     el.classList.add(cls);
+
+    if (v === maxS) {
+      const img = document.createElement("img");
+      img.src = "svg/star.svg";
+      img.alt = "Best move";
+      img.className = "score-star";
+      el.appendChild(img);
+    }
   }
 }
 
