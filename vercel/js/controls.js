@@ -150,7 +150,6 @@ resetBtn.addEventListener("click", () => {
 
 scoreToggleBtn.addEventListener("click", () => {
   showScores = !showScores;
-  console.log("Toggle scores:", showScores);
   scoreRowEl.classList.toggle("hidden", !showScores);
   scoreToggleBtn.className = "btn btn-block";
 

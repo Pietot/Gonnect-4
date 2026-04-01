@@ -86,9 +86,7 @@ function renderStatus() {
 function renderColScores() {
   if (!showScores) return;
 
-  console.log("renderColScores called, moveHistory:", moveHistory);
   const raw = computeColScores(board, currentPlayer);
-  console.log("Raw scores:", raw);
 
   const valid = raw.filter((s) => s !== null);
 

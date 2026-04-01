@@ -33,7 +33,6 @@ async function initWasm() {
       }
 
       wasmReady = true;
-      console.log("WASM initialized successfully");
       return true;
     } catch (err) {
       console.error("Failed to initialize WASM:", err);
@@ -111,10 +110,7 @@ function computeColScores(b, player) {
     const sequence = Array.from(moveHistory)
       .map((col) => String(Number(col) + 1))
       .join("");
-    console.log("Requesting analysis for sequence:", sequence);
     const analysis = window.gonnectAnalyze(sequence);
-    console.log("Full analysis object:", analysis);
-    console.log("analysis.analysis:", analysis.analysis);
 
     if (!analysis.ok) {
       console.warn("Analysis not ok:", analysis.error);
@@ -127,7 +123,6 @@ function computeColScores(b, player) {
     }
 
     const scores = analysis.analysis.scores;
-    console.log("Scores from WASM:", scores, "type:", typeof scores);
 
     if (!scores) {
       console.warn("No scores returned");
@@ -143,7 +138,6 @@ function computeColScores(b, player) {
       }
       return score ?? null;
     });
-    console.log("Final column scores:", result);
     return result;
   } catch (err) {
     console.error("Error computing column scores:", err);
