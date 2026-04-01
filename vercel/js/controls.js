@@ -62,13 +62,31 @@ function buildDOM() {
     handleColClick(col);
   });
 
-  // ── Hover tracking ──
+  // ── Event delegation: clicks on col-layer (entire column areas) ──
+  colLayerEl.addEventListener("click", (e) => {
+    // Get the clicked element and find which column it is
+    const hi = e.target.closest(".col-hi");
+    if (!hi) return;
+    const col = Array.from(colLayerEl.children).indexOf(hi);
+    if (col >= 0) handleColClick(col);
+  });
+
+  // ── Hover tracking on board cells ──
   boardEl.addEventListener("mousemove", (e) => {
     const cell = e.target.closest(".cell");
     if (!cell) return;
     setHover(parseInt(cell.id.split("-")[2]));
   });
   boardEl.addEventListener("mouseleave", () => setHover(-1));
+
+  // ── Hover tracking on col-layer ──
+  colLayerEl.addEventListener("mousemove", (e) => {
+    const hi = e.target.closest(".col-hi");
+    if (!hi) return;
+    const col = Array.from(colLayerEl.children).indexOf(hi);
+    if (col >= 0) setHover(col);
+  });
+  colLayerEl.addEventListener("mouseleave", () => setHover(-1));
 
   colArrowsEl.addEventListener("mousemove", (e) => {
     const btn = e.target.closest(".arrow-btn");

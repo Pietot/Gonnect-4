@@ -191,7 +191,8 @@
   border-radius: 10px;
   background: transparent;
   transition: all 0.15s;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .col-hi.hovered {
@@ -228,7 +229,6 @@
 .cell {
   border-radius: 50%;
   background: var(--bg-panel);
-  cursor: pointer;
   position: relative;
   transition: background 0.12s;
 }
