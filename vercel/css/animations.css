@@ -1,0 +1,47 @@
+/* ════════════════════════════════════
+   animations.css — Keyframes & motion
+   ════════════════════════════════════ */
+
+/* ── Piece drop ── */
+.cell.dropping {
+  animation: drop-in 0.32s cubic-bezier(0.2, 1, 0.4, 1);
+}
+
+@keyframes drop-in {
+  from {
+    transform: translateY(calc(-1 * var(--drop-h)));
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ── Winning cells glow ── */
+@keyframes glow-pulse {
+  from {
+    box-shadow:
+      0 0 6px var(--gc),
+      0 0 14px rgba(0, 0, 0, 0.4);
+  }
+  to {
+    box-shadow:
+      0 0 18px var(--gc),
+      0 0 32px var(--gc);
+  }
+}
+
+/* ── AI thinking dots ── */
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

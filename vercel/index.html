@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gonnect 4</title>
+    <link rel="icon" type="image/x-icon" href="ico/favicon.ico" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles (order matters) -->
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+  </head>
+  <body>
+    <!-- ── Header ── -->
+    <div class="header">
+      <h1 class="title">Gonnect <em>4</em></h1>
+      <p class="subtitle">A perfect AI written in Go</p>
+    </div>
+
+    <!-- ── Status bar ── -->
+    <div class="status-bar p1-turn" id="status-bar">
+      <div class="s-dot p1" id="s-dot"></div>
+      <span id="status-text">Player 1's turn</span>
+    </div>
+
+    <!-- ── AI thinking indicator ── -->
+    <div class="thinking" id="thinking">
+      <span>The AI is thinking</span>
+      <div class="t-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- ── Game area ── -->
+    <div class="game-wrapper">
+      <div class="game-area">
+        <!-- Score hint row (hidden until toggled) -->
+        <div class="score-row" id="score-row"></div>
+
+        <!-- Board -->
+        <div class="board-wrap">
+          <div class="board" id="board"></div>
+          <div class="col-layer" id="col-layer"></div>
+          <div class="preview-token" id="preview-token"></div>
+        </div>
+
+        <!-- Column drop arrows -->
+        <div class="col-arrows" id="col-arrows"></div>
+      </div>
+
+      <!-- ── Controls ── -->
+      <div class="controls">
+        <!-- Reset + first player -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">Player 1</span>
+          <div class="btn-row" id="first-btns">
+            <button class="btn" data-first="1">You</button>
+            <button class="btn" data-first="2">Player 2</button>
+          </div>
+          <button class="btn btn-block" id="reset-btn">↺ Reset</button>
+        </div>
+
+        <!-- Opponent -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">Player 2</span>
+          <div class="btn-row" id="opp-btns">
+            <button class="btn" data-opp="player">Manual</button>
+            <button class="btn" data-opp="easy">Easy AI</button>
+            <button class="btn" data-opp="hard">Hard AI</button>
+            <button class="btn" data-opp="perfect">Perfect AI</button>
+          </div>
+        </div>
+
+        <!-- Score hints + win counter -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">Analysis</span>
+          <button class="btn btn-block" id="scores-toggle">Show scores</button>
+        </div>
+
+        <!-- Info -->
+        <div class="ctrl-group">
+          <span class="ctrl-label">About Gonnect 4</span>
+          <button class="btn btn-block" id="info-btn">Show info</button>
+        </div>
+      </div>
+      <!-- /.controls -->
+    </div>
+
+    <!-- ── Modal ── -->
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal" id="modal">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <div class="modal-header">
+          <button class="modal-tab active" data-section="section-1">
+            About
+          </button>
+          <button class="modal-tab" data-section="section-2">
+            How to play ?
+          </button>
+          <button class="modal-tab" data-section="section-3">
+            How it works ?
+          </button>
+        </div>
+        <div class="modal-content">
+          <section id="section-1" class="modal-section active">
+            <h2>About Gonnect 4</h2>
+            <p>
+              Gonnect 4 is a digital implementation of the classic Connect Four
+              board game with a twist: it features a perfect AI opponent written
+              in pure Go, compiled in WebAssembly for web browsers.
+            </p>
+
+            <h3>Game Overview</h3>
+            <p>
+              Connect Four is a strategy game where two players take turns
+              dropping colored pieces into a 7-column, 6-row board. The first
+              player to align four pieces horizontally, vertically, or
+              diagonally wins the game.
+            </p>
+
+            <h3>Features</h3>
+            <ul style="margin-left: 20px; line-height: 1.8">
+              <li>
+                <strong>Perfect AI:</strong> Challenge an AI opponent that plays
+                flawlessly
+              </li>
+              <li>
+                <strong>Multiple Difficulty Levels:</strong>
+                <ul style="margin-left: 20px">
+                  <li><strong>Easy:</strong> Plays randomly</li>
+                  <li>
+                    <strong>Hard:</strong> The more a column has a higher score,
+                    the more likely it is to be chosen
+                  </li>
+                  <li>
+                    <strong>Perfect:</strong> Always plays the best possible
+                    move
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <strong>Score Analysis:</strong> View column evaluation scores
+                and AI recommendations. The higher the score, the better the
+                move for the current player
+              </li>
+              <li>
+                <strong>Move Replay:</strong> Share and replay game sequences
+                via URL parameters
+              </li>
+              <li>
+                <strong>Responsive Design:</strong> Play on desktop, tablet, or
+                mobile
+              </li>
+            </ul>
+          </section>
+
+          <section id="section-2" class="modal-section">
+            <h2>How to Play</h2>
+
+            <h3>Basic Gameplay</h3>
+            <p>
+              The game starts with Player 1 (blue pieces). Click on any column
+              to drop a piece at the top—it will fall to the lowest available
+              position.
+            </p>
+
+            <h3>Controls</h3>
+            <ul style="margin-left: 20px; line-height: 1.8">
+              <li>
+                <strong>Drop a Piece:</strong> Click anywhere on the board or
+                use the arrow buttons
+              </li>
+              <li>
+                <strong>Change Players:</strong> Switch who goes first using the
+                "Player 1" buttons
+              </li>
+              <li>
+                <strong>Select Opponent:</strong> Choose between Manual, Easy
+                AI, Hard AI, or Perfect AI
+              </li>
+              <li>
+                <strong>Reset Game:</strong> Start a new game with the same
+                settings
+              </li>
+              <li>
+                <strong>View Scores:</strong> Toggle column analysis to see AI
+                evaluation of moves
+              </li>
+            </ul>
+
+            <h3>Winning</h3>
+            <p>
+              Get four pieces in a row (horizontal, vertical, or diagonal) to
+              win! The game ends in a draw if the board fills without a winner.
+            </p>
+          </section>
+
+          <section id="section-3" class="modal-section">
+            <h2>How It Works</h2>
+
+            <h3>AI Engine</h3>
+            <p>
+              The Perfect AI uses the
+              <strong>Negamax algorithm with Alpha-Beta pruning</strong> to
+              evaluate board positions and determine the optimal move. This
+              ensures it plays perfectly or nearly perfectly against any
+              opponent.
+            </p>
+
+            <h3>Algorithm and optimization overview</h3>
+            <ul style="margin-left: 20px; line-height: 1.8">
+              <li>
+                <strong>Negamax:</strong> Recursively evaluates all possible
+                future moves
+              </li>
+              <li>
+                <strong>Alpha-Beta Pruning:</strong> Eliminates unnecessary
+                branches to improve performance
+              </li>
+              <li>
+                <strong>Transposition table:</strong> Caches board positions to
+                avoid recalculation
+              </li>
+              <li>
+                <strong>Bitboards:</strong> Efficiently represents the game
+                state using bitwise operations
+              </li>
+              <li>
+                <strong>Move sorting:</strong> Orders moves with a heuristic to
+                improve pruning effectiveness
+              </li>
+            </ul>
+
+            <a href="https://github.com/Pietot/Gonnect-4"
+              >🔗 Source code, more information and implementation details</a
+            >
+
+            <h3>Difficulty Levels</h3>
+            <ul style="margin-left: 20px; line-height: 1.8">
+              <li><strong>Easy:</strong> Makes random legal moves</li>
+              <li>
+                <strong>Hard:</strong> Evaluates positions at shallow depth (~8
+                moves ahead)
+              </li>
+              <li>
+                <strong>Perfect:</strong> Full negamax evaluation (nearly
+                unbeatable)
+              </li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Scripts (load order: logic → render → game → controls) ── -->
+    <script src="js/wasm_exec.js"></script>
+    <script src="js/board.js"></script>
+    <script src="js/solver.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/modal.js"></script>
+  </body>
+</html>

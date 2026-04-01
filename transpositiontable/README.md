@@ -1,3 +1,5 @@
+# Transposition Table
+
 This README file is to explain the purpose of the transpositiontable package and how to use it.
 
 ## 📋 Summary
@@ -7,6 +9,7 @@ This README file is to explain the purpose of the transpositiontable package and
 ### 2. [Implementation Details](#2---implementation-details)
 
 - #### 2.1 [Table Structure](#21---table-structure)
+
 - #### 2.2 [Hash Collision Strategy](#22---hash-collision-strategy)
 
 ## 1 - General Idea
