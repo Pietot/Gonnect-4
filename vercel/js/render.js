@@ -120,20 +120,14 @@ function renderColScores() {
     }
 
     const v = raw[c];
-    el.textContent = v >= 1e6 ? "♟ WIN" : v <= -1e6 ? "✗ BAD" : v;
+    el.textContent = v;
 
     let cls;
-    if (v >= 1e6) cls = "score-best";
-    else if (v <= -1e6) cls = "score-worst";
-    else if (range < 1) cls = "score-neutral";
-    else {
-      const norm = (v - minS) / range; // 0..1
-      if (norm >= 0.75) cls = "score-best";
-      else if (norm >= 0.45) cls = "score-good";
-      else if (norm >= 0.25) cls = "score-neutral";
-      else if (norm >= 0.1) cls = "score-bad";
-      else cls = "score-worst";
-    }
+    if (v === maxS) cls = "score-best";
+    else if (v === minS) cls = "score-worst";
+    else if (v === 0) cls = "score-neutral";
+    else if (v > 0) cls = "score-good";
+    else cls = "score-bad";
     el.classList.add(cls);
   }
 }
@@ -186,8 +180,8 @@ function setHover(col) {
     }
 
     // Account for board-wrap padding
-    previewTokenEl.style.left =  cell.offsetLeft + "px";
-    previewTokenEl.style.top =  cell.offsetTop + "px";
+    previewTokenEl.style.left = cell.offsetLeft + "px";
+    previewTokenEl.style.top = cell.offsetTop + "px";
     previewTokenEl.className = `preview-token p${currentPlayer} show`;
   }
 }

@@ -130,14 +130,14 @@
 }
 
 .sc.score-best {
-  color: var(--green);
-  background: var(--green-t);
-  border-color: rgba(152, 195, 121, 0.3);
-}
-.sc.score-good {
   color: var(--cyan);
   background: rgba(86, 182, 194, 0.08);
   border-color: rgba(86, 182, 194, 0.2);
+}
+.sc.score-good {
+  color: var(--green);
+  background: var(--green-t);
+  border-color: rgba(152, 195, 121, 0.3);
 }
 .sc.score-neutral {
   color: var(--text);
