@@ -57,6 +57,8 @@ Here is a brief overview of each folder and its purpose:
 
 - `cmd/web/`: Contains the implementation of the web assembly tool, which is used to create a web assembly version of the solver to be used in the browser.
 
+- `vercel/`: Contains the implementation of the website to play against the AI in the browser (all client-side).
+
 > [!NOTE]
 > You can also read some README.md files in some folders for more details on the implementation of the code in those folders.
 
