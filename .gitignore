@@ -1,8 +1,10 @@
 .vscode/
 
+# Ignore sandbox files
+sandbox.go
+
 # Ignore database files
 */badger*
-*.zip
 
 # Ignore executable files
 *.exe
