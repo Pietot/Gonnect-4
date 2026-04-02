@@ -17,3 +17,4 @@
   - Add parameters to the URL to save the controls (P1, P2, show scores, and modal)
   - Display message "AI is thinking..." when show score is activated but player 2 is in manual mode
   - Set the computation in asynchronous to avoid freezing the UI when the AI is thinking
+  - Launch the AI when setting an P2 as an AI and starting the game as P2
