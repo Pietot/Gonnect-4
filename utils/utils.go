@@ -9,7 +9,7 @@ import (
 type JSONPosition struct {
 	Sequence string  `json:"sequence"`
 	Score    int8    `json:"score"`
-	Analysis [7]int8 `json:"analysis"`
+	Analysis [7]*int8 `json:"analysis"`
 }
 
 func FormatFloat(value float64) string {
