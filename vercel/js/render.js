@@ -74,10 +74,7 @@ function renderStatus() {
   } else {
     statusBar.classList.add(`p${currentPlayer}-turn`);
     statusDot.className = `s-dot p${currentPlayer}`;
-    const isAITurn = currentPlayer === 2 && opponent !== "player";
-    statusText.textContent = isAITurn
-      ? `${getPlayerName(currentPlayer)} is thinking…`
-      : `${getPlayerName(currentPlayer)}'s turn`;
+    statusText.textContent = `${getPlayerName(currentPlayer)}'s turn`;
   }
 }
 
