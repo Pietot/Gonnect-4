@@ -34,6 +34,8 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 
 - #### [Lower Bound transposition table](#49-lower-bound-transposition-table)
 
+- #### [The book](#410-the-book)
+
 ### 5. [Benchmark](#5---benchmark)
 
 - #### 5.1 [Testsets](#testsets)
@@ -49,6 +51,7 @@ Gonnect 4 is a command-line connect 4 game written in Go. It allows you to solve
 - Command-line interface for easy interaction
 - Ability to analyze and/or solve Connect 4 positions
 - Uses a book of known positions to solve hard positions instantly
+- Online solver available at [gonnect-4.vercel.app](gonnect-4.vercel.app)
 
 ## 2 - Installation
 
@@ -154,6 +157,10 @@ Then it will print you how to use the tool correctly but I will explain it here 
   In negamax with alpha-beta pruning, fully explored nodes provide upper bounds while pruned nodes provide lower bounds. Traditionally, only upper bounds were stored in the transposition table, but keeping lower bounds as well can improve efficiency, even if the benefit is smaller since pruned nodes are cheaper to evaluate.
 
   Instead of using two separate tables, it is more efficient to store both bounds in a single table by adding a flag. This is done by shifting lower bound values by the maximum possible score, effectively doubling the score range and requiring one extra bit of storage per entry.
+
+- ### 4.10 The book
+
+  The book is a pre-computed database of known positions that takes +20M nodes to analyze that allows the solver/analyzer to instantly provide results for those positions without performing any search. This is particularly useful for early game positions, which tend to have a large search space and can take a long time to analyze. By pre-computing the analysis of these positions, the solver can provide instant results for them, improving the user experience when playing against the AI.
 
 ## 5 - Benchmark
 
