@@ -89,7 +89,6 @@ function renderColScores() {
 
   // Handle case where all scores are null/invalid
   if (valid.length === 0) {
-    console.warn("No valid scores to display");
     for (let c = 0; c < COLS; c++) {
       const el = document.getElementById(`sc-${c}`);
       if (el) {
