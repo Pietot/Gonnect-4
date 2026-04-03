@@ -99,9 +99,8 @@ function getAIMove(b, diff) {
  * Compute per-column evaluation scores for the hint display.
  * Returns an array of 7 values (null = invalid column).
  * @param {Int8Array[]} b      - Current board
- * @param {number}      player - Whose turn it is
  */
-function computeColScores(b, player) {
+function computeColScores(b) {
   if (!wasmReady) {
     console.warn("WASM not ready for score computation");
     return Array(COLS).fill(null);
