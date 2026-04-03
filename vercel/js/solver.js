@@ -64,7 +64,8 @@ function getAIMove(b, diff) {
 
   // For "hard", the higher a column's score, the greater its chance of being chosen.
   if (diff === "hard") {
-    const temp = 0.5;
+    // temp controls randomness: higher = more random, lower = more deterministic
+    const temp = 2;
     const candidates = scores
       .map((score, col) => ({ col, score }))
       .filter(({ score }) => score !== -128);

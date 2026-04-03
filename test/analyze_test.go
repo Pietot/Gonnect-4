@@ -43,16 +43,18 @@ func TestAnalyze(t *testing.T) {
 				t.Fatalf("Error initializing grid (file %d, entry %d): %v", fileIndex, i, err)
 			}
 
-			anal, _ := game.Analyze()
+			analysis, _ := game.Analyze()
+			// json.NewDecoder(f).Decode doesn't support null values for int8, so the analysis in the JSON file has 0 for the columns that are not filled, but in our code we use config.NIL_SCORE for that, so we need to convert the analysis from the JSON file before comparing it with the one from our code
+			savedAnalysis := convert(pos.Analysis)
 
-			if !scoresEqual(anal.Scores, pos.Analysis) {
+			if !scoresEqual(analysis.Scores, savedAnalysis) {
 				t.Errorf(
 					"[File %d, Entry %d] Scores mismatch for position %q\nExpected: %v\nGot:      %v",
 					fileIndex,
 					i,
 					pos.Sequence,
-					formatScores(pos.Analysis),
-					formatScores(anal.Scores),
+					formatScores(savedAnalysis),
+					formatScores(analysis.Scores),
 				)
 			} else {
 				t.Logf("[File %d] Position %s analyzed correctly", fileIndex, pos.Sequence)
@@ -94,12 +96,6 @@ func TestSolve(t *testing.T) {
 
 func scoresEqual(a, b [7]int8) bool {
 	for i := range 7 {
-		if a[i] == config.NIL_SCORE && b[i] == config.NIL_SCORE {
-			continue
-		}
-		if a[i] == config.NIL_SCORE || b[i] == config.NIL_SCORE {
-			return false
-		}
 		if a[i] != b[i] {
 			return false
 		}
@@ -117,4 +113,17 @@ func formatScores(s [7]int8) string {
 		}
 	}
 	return "[" + strings.Join(out, ", ") + "]"
+}
+
+// I don't know how to name the function but it converts the analysis from the JSON file, with the possible null values, and convert it to config.NIL_SCORE
+func convert(analysis [7]*int8) [7]int8 {
+	var converted [7]int8
+	for i, v := range analysis {
+		if v == nil {
+			converted[i] = config.NIL_SCORE
+		} else {
+			converted[i] = *v
+		}
+	}
+	return converted
 }

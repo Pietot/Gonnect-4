@@ -115,8 +115,8 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 
 	start := time.Now()
 	for column := range 7 {
+		var score int8
 		if grid.CanPlay(column) {
-			var score int8
 			if grid.IsWinningMove(column) {
 				score = int8((WIDTH*HEIGHT + 1 - grid.nbMoves) / 2)
 			} else {
@@ -129,6 +129,8 @@ func (grid *Grid) Analyze() (evaluation.Analysis, stats.Stats) {
 				maxScore = score
 				bestMove = uint8(column)
 			}
+		} else {
+			scores.Scores[column] = config.NIL_SCORE
 		}
 	}
 
