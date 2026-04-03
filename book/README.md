@@ -34,7 +34,7 @@ After it's done, run the command `go generate ./...` to re-generate the `map.go`
 
 ## 3 - Implementation Details
 
-In addition to the naïve implementation where you just do a Breadth-First Search (BFS), I used the fact that a position of Connect-4 is symmetric, so we can litteraly skip half of the positions by always getting the canonical key of a position. The canonical key is the smallest key between the position's key and the mirrored position's key.
+In addition to the naïve implementation where you just do a Breadth-First Search (BFS), I used the fact that a position of Connect 4 is symmetric, so we can litteraly skip half of the positions by always getting the canonical key of a position. The canonical key is the smallest key between the position's key and the mirrored position's key.
 
 The next optimisation is what I call "early pruning". If a position takes less than 20 million nodes to be analyzed, there is no use to analyze it's children positions, because a children always take less node to be analyzed than it's parent. With this, we only care about the branches of of the position tree that have "hard" positions.
 

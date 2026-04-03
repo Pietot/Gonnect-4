@@ -1,6 +1,6 @@
-# What is Gonnect-4?
+# What is Gonnect 4?
 
-This markdown file contains instructions on how to build Gonnect-4 from source, as well as some informations on how the project is structured, and how the code works.
+This markdown file contains instructions on how to build Gonnect 4 from source, as well as some informations on how the project is structured, and how the code works.
 
 > [!IMPORTANT]
 > All the instruction and commands in all the mardown files are meant to be run on Windows, but they should work on other operating systems as well, with some minor adjustments.
@@ -64,7 +64,7 @@ Here is a brief overview of each folder and its purpose:
 
 ## 2 - Installation
 
-To install Gonnect-4, you need to have Go installed on your machine.
+To install Gonnect 4, you need to have Go installed on your machine.
 
 Then you have to clone the repository and navigate to the project directory:
 

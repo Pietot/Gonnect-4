@@ -18,7 +18,7 @@ This README file is to explain the purpose of the grid package and how to use it
 
 ## 1 - About this package
 
-The grid package is the heart of the Connect-4 solver. It contains all the structs, methods and functions related to the game state representation and the core engine.
+The grid package is the heart of the Connect 4 solver. It contains all the structs, methods and functions related to the game state representation and the core engine.
 
 - `grid.go`: Defines the `Grid` struct and methods for manipulating game states
 - `negamax.go`: Implements the negamax search algorithm with alpha-beta pruning
@@ -40,7 +40,7 @@ The grid package is the heart of the Connect-4 solver. It contains all the struc
   Positive (winning) score can be computed as 22 minus number of stone played by the current player at the end of the game.\
   Negative (losing) score can be computed as number of stone played by the current player at the end of the game minus 22.
 
-  Why 22 ? Because the maximum number of moves in a Connect-4 game is 42, and each player can play at most 21 moves.
+  Why 22 ? Because the maximum number of moves in a Connect 4 game is 42, and each player can play at most 21 moves.
   But if the current player can win with it's last stone, the score will be 1, so 1 + 21 = 22, and 22 - 21 = 1.
   So this system means the higher the score is, the quicker the current player can win, and the lower the score is, the quicker the current player can lose.
 
