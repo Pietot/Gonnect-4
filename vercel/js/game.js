@@ -120,16 +120,14 @@ function triggerAI() {
   clearColScores();
   renderBoard(); // disable arrows while thinking
 
-  const delay =
-    opponent === "perfect" ? 80 : opponent === "impossible" ? 50 : 30;
-
+  // Delay the AI move slightly so the "thinking" state can render
   setTimeout(() => {
     const col = getAIMove(board, opponent, 2);
     aiThinking = false;
     setThinking(false);
     placePiece(col);
     if (showScores && !gameOver) setTimeout(renderColScores, 20);
-  }, delay);
+  }, 50);
 }
 
 /**
