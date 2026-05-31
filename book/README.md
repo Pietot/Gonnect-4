@@ -14,7 +14,7 @@ This README file is to explain the purpose of the book package and how to use it
 
 The early a position is in the game, the more possible moves there are, and the more time it takes to solve/analyze it in average.
 
-For example, an empty position takes 22 minutes (on my machine) to be analyzed, and it keeps decreasing as the game goes on. So to time window for a position to be analyzed is between 0 and 22 minutes. So imagine if we want to use this solver to play perfectly against a human, we don't want to wait 22 minutes for the first move to be analyzed, neither do we want to wait x minute/seconds for each time it's the solver to play.
+For example, an empty position takes 22 minutes (on my machine) to be analyzed, and it keeps decreasing as the game goes on. So the time window for a position to be analyzed is between 0 and 22 minutes. So imagine if we want to use this solver to play perfectly against a human, we don't want to wait 22 minutes for the first move to be analyzed, neither do we want to wait x minute/seconds for each time it's the solver to play.
 
 An idea to solve this problem is to create a book of positions, where we pre-compute the analysis of each position up to an arbitrary depth.
 
