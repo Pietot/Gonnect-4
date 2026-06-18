@@ -73,31 +73,19 @@ The grid package is the heart of the Connect 4 solver. It contains all the struc
   Instead of using a traditional 7x6 grid representation, the bitboard uses a clever encoding where each column is represented by 7 bits (6 for the cells + 1 separator).
 
 > [!IMPORTANT]  
-> Since a binary number is "built" from right to left, each bucket of 7 bits corresponds to a column, **FROM RIGHT TO LEFT**.
+> Since a binary number is "built" from right to left, each bucket of 7 bits **_(from right to left)_** corresponds to a column, **FROM LEFT TO RIGHT**.
 
   For more clarity, here is the order of bits to encode for a 7x6 board.
 
   ```text
-  .  .  .  .  .  .  . <- extra bit
-  48 41 34 27 20 13 6
-  47 40 33 26 19 12 5
-  46 39 32 25 18 11 4
-  45 38 31 24 17 10 3
-  44 37 30 23 16  9 2
-  43 36 29 22 15  8 1
-  ```
-
-  Now, imagine we have the following position where x is the current player.:
-
-  ```text
-  . . . . . . .
-  —————————————
-  . . . . . . .
-  . . . o . . .
-  . . x x . . .
-  . . o x . . .
-  . . o o x . .
-  . . o x x o .
+  7 14 21 28 35 42 49 <- extra bit
+  ___________________
+  6 13 20 27 34 41 48
+  5 12 19 26 33 40 47
+  4 11 18 25 32 39 46
+  3 10 17 24 31 38 45
+  2  9 16 23 30 37 44
+  1  8 15 22 29 36 43
   ```
 
   We can encode this position where
@@ -122,26 +110,25 @@ The grid package is the heart of the Connect 4 solver. It contains all the struc
 
   ```text
 
-      Grid         CurrentPosition  +       Mask       +     BOTTOM      =       Key
-  . . . . . . .     0 0 0 0 0 0 0       0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 1 1 1 0 0 0
-  —————————————     —————————————   +   —————————————     —————————————     —————————————
-  . . . . . . .     0 0 0 0 0 0 0   +   0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
-  . . . o . . .     0 0 0 0 0 0 0   +   0 0 0 1 0 0 0     0 0 0 0 0 0 0     0 0 0 1 0 0 0
-  . . x x . . .     0 0 1 1 0 0 0   +   0 0 1 1 0 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
-  . . o x . . .     0 0 0 1 0 0 0   +   0 0 1 1 0 0 0     0 0 0 0 0 0 0     0 0 0 1 0 0 0
-  . . o o x . .     0 0 0 0 1 0 0   +   0 0 1 1 1 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
-  . . o x x o .     0 0 0 1 1 0 0   +   0 0 1 1 1 1 0     1 1 1 1 1 1 1     0 1 0 1 0 0 0
+      Grid         CurrentPosition  +      Mask       +     BOTTOM      =       Key
+  . . . . . . .     0 0 0 0 0 0 0      0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 1 1 1 0 0 0
+  —————————————     —————————————      —————————————     —————————————     —————————————
+  . . . . . . .     0 0 0 0 0 0 0      0 0 0 0 0 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
+  . . . o . . .     0 0 0 0 0 0 0      0 0 0 1 0 0 0     0 0 0 0 0 0 0     0 0 0 1 0 0 0
+  . . x x . . .     0 0 1 1 0 0 0      0 0 1 1 0 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
+  . . o x . . .     0 0 0 1 0 0 0      0 0 1 1 0 0 0     0 0 0 0 0 0 0     0 0 0 1 0 0 0
+  . . o o x . .     0 0 0 0 1 0 0      0 0 1 1 1 0 0     0 0 0 0 0 0 0     0 0 0 0 0 0 0
+  . . o x x o .     0 0 0 1 1 0 0      0 0 1 1 1 1 0     1 1 1 1 1 1 1     0 1 0 1 0 0 0
 
   Calculus:
 
-  CurrentPosition = 0000000 1000000 1100000 1111100 1111000 0000000 0000000 (2 225 055 072 256)
+  CurrentPosition = 0000000 0000000 0000011 0001101 0001000 0000000 0000000       (832 700 416)
   +
-  Mask            = 0000000 0000000 1100000 1011000 0001000 0000000 0000000    (25 954 484 224)
+  Mask            = 0000000 0000001 0000011 0011111 0001111 0000000 0000000    (35 230 302 208)
   +
   BOTTOM          = 0000001 0000001 0000001 0000001 0000001 0000001 0000001 (4 432 676 798 593)
   =
-  Key             = 0000001 1000010 1000010 1010110 0000001 0000001 0000001 (6 683 686 355 073)
-
+  Key             = 0000001 0000010 0000111 0101101 0011000 0000001 0000001 (4 468 739 801 217)
   ```
 
 - ### 2.4 - Move Sorter
