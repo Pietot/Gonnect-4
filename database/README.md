@@ -46,8 +46,8 @@ The database package provides persistent storage for the book creation process a
   - **Queue** (`Q:`): Stores positions waiting to be analyzed, sorted by depth for efficient BFS
   - **Pending** (`P:`): Fast lookup to check if a position is already in the queue (avoids duplicates)
 
-  > [!NOTE]
-  > The queue uses a composite key with depth as the first byte to ensure positions are processed in breadth-first order. This allows the database iterator to naturally retrieve positions level by level.
+> [!NOTE]
+> The queue uses a composite key with depth as the first byte to ensure positions are processed in breadth-first order. This allows the database iterator to naturally retrieve positions level by level.
 
 ## 3 - Exporting the Book
 
